@@ -220,6 +220,38 @@ namespace XibFree
 				c.onDetach();
 		}
 
+		public int Tag
+		{
+			get;
+			set;
+		}
+
+		internal override View LayoutViewWithTag(int tag)
+		{
+			if (Tag==tag)
+				return this;
+
+			foreach (var v in _subViews)
+			{
+				var result = v.LayoutViewWithTag(tag);
+				if (result!=null)
+					return result;
+			}
+
+			return null;
+		}
+
+		internal override UIView UIViewWithTag(int tag)
+		{
+			foreach (var v in _subViews)
+			{
+				var result = v.UIViewWithTag(tag);
+				if (result!=null)
+					return result;
+			}
+			return null;
+		}
+
 		// Fields
 		List<View> _subViews = new List<View>();
 		UIEdgeInsets _padding = UIEdgeInsets.Zero;

@@ -102,6 +102,7 @@ namespace Demo
 								// Here we're hosting a button
 								View = new UIButton(UIButtonType.RoundedRect)
 								{
+									Tag = 123,
 								},
 								LayoutParameters = new LayoutParameters()
 								{
@@ -153,58 +154,7 @@ namespace Demo
 				},
 			};
 
-
-			// Frame layouts allow subviews that overlap each other
-			var layout2 = new FrameLayout()
-			{
-				Padding = new UIEdgeInsets(10,10,10,10),
-				SubViews = new View[]
-				{
-					new NativeView()
-					{
-						View = new UIView()
-						{
-							BackgroundColor = UIColor.FromRGBA(255,0,0,128),
-						},
-						LayoutParameters = new LayoutParameters()
-						{
-							Width = AutoSize.FillParent,
-							Height = AutoSize.FillParent,
-						}
-					},
-
-					new NativeView()
-					{
-						View = new UIView()
-						{
-							BackgroundColor = UIColor.FromRGBA(0,0,255,128),
-						},
-						LayoutParameters = new LayoutParameters()
-						{
-							Width = AutoSize.FillParent,
-							Height = 100,
-							Margins = new UIEdgeInsets(10,10,10,10),
-							Gravity = Gravity.Bottom,
-						}
-					},
-
-					new NativeView()
-					{
-						View = new UIView()
-						{
-							BackgroundColor = UIColor.FromRGBA(0,0,0,128),
-						},
-						LayoutParameters = new LayoutParameters()
-						{
-							Width = AutoSize.FillParent,
-							Height = 80,
-							Margins = new UIEdgeInsets(10,-10,10,-10),
-							Gravity = Gravity.CenterVertical,
-						}
-					}
-				},
-			};
-
+			var button = layout.ViewWithTag<NativeView>(123);
 
 			// We've now defined our layout, to actually use it we simply create a UILayoutHost control and pass it the layout
 			this.View = new XibFree.UILayoutHost(layout);

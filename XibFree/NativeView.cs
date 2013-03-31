@@ -185,6 +185,22 @@ namespace XibFree
 			}
 		}
 
+		internal override UIView UIViewWithTag(int tag)
+		{
+			if (_view!=null)
+				return _view.ViewWithTag(tag);
+			return null;
+		}
+
+		internal override View LayoutViewWithTag(int tag)
+		{
+			if (_view!=null && _view.Tag==tag)
+				return this;
+			return null;
+		}
+
+
+
 		// The hosted native view
 		private UIView _view;
 	}

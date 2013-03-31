@@ -156,17 +156,12 @@ namespace XibFree
 		/// <param name="parentHeight">Available height of the parent view group(might be float.MaxValue)</param>
 		public void Measure(float parentWidth, float parentHeight)
 		{
-//			if (!_measuredSizeValid || parentWidth!=_prevParentWidth || parentHeight!=_prevParentHeight)
-//			{
-//				_prevParentWidth = parentWidth;
-//				_prevParentHeight = parentHeight;
-				_measuredSizeValid = false;
-				onMeasure(parentWidth, parentHeight);
-				if (!_measuredSizeValid)
-				{
-					throw new InvalidOperationException("onMeasure didn't set measurement before returning");
-				}
-//			}
+			_measuredSizeValid = false;
+			onMeasure(parentWidth, parentHeight);
+			if (!_measuredSizeValid)
+			{
+				throw new InvalidOperationException("onMeasure didn't set measurement before returning");
+			}
 		}
 
 		/// <summary>
@@ -204,10 +199,37 @@ namespace XibFree
 			return _measuredSize;
 		}
 
+		/// <summary>
+		/// Overridden to locate a UIView 
+		/// </summary>
+		/// <returns>The view with tag.</returns>
+		/// <param name="tag">Tag.</param>
+		internal abstract UIView UIViewWithTag(int tag);
+
+		/// <summary>
+		/// Overridden to locate a layout hierarchy view
+		/// </summary>
+		/// <returns>The view with tag.</returns>
+		/// <param name="tag">Tag.</param>
+		internal abstract View LayoutViewWithTag(int tag);
+
+		/// <summary>
+		/// Locates a view in either the layout or GUI hierarchy
+		/// </summary>
+		/// <returns>The view with tag.</returns>
+		/// <param name="tag">Tag.</param>
+		/// <typeparam name="T">The type of view to return</typeparam>
+		public T ViewWithTag<T>(int tag)
+		{
+			if (typeof(UIView).IsAssignableFrom(typeof(T)))
+				return (T)(object)UIViewWithTag(tag);
+			else
+			    return (T)(object)LayoutViewWithTag(tag);
+		}
+
+
 		internal SizeF _measuredSize;
 		internal bool _measuredSizeValid;
-//		internal float _prevParentWidth;
-//		internal float _prevParentHeight;
 		internal ViewGroup _parent;
 	}
 }
