@@ -173,8 +173,6 @@ namespace Demo
 
 			TableViewCellDemo _owner;
 
-			DemoTableViewCell _prototype = new DemoTableViewCell();
-
 			#region implemented abstract members of UITableViewSource
 
 			public override int RowsInSection(UITableView tableview, int section)

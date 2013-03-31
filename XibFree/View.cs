@@ -227,6 +227,8 @@ namespace XibFree
 			    return (T)(object)LayoutViewWithTag(tag);
 		}
 
+		public abstract NativeView FindNativeView(UIView v);
+
 
 		internal SizeF _measuredSize;
 		internal bool _measuredSizeValid;

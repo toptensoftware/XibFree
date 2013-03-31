@@ -252,6 +252,17 @@ namespace XibFree
 			return null;
 		}
 
+		public override NativeView FindNativeView(UIView view)
+		{
+			foreach (var v in _subViews)
+			{
+				var result = v.FindNativeView(view);
+				if (result!=null)
+					return result;
+			}
+			return null;
+		}
+
 		// Fields
 		List<View> _subViews = new List<View>();
 		UIEdgeInsets _padding = UIEdgeInsets.Zero;

@@ -35,6 +35,11 @@ namespace XibFree
 			Root = root;
 		}
 
+		public UILayoutHost() 
+		{
+			this.AutoresizingMask = UIViewAutoresizing.FlexibleDimensions;
+		}
+
 		public UILayoutHost(ViewGroup root) 
 		{
 			this.AutoresizingMask = UIViewAutoresizing.FlexibleDimensions;
@@ -63,6 +68,26 @@ namespace XibFree
 				if (_root!=null)
 					_root.SetHost(this);
 			}
+		}
+
+		/// <summary>
+		/// Finds the NativeView associated with a UIView
+		/// </summary>
+		/// <returns>The native view.</returns>
+		/// <param name="view">View.</param>
+		public NativeView FindNativeView(UIView view)
+		{
+			return _root.FindNativeView(view);
+		}
+
+		public override SizeF SizeThatFits(SizeF size)
+		{
+			if (_root==null)
+				return new SizeF(0,0);
+
+			// Measure the root layout
+			_root.Measure(size.Width, size.Height);
+			return _root.GetMeasuredSize();
 		}
 
 

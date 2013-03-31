@@ -154,8 +154,6 @@ namespace Demo
 				},
 			};
 
-			var button = layout.ViewWithTag<NativeView>(123);
-
 			// We've now defined our layout, to actually use it we simply create a UILayoutHost control and pass it the layout
 			this.View = new XibFree.UILayoutHost(layout);
 			this.View.BackgroundColor=UIColor.Gray;

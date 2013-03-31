@@ -69,6 +69,9 @@ namespace XibFree
 					// Store the new view
 					_view = value;
 
+					// Turn off auto-resizing, we'll take care of that thanks
+					_view.AutoresizingMask = UIViewAutoresizing.None;
+
 					// Attach the new view to the host
 					if (host!=null)
 					{
@@ -197,6 +200,14 @@ namespace XibFree
 			if (_view!=null && _view.Tag==tag)
 				return this;
 			return null;
+		}
+
+		public override NativeView FindNativeView(UIView v)
+		{
+			if (_view == v)
+				return this;
+			else
+				return null;
 		}
 
 
