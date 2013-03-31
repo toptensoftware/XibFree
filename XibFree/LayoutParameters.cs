@@ -36,6 +36,15 @@ namespace XibFree
 			Gravity = Gravity.None;
 		}
 
+		public LayoutParameters(float width, float height, float weight=1)
+		{
+			Width = width;
+			Height = height;
+			Margins = UIEdgeInsets.Zero;
+			Weight = 1;
+			Gravity = Gravity.None;
+		}
+
 		/// <summary>
 		/// Gets or sets the width for this view
 		/// </summary>

@@ -45,6 +45,19 @@ namespace XibFree
 			this.LayoutParameters = lp;
 		}
 
+		public override LayoutParameters LayoutParameters
+		{
+			get
+			{
+				var nestedHost = _view as UILayoutHost;
+				if (nestedHost!=null && nestedHost.Layout!=null)
+				{
+					return nestedHost.Layout.LayoutParameters;
+				}
+				return base.LayoutParameters;
+			}
+		}
+
 		/// <summary>
 		/// Gets or sets the native view
 		/// </summary>

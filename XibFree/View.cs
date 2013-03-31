@@ -67,7 +67,7 @@ namespace XibFree
 		/// Gets or sets the layout parameters for this view
 		/// </summary>
 		/// <value>The layout parameters.</value>
-		public LayoutParameters LayoutParameters
+		public virtual LayoutParameters LayoutParameters
 		{
 			get;
 			set;
