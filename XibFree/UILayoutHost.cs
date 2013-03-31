@@ -28,11 +28,11 @@ namespace XibFree
 		/// <summary>
 		/// Initializes a new instance of the <see cref="XibFree.UILayoutHost"/> class.
 		/// </summary>
-		/// <param name="root">Root of the view hierarchy to be hosted by this layout host</param>
-		public UILayoutHost(ViewGroup root, RectangleF frame) : base(frame)
+		/// <param name="layout">Root of the view hierarchy to be hosted by this layout host</param>
+		public UILayoutHost(ViewGroup layout, RectangleF frame) : base(frame)
 		{
 			this.AutoresizingMask = UIViewAutoresizing.FlexibleDimensions;
-			Root = root;
+			Layout = layout;
 		}
 
 		public UILayoutHost() 
@@ -40,33 +40,33 @@ namespace XibFree
 			this.AutoresizingMask = UIViewAutoresizing.FlexibleDimensions;
 		}
 
-		public UILayoutHost(ViewGroup root) 
+		public UILayoutHost(ViewGroup layout) 
 		{
 			this.AutoresizingMask = UIViewAutoresizing.FlexibleDimensions;
-			Root = root;
+			Layout = layout;
 		}
 
 
 		/// <summary>
-		/// The root ViewGroup hosted by this native view host
+		/// The ViewGroup declaring the layout to hosted
 		/// </summary>
-		/// <value>The root.</value>
-		public ViewGroup Root
+		/// <value>The ViewGroup.</value>
+		public ViewGroup Layout
 		{
 			get
 			{
-				return _root;
+				return _layout;
 			}
 
 			set
 			{
-				if (_root!=null)
-					_root.SetHost(null);
+				if (_layout!=null)
+					_layout.SetHost(null);
 
-				_root = value;
+				_layout = value;
 
-				if (_root!=null)
-					_root.SetHost(this);
+				if (_layout!=null)
+					_layout.SetHost(this);
 			}
 		}
 
@@ -77,17 +77,17 @@ namespace XibFree
 		/// <param name="view">View.</param>
 		public NativeView FindNativeView(UIView view)
 		{
-			return _root.FindNativeView(view);
+			return _layout.FindNativeView(view);
 		}
 
 		public override SizeF SizeThatFits(SizeF size)
 		{
-			if (_root==null)
+			if (_layout==null)
 				return new SizeF(0,0);
 
-			// Measure the root layout
-			_root.Measure(size.Width, size.Height);
-			return _root.GetMeasuredSize();
+			// Measure the layout
+			_layout.Measure(size.Width, size.Height);
+			return _layout.GetMeasuredSize();
 		}
 
 
@@ -97,12 +97,12 @@ namespace XibFree
 		/// </summary>
 		public override void LayoutSubviews()
 		{
-			if (_root!=null)
+			if (_layout!=null)
 			{
 				// Remeasure
-				_root.Measure(Bounds.Width, Bounds.Height);
+				_layout.Measure(Bounds.Width, Bounds.Height);
 				// Apply layout
-				_root.Layout(Bounds);
+				_layout.Layout(Bounds);
 			}
 		}
 
@@ -118,7 +118,7 @@ namespace XibFree
 
 		#endregion
 
-		private ViewGroup _root;
+		private ViewGroup _layout;
 	}
 }
 

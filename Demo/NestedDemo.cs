@@ -44,7 +44,7 @@ namespace Demo
 						{
 							//BackgroundColor = UIColor.Yellow,
 							ClipsToBounds = true,
-							Root = new LinearLayout(Orientation.Vertical)
+							Layout = new LinearLayout(Orientation.Vertical)
 							{
 								Padding = new UIEdgeInsets(3,3,3,3),
 								SubViews = new View[]

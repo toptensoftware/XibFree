@@ -45,7 +45,7 @@ namespace XibFree
 		public static View GetLayoutRoot(this UIView view)
 		{
 			var host = view.GetLayoutHost();
-			return host.Root;
+			return host.Layout;
 		}
 	}
 }
