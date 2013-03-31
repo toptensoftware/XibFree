@@ -1,0 +1,50 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XibFree", "XibFree\XibFree.csproj", "{3CAF9EB6-5E29-40E2-8798-2DE909310CBE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Demo", "Demo\Demo.csproj", "{3AB2BCA1-4E9C-44FD-81AD-5B8F2B4F6BE0}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|iPhoneSimulator = Debug|iPhoneSimulator
+		Release|iPhoneSimulator = Release|iPhoneSimulator
+		Debug|iPhone = Debug|iPhone
+		Release|iPhone = Release|iPhone
+		Ad-Hoc|iPhone = Ad-Hoc|iPhone
+		AppStore|iPhone = AppStore|iPhone
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3AB2BCA1-4E9C-44FD-81AD-5B8F2B4F6BE0}.Ad-Hoc|iPhone.ActiveCfg = Ad-Hoc|iPhone
+		{3AB2BCA1-4E9C-44FD-81AD-5B8F2B4F6BE0}.Ad-Hoc|iPhone.Build.0 = Ad-Hoc|iPhone
+		{3AB2BCA1-4E9C-44FD-81AD-5B8F2B4F6BE0}.AppStore|iPhone.ActiveCfg = AppStore|iPhone
+		{3AB2BCA1-4E9C-44FD-81AD-5B8F2B4F6BE0}.AppStore|iPhone.Build.0 = AppStore|iPhone
+		{3AB2BCA1-4E9C-44FD-81AD-5B8F2B4F6BE0}.Debug|iPhone.ActiveCfg = Debug|iPhone
+		{3AB2BCA1-4E9C-44FD-81AD-5B8F2B4F6BE0}.Debug|iPhone.Build.0 = Debug|iPhone
+		{3AB2BCA1-4E9C-44FD-81AD-5B8F2B4F6BE0}.Debug|iPhoneSimulator.ActiveCfg = Debug|iPhoneSimulator
+		{3AB2BCA1-4E9C-44FD-81AD-5B8F2B4F6BE0}.Debug|iPhoneSimulator.Build.0 = Debug|iPhoneSimulator
+		{3AB2BCA1-4E9C-44FD-81AD-5B8F2B4F6BE0}.Release|iPhone.ActiveCfg = Release|iPhone
+		{3AB2BCA1-4E9C-44FD-81AD-5B8F2B4F6BE0}.Release|iPhone.Build.0 = Release|iPhone
+		{3AB2BCA1-4E9C-44FD-81AD-5B8F2B4F6BE0}.Release|iPhoneSimulator.ActiveCfg = Release|iPhoneSimulator
+		{3AB2BCA1-4E9C-44FD-81AD-5B8F2B4F6BE0}.Release|iPhoneSimulator.Build.0 = Release|iPhoneSimulator
+		{3CAF9EB6-5E29-40E2-8798-2DE909310CBE}.Ad-Hoc|iPhone.ActiveCfg = Release|Any CPU
+		{3CAF9EB6-5E29-40E2-8798-2DE909310CBE}.Ad-Hoc|iPhone.Build.0 = Release|Any CPU
+		{3CAF9EB6-5E29-40E2-8798-2DE909310CBE}.AppStore|iPhone.ActiveCfg = Release|Any CPU
+		{3CAF9EB6-5E29-40E2-8798-2DE909310CBE}.AppStore|iPhone.Build.0 = Release|Any CPU
+		{3CAF9EB6-5E29-40E2-8798-2DE909310CBE}.Debug|iPhone.ActiveCfg = Debug|Any CPU
+		{3CAF9EB6-5E29-40E2-8798-2DE909310CBE}.Debug|iPhone.Build.0 = Debug|Any CPU
+		{3CAF9EB6-5E29-40E2-8798-2DE909310CBE}.Debug|iPhoneSimulator.ActiveCfg = Debug|Any CPU
+		{3CAF9EB6-5E29-40E2-8798-2DE909310CBE}.Debug|iPhoneSimulator.Build.0 = Debug|Any CPU
+		{3CAF9EB6-5E29-40E2-8798-2DE909310CBE}.Release|iPhone.ActiveCfg = Release|Any CPU
+		{3CAF9EB6-5E29-40E2-8798-2DE909310CBE}.Release|iPhone.Build.0 = Release|Any CPU
+		{3CAF9EB6-5E29-40E2-8798-2DE909310CBE}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
+		{3CAF9EB6-5E29-40E2-8798-2DE909310CBE}.Release|iPhoneSimulator.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		StartupItem = Demo\Demo.csproj
+		Policies = $0
+		$0.StandardHeader = $1
+		$1.Text = @ XibFree - http://www.toptensoftware.com/xibfree/\n\n Copyright ${Year}  ${CopyrightHolder}\n\n   Licensed under the Apache License, Version 2.0 (the "License");\n   you may not use this file except in compliance with the License.\n   You may obtain a copy of the License at\n\n       http://www.apache.org/licenses/LICENSE-2.0\n\n   Unless required by applicable law or agreed to in writing, software\n   distributed under the License is distributed on an "AS IS" BASIS,\n   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n   See the License for the specific language governing permissions and\n   limitations under the License.
+		$1.IncludeInNewFiles = True
+	EndGlobalSection
+EndGlobal

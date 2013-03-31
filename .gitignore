@@ -1,0 +1,7 @@
+bin
+obj
+*.swp
+*.userprefs
+.DS_Store
+xcuserdata
+*~
