@@ -99,6 +99,7 @@
     <Compile Include="NestedDemo.cs" />
     <Compile Include="ViewGroupLayerDemo.cs" />
     <Compile Include="VisibilityDemo.cs" />
+    <Compile Include="RecalculateLayoutDemo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

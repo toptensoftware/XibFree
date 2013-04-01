@@ -54,6 +54,7 @@ namespace Demo
 				new Demo() { Title = "TableViewCell", TClass = typeof(TableViewCellDemo) },
 				new Demo() { Title = "TableViewCell Variable", TClass = typeof(TableViewCellDemo2) },
 				new Demo() { Title = "Visibility", TClass = typeof(VisibilityDemo) },
+				new Demo() { Title = "Recalculate Layout", TClass = typeof(RecalculateLayoutDemo) },
 			};
 
 			#region implemented abstract members of UITableViewSource

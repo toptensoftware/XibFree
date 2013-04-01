@@ -132,7 +132,7 @@ namespace XibFree
 		/// Remove the specified subview
 		/// </summary>
 		/// <param name="view">The subview to remove</param>
-		public void RemoveSubView(ViewGroup view)
+		public void RemoveSubView(View view)
 		{
 			RemoveSubViewAt(_subViews.IndexOf(view));
 		}

@@ -216,6 +216,14 @@ namespace XibFree
 			}
 		}
 
+		public void RemoveFromSuperview()
+		{
+			if (Parent!=null)
+			{
+				Parent.RemoveSubView(this);
+			}
+		}
+
 
 		internal SizeF _measuredSize;
 		internal bool _measuredSizeValid;
