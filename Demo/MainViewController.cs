@@ -53,6 +53,7 @@ namespace Demo
 				new Demo() { Title = "ViewGroup Layers", TClass = typeof(ViewGroupLayerDemo) },
 				new Demo() { Title = "TableViewCell", TClass = typeof(TableViewCellDemo) },
 				new Demo() { Title = "TableViewCell Variable", TClass = typeof(TableViewCellDemo2) },
+				new Demo() { Title = "Visibility", TClass = typeof(VisibilityDemo) },
 			};
 
 			#region implemented abstract members of UITableViewSource

@@ -102,7 +102,7 @@ namespace XibFree
 				// Remeasure
 				_layout.Measure(Bounds.Width, Bounds.Height);
 				// Apply layout
-				_layout.Layout(Bounds);
+				_layout.Layout(Bounds, false);
 			}
 		}
 

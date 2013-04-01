@@ -54,7 +54,7 @@ namespace XibFree
 			// Measure all subviews where both dimensions can be resolved
 			bool haveResolveSize = false;
 			float maxWidth=0, maxHeight=0;
-			foreach (var v in SubViews.Where(x=>!x.Hidden))
+			foreach (var v in SubViews.Where(x=>!x.Gone))
 			{
 				// Try to resolve subview width
 				var subViewWidth = v.LayoutParameters.Width;
@@ -183,29 +183,38 @@ namespace XibFree
 			SetMeasuredSize(new SizeF(width, height));
 		}
 
-		protected override void onLayout(System.Drawing.RectangleF newPosition)
+		protected override void onLayout(System.Drawing.RectangleF newPosition, bool parentHidden)
 		{
 			// Make room for padding
 			newPosition = newPosition.ApplyInsets(Padding);
 
-			// Position each view according to it's gravity
-			foreach (var v in SubViews.Where(x=>!x.Hidden))
+			if (!parentHidden && Visible)
 			{
-				// If subview has a gravity specified, use it, otherwise use our own
-				var g = v.LayoutParameters.Gravity;
-				if (g==Gravity.None)
+				// Position each view according to it's gravity
+				foreach (var v in SubViews)
 				{
-					g = this.Gravity;
+					if (v.Gone)
+					{
+						v.Layout(RectangleF.Empty, false);
+						continue;
+					}
+
+					// If subview has a gravity specified, use it, otherwise use our own
+					var g = v.LayoutParameters.Gravity;
+					if (g==Gravity.None)
+					{
+						g = this.Gravity;
+					}
+
+					// Get it's size
+					var size = v.GetMeasuredSize();
+
+					// Work out it's position by apply margins and gravity
+					var subViewPosition = newPosition.ApplyInsets(v.LayoutParameters.Margins).ApplyGravity(size, g);
+
+					// Position it
+					v.Layout(subViewPosition, false);
 				}
-
-				// Get it's size
-				var size = v.GetMeasuredSize();
-
-				// Work out it's position by apply margins and gravity
-				var subViewPosition = newPosition.ApplyInsets(v.LayoutParameters.Margins).ApplyGravity(size, g);
-
-				// Position it
-				v.Layout(subViewPosition);
 			}
 		}
 

@@ -109,11 +109,12 @@ namespace XibFree
 		/// Overridden to set the position of the native view
 		/// </summary>
 		/// <param name="newPosition">New position.</param>
-		protected override void onLayout(RectangleF newPosition)
+		protected override void onLayout(RectangleF newPosition, bool parentHidden)
 		{
 			// Simple, just reposition the view!
 			if (_view!=null)
 			{
+				_view.Hidden = parentHidden || !Visible;
 				_view.Frame = newPosition;
 			}
 		}

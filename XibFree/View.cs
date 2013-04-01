@@ -93,62 +93,21 @@ namespace XibFree
 		{
 		}
 
-		bool _hidden;
-
-		/// <summary>
-		/// Gets or sets a value indicating whether this <see cref="XibFree.View"/> is hidden.  Hidden views
-		/// are collapsed and not included in layout.
-		/// </summary>
-		/// <value><c>true</c> if hidden; otherwise, <c>false</c>.</value>
-		/// <description>To hide a view, but not collapse the space it uses, use the hidden attribute of the
-		/// native view (ie: UIView.Hidden) and leave this property set to true</description>
-		public bool Hidden
-		{
-			get
-			{
-				return _hidden;
-			}
-			set
-			{
-				if (_hidden!=value)
-				{
-					_hidden = value;
-					onHiddenChanged();
-				}
-			}
-		}
-
-		protected virtual void onHiddenChanged()
-		{
-		}
-
-		public bool ResolveHidden
-		{
-			get
-			{
-				if (_hidden)
-					return _hidden;
-				if (_parent!=null)
-					return _parent.ResolveHidden;
-				return false;
-			}
-		}
-
 
 		/// <summary>
 		/// Layout the subviews in this view using dimensions calculated during the last measure cycle
 		/// </summary>
 		/// <param name="newPosition">The new position of this view</param>
-		public void Layout(RectangleF newPosition)
+		public void Layout(RectangleF newPosition, bool parentHidden)
 		{
-			onLayout(newPosition);
+			onLayout(newPosition, parentHidden);
 		}
 
 		/// <summary>
 		/// Overridden by view groups to perform the actual layout process
 		/// </summary>
 		/// <param name="newPosition">New position.</param>
-		protected abstract void onLayout(RectangleF newPosition);
+		protected abstract void onLayout(RectangleF newPosition, bool parentHidden);
 
 		/// <summary>
 		/// Measures the subviews of this view
@@ -232,6 +191,30 @@ namespace XibFree
 		}
 
 		public abstract NativeView FindNativeView(UIView v);
+
+		public bool Gone
+		{
+			get
+			{
+				return LayoutParameters.Visibility == Visibility.Gone;
+			}
+			set
+			{
+				LayoutParameters.Visibility = value ? Visibility.Gone : Visibility.Visible;
+			}
+		}
+
+		public bool Visible
+		{
+			get
+			{
+				return LayoutParameters.Visibility == Visibility.Visible;
+			}
+			set
+			{
+				LayoutParameters.Visibility = value ? Visibility.Visible : Visibility.Invisible;
+			}
+		}
 
 
 		internal SizeF _measuredSize;

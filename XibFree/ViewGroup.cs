@@ -19,6 +19,7 @@ using MonoTouch.UIKit;
 using System.Collections.Generic;
 using System.Linq;
 using MonoTouch.CoreAnimation;
+using System.Drawing;
 
 namespace XibFree
 {
@@ -229,12 +230,40 @@ namespace XibFree
 				c.onDetach();
 		}
 
-		protected override void onLayout(System.Drawing.RectangleF newPosition)
+		protected override void onLayout(System.Drawing.RectangleF newPosition, bool parentHidden)
 		{
 			// Reposition the layer
 			if (_layer!=null)
 			{
-				_layer.Frame = newPosition;
+				bool newHidden = parentHidden || !Visible;
+				if (newHidden!=_layer.Hidden)
+				{
+					// If we're changing the visibility, disable animations since
+					// the old rectangle for the position was probably wrong, resulting in 
+					// weird animation as it's repositioned.
+					CATransaction.Begin();
+					CATransaction.DisableActions = true;
+					_layer.Hidden = newHidden;
+					_layer.Frame = newPosition;
+					CATransaction.Commit();
+				}
+				else
+				{
+					if (!_layer.Hidden)
+					{
+						_layer.Frame = newPosition;
+					}
+				}
+			}
+
+			// Hide all subviews
+			if (parentHidden || !Visible)
+			{
+				foreach (var v in SubViews)
+				{
+					v.Layout(RectangleF.Empty, false);
+				}
+				return;
 			}
 		}
 		public int Tag

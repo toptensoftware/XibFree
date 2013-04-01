@@ -90,7 +90,7 @@ namespace XibFree
 			// Work out the total fixed size
 			float totalFixedSize = 0;
 			float totalWeight = 0;
-			foreach (var v in SubViews.Where(x=>!x.Hidden))
+			foreach (var v in SubViews.Where(x=>!x.Gone))
 			{
 				if (v.LayoutParameters.Height==AutoSize.FillParent)
 				{
@@ -124,7 +124,7 @@ namespace XibFree
 			{
 				// This is a weird case: we have a height of wrap content, but child items that want to fill parent too.
 				// Temporarily switch those items to wrap content and use their natural size
-				foreach (var v in SubViews.Where(x=>!x.Hidden && x.LayoutParameters.Height==AutoSize.FillParent))
+				foreach (var v in SubViews.Where(x=>!x.Gone && x.LayoutParameters.Height==AutoSize.FillParent))
 				{
 					v.LayoutParameters.Height = AutoSize.WrapContent;
 					v.Measure(adjustLayoutWidth(layoutWidth, v), float.MaxValue);
@@ -144,7 +144,7 @@ namespace XibFree
 					room = 0;
 				
 				// Layout the fill parent items
-				foreach (var v in SubViews.Where(x=>!x.Hidden && x.LayoutParameters.Height==AutoSize.FillParent))
+				foreach (var v in SubViews.Where(x=>!x.Gone && x.LayoutParameters.Height==AutoSize.FillParent))
 				{
 					// Work out size
 					float size = room * v.LayoutParameters.Weight / totalWeight;
@@ -163,7 +163,7 @@ namespace XibFree
 			{
 				// Work out the maximum width of all children that aren't fill parent
 				width = 0;
-				foreach (var v in SubViews.Where(x=>!x.Hidden && x.LayoutParameters.Width!=AutoSize.FillParent))
+				foreach (var v in SubViews.Where(x=>!x.Gone && x.LayoutParameters.Width!=AutoSize.FillParent))
 				{
 					float totalChildWidth = v.GetMeasuredSize().Width + v.LayoutParameters.Margins.TotalWidth();
 					if (totalChildWidth > width)
@@ -171,7 +171,7 @@ namespace XibFree
 				}
 				
 				// Set the width of all children that are fill parent
-				foreach (var v in SubViews.Where(x=>!x.Hidden && x.LayoutParameters.Width==AutoSize.FillParent))
+				foreach (var v in SubViews.Where(x=>!x.Gone && x.LayoutParameters.Width==AutoSize.FillParent))
 				{
 					v.Measure(width, v.GetMeasuredSize().Height);
 				}
@@ -211,7 +211,7 @@ namespace XibFree
 			// Work out the total fixed size
 			float totalFixedSize = 0;
 			float totalWeight = 0;
-			foreach (var v in SubViews.Where(x=>!x.Hidden))
+			foreach (var v in SubViews.Where(x=>!x.Gone))
 			{
 				if (v.LayoutParameters.Width==AutoSize.FillParent)
 				{
@@ -245,7 +245,7 @@ namespace XibFree
 			{
 				// This is a weird case: we have a width of wrap content, but child items that want to fill parent too.
 				// Temporarily switch those items to wrap content and use their natural size
-				foreach (var v in SubViews.Where(x=>!x.Hidden && x.LayoutParameters.Width==AutoSize.FillParent))
+				foreach (var v in SubViews.Where(x=>!x.Gone && x.LayoutParameters.Width==AutoSize.FillParent))
 				{
 					v.LayoutParameters.Width = AutoSize.WrapContent;
 					v.Measure(float.MaxValue, adjustLayoutHeight(layoutHeight, v));
@@ -265,7 +265,7 @@ namespace XibFree
 					room = 0;
 				
 				// Layout the fill parent items
-				foreach (var v in SubViews.Where(x=>!x.Hidden && x.LayoutParameters.Width==AutoSize.FillParent))
+				foreach (var v in SubViews.Where(x=>!x.Gone && x.LayoutParameters.Width==AutoSize.FillParent))
 				{
 					// Work out size
 					float size = room * v.LayoutParameters.Weight / totalWeight;
@@ -284,7 +284,7 @@ namespace XibFree
 			{
 				// Work out the maximum height of all children that aren't fill parent
 				height = 0;
-				foreach (var v in SubViews.Where(x=>!x.Hidden && x.LayoutParameters.Height!=AutoSize.FillParent))
+				foreach (var v in SubViews.Where(x=>!x.Gone && x.LayoutParameters.Height!=AutoSize.FillParent))
 				{
 					float totalChildHeight = v.GetMeasuredSize().Height + v.LayoutParameters.Margins.TotalHeight();
 					if (totalChildHeight > height)
@@ -292,7 +292,7 @@ namespace XibFree
 				}
 				
 				// Set the height of all children that are fill parent
-				foreach (var v in SubViews.Where(x=>!x.Hidden && x.LayoutParameters.Height==AutoSize.FillParent))
+				foreach (var v in SubViews.Where(x=>!x.Gone && x.LayoutParameters.Height==AutoSize.FillParent))
 				{
 					v.Measure(v.GetMeasuredSize().Width, height);
 				}
@@ -316,16 +316,20 @@ namespace XibFree
 		}
 
 		// Overridden to layout the subviews
-		protected override void onLayout(RectangleF newPosition)
+		protected override void onLayout(RectangleF newPosition, bool parentHidden)
 		{
-			base.onLayout(newPosition);
-			if (_orientation==Orientation.Vertical)
+			base.onLayout(newPosition, parentHidden);
+
+			if (!parentHidden && Visible)
 			{
-				LayoutVertical(newPosition);
-			}
-			else
-			{
-				LayoutHorizontal(newPosition);
+				if (_orientation==Orientation.Vertical)
+				{
+					LayoutVertical(newPosition);
+				}
+				else
+				{
+					LayoutHorizontal(newPosition);
+				}
 			}
 		}
 
@@ -349,8 +353,15 @@ namespace XibFree
 
 			}
 
-			foreach (var v in SubViews.Where(i=>!i.Hidden))
+			foreach (var v in SubViews)
 			{
+				// Hide hidden views
+				if (v.Gone)
+				{
+					v.Layout(RectangleF.Empty, false);
+					continue;
+				}
+
 				y+= v.LayoutParameters.Margins.Top;
 
 				SizeF size = v.GetMeasuredSize();
@@ -378,7 +389,7 @@ namespace XibFree
 				}
 
 				
-				v.Layout(new RectangleF(x, y, size.Width, size.Height));
+				v.Layout(new RectangleF(x, y, size.Width, size.Height), false);
 
 				y += size.Height + v.LayoutParameters.Margins.Bottom;
 			}
@@ -404,8 +415,15 @@ namespace XibFree
 					
 			}
 			
-			foreach (var v in SubViews.Where(i=>!i.Hidden))
+			foreach (var v in SubViews)
 			{
+				// Hide hidden views
+				if (v.Gone)
+				{
+					v.Layout(RectangleF.Empty, false);
+					continue;
+				}
+				
 				x += v.LayoutParameters.Margins.Left;
 				
 				SizeF size = v.GetMeasuredSize();
@@ -433,7 +451,7 @@ namespace XibFree
 				}
 				
 				
-				v.Layout(new RectangleF(x, y, size.Width, size.Height));
+				v.Layout(new RectangleF(x, y, size.Width, size.Height), false);
 				
 				x += size.Width + v.LayoutParameters.Margins.Right;
 			}
@@ -442,13 +460,13 @@ namespace XibFree
 		// Helper to get the total measured height of all subviews, including all padding and margins
 		private float getTotalMeasuredHeight()
 		{
-			return Padding.Top + Padding.Bottom + SubViews.Where(x=>!x.Hidden).Sum(x=>x.GetMeasuredSize().Height + x.LayoutParameters.Margins.TotalHeight());
+			return Padding.Top + Padding.Bottom + SubViews.Where(x=>!x.Gone).Sum(x=>x.GetMeasuredSize().Height + x.LayoutParameters.Margins.TotalHeight());
 		}
 		
 		// Helper to get the total measured width of all subviews, including all padding and margins
 		private float getTotalMeasuredWidth()
 		{
-			return Padding.Left + Padding.Right + SubViews.Where(x=>!x.Hidden).Sum(x=>x.GetMeasuredSize().Width + x.LayoutParameters.Margins.TotalWidth());
+			return Padding.Left + Padding.Right + SubViews.Where(x=>!x.Gone).Sum(x=>x.GetMeasuredSize().Width + x.LayoutParameters.Margins.TotalWidth());
 		}
 
 		// Helper to adjust the parent width passed down to subviews during measurement

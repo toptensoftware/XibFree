@@ -59,5 +59,6 @@
     <Compile Include="AutoSize.cs" />
     <Compile Include="FrameLayout.cs" />
     <Compile Include="PublicExtensions.cs" />
+    <Compile Include="Visibility.cs" />
   </ItemGroup>
 </Project>

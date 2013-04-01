@@ -94,6 +94,16 @@ namespace XibFree
 			get;
 			set;
 		}
+
+		/// <summary>
+		/// Gets or sets the visibility of this view
+		/// </summary>
+		/// <value>One of the Visibility constants</value>
+		public Visibility Visibility
+		{
+			get;
+			set;
+		}
 	}
 }
 

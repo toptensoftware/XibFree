@@ -10,17 +10,18 @@ using MonoTouch.CoreAnimation;
 
 namespace Demo
 {
-	public partial class ViewGroupLayerDemo : UIViewController
+	public partial class VisibilityDemo : UIViewController
 	{
-		public ViewGroupLayerDemo()
+		public VisibilityDemo()
 		{
-			Title = "ViewGroup Layers";
+			Title = "Visibility";
 
 			// Custom initialization
 		}
 
 		public override void LoadView()
 		{
+			View panel;
 			var layout = new LinearLayout(Orientation.Vertical)
 			{
 				SubViews = new View[] 
@@ -58,7 +59,7 @@ namespace Demo
 									BackgroundColor = UIColor.Clear,
 								}
 							},
-							new NativeView()
+							panel = new NativeView()
 							{
 								View = new UILabel(RectangleF.Empty)
 								{
@@ -80,6 +81,32 @@ namespace Demo
 						View = new UIView()	{ BackgroundColor = UIColor.Blue },
 						LayoutParameters = new LayoutParameters(AutoSize.FillParent, 50),
 					},
+					new NativeView()
+					{
+						View = new UIButton(UIButtonType.RoundedRect),
+						LayoutParameters = new LayoutParameters(AutoSize.FillParent, AutoSize.WrapContent),
+						Init = v =>
+						{
+							v.As<UIButton>().SetTitle("Change Visibility", UIControlState.Normal);
+							v.As<UIButton>().TouchUpInside += (sender, e) => 
+							{
+								switch (panel.LayoutParameters.Visibility)
+								{
+									case Visibility.Gone:
+										panel.LayoutParameters.Visibility = Visibility.Visible;
+										break;
+									case Visibility.Visible:
+										panel.LayoutParameters.Visibility = Visibility.Invisible;
+										break;
+									case Visibility.Invisible:
+										panel.LayoutParameters.Visibility = Visibility.Gone;
+										break;
+								}
+
+								this.View.SetNeedsLayout();
+							};
+						}
+					}
 				},
 			};
 
