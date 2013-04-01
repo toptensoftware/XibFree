@@ -68,8 +68,8 @@ namespace Demo
 						},
 						Init = v =>
 						{
-							v.Layer.CornerRadius = 5;
-							v.Layer.MasksToBounds = true;
+							v.View.Layer.CornerRadius = 5;
+							v.View.Layer.MasksToBounds = true;
 						}
 					},
 					new NativeView()

@@ -117,10 +117,10 @@ namespace Demo
 									// Because we can't set a button's title with a property, we use the Init property
 									// to execute some code.  Whatever action we assign to Init is simply executed immediately allowing
 									// us to to keep this code here with the rest of the layout definition
-									((UIButton)v).SetTitle("Hello", UIControlState.Normal);
+									v.As<UIButton>().SetTitle("Hello", UIControlState.Normal);
 
 									// We can also setup an event handler
-									((UIButton)v).TouchUpInside += (sender,args) =>
+									v.As<UIButton>().TouchUpInside += (sender,args) =>
 									{
 										new UIAlertView("Clicked", "", null, "OK").Show();
 									};

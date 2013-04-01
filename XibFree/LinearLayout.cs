@@ -468,7 +468,15 @@ namespace XibFree
 			
 			return height - c.LayoutParameters.Margins.TotalHeight();
 		}
-		
+
+		public Action<LinearLayout> Init
+		{
+			set
+			{
+				value(this);
+			}
+		}
+
 		// Fields
 		private Orientation _orientation;
 		private float _totalWeight;

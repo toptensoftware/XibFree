@@ -214,6 +214,14 @@ namespace XibFree
 			get;
 			set;
 		}
+
+		public Action<FrameLayout> Init
+		{
+			set
+			{
+				value(this);
+			}
+		}
 	}
 }
 

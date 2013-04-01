@@ -194,11 +194,11 @@ namespace XibFree
 		/// with the layout of the view hierarchy.  See examples.
 		/// </summary>
 		/// <value>An Action to be called immediately</value>
-		public Action<UIView> Init
+		public Action<NativeView> Init
 		{
 			set
 			{
-				value(View);
+				value(this);
 			}
 		}
 
