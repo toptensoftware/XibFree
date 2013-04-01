@@ -50,6 +50,7 @@ namespace Demo
 				new Demo() { Title = "LinearLayout", TClass = typeof(LinearLayoutDemo) },
 				new Demo() { Title = "FrameLayout", TClass = typeof(FrameLayoutDemo) },
 				new Demo() { Title = "Nested Hosts", TClass = typeof(NestedDemo) },
+				new Demo() { Title = "ViewGroup Layers", TClass = typeof(ViewGroupLayerDemo) },
 				new Demo() { Title = "TableViewCell", TClass = typeof(TableViewCellDemo) },
 				new Demo() { Title = "TableViewCell Variable", TClass = typeof(TableViewCellDemo2) },
 			};

@@ -17,6 +17,7 @@
 using System;
 using MonoTouch.UIKit;
 using System.Drawing;
+using MonoTouch.CoreAnimation;
 
 namespace XibFree
 {
@@ -198,6 +199,9 @@ namespace XibFree
 				throw new InvalidOperationException("Attempt to use measured size before measurement");
 			return _measuredSize;
 		}
+
+		internal abstract CALayer GetDisplayLayer();
+		internal abstract CALayer FindFirstSublayer();
 
 		/// <summary>
 		/// Overridden to locate a UIView 

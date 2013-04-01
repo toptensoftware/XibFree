@@ -80,56 +80,6 @@ namespace Demo
 				},
 			};
 
-			/*
-			var layout = new LinearLayout(Orientation.Vertical)
-			{
-				SubViews = new View[] 
-				{
-					new NativeView()
-					{
-						View = new UIView()	{ BackgroundColor = UIColor.Blue },
-						LayoutParameters = new LayoutParameters(AutoSize.FillParent, 50),
-					},
-					new LinearLayout(Orientation.Vertical)
-					{
-						Padding = new UIEdgeInsets(3,3,3,3),
-						SubViews = new View[]
-						{
-							new NativeView()
-							{
-								View = new UILabel(RectangleF.Empty)
-								{
-									Text="Hello World",
-									Font = UIFont.SystemFontOfSize(24),
-									BackgroundColor = UIColor.Clear,
-								}
-							},
-							new NativeView()
-							{
-								View = new UILabel(RectangleF.Empty)
-								{
-									Text="Goodbye",
-									Font = UIFont.SystemFontOfSize(24),
-									BackgroundColor = UIColor.Clear,
-								}
-							}
-						},
-						LayoutParameters = new LayoutParameters()
-						{
-							Width = AutoSize.FillParent,
-							Height = AutoSize.WrapContent,
-							Margins = new UIEdgeInsets(10,10,10,10),
-						},
-					},
-					new NativeView()
-					{
-						View = new UIView()	{ BackgroundColor = UIColor.Blue },
-						LayoutParameters = new LayoutParameters(AutoSize.FillParent, 50),
-					},
-				},
-			};
-			*/
-
 			// We've now defined our layout, to actually use it we simply create a UILayoutHost control and pass it the layout
 			this.View = new XibFree.UILayoutHost(layout);
 			this.View.BackgroundColor=UIColor.Gray;

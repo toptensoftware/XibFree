@@ -97,6 +97,7 @@
     <Compile Include="Demo1.cs" />
     <Compile Include="TableViewCellDemo2.cs" />
     <Compile Include="NestedDemo.cs" />
+    <Compile Include="ViewGroupLayerDemo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

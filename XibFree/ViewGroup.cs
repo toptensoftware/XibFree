@@ -18,6 +18,7 @@ using System;
 using MonoTouch.UIKit;
 using System.Collections.Generic;
 using System.Linq;
+using MonoTouch.CoreAnimation;
 
 namespace XibFree
 {
@@ -205,6 +206,10 @@ namespace XibFree
 		/// <param name="host">The Host.</param>
 		internal override void onAttach(IHost host)
 		{
+			// Add the layer
+			if (_layer!=null)
+				host.GetUIView().Layer.AddSublayer(_layer);
+
 			// Forward on to all children
 			foreach (var c in _subViews)
 				c.onAttach(host);
@@ -215,11 +220,23 @@ namespace XibFree
 		/// </summary>
 		internal override void onDetach()
 		{
+			// Remove from layer
+			if (_layer!=null)
+				_layer.RemoveFromSuperLayer();
+
 			// Forward on to all children
 			foreach (var c in _subViews)
 				c.onDetach();
 		}
 
+		protected override void onLayout(System.Drawing.RectangleF newPosition)
+		{
+			// Reposition the layer
+			if (_layer!=null)
+			{
+				_layer.Frame = newPosition;
+			}
+		}
 		public int Tag
 		{
 			get;
@@ -263,9 +280,70 @@ namespace XibFree
 			return null;
 		}
 
+		internal override CALayer FindFirstSublayer()
+		{
+			foreach (var v in SubViews)
+			{
+				var l = v.GetDisplayLayer();
+				if (l!=null)
+					return l;
+
+				l = v.FindFirstSublayer();
+				if (l!=null)
+					return l;
+			}
+
+			return null;
+		}
+
+
+		internal override CALayer GetDisplayLayer()
+		{
+			return _layer;
+		}
+
+
+		public CALayer Layer
+		{
+			get
+			{
+				return _layer;
+			}
+			set
+			{
+				// Remove old layer
+				if (_layer!=null)
+					_layer.RemoveFromSuperLayer();
+
+				// Store it
+				_layer = value;
+
+				// If we're attached, add the layer to our host
+				if (_layer!=null)
+				{
+					ViewGroup.IHost host = GetHost();
+					if (host!=null)
+					{
+						UIView hostView = host.GetUIView();
+						var nextSubLayer = FindFirstSublayer();
+						if (nextSubLayer!=null)
+						{
+							hostView.Layer.InsertSublayerBelow(_layer, nextSubLayer);
+						}
+						else
+						{
+							hostView.Layer.AddSublayer(_layer);
+						}
+					}
+				}
+
+			}
+		}
+
 		// Fields
 		List<View> _subViews = new List<View>();
 		UIEdgeInsets _padding = UIEdgeInsets.Zero;
+		CALayer _layer;
 		IHost _host;
 	}
 }

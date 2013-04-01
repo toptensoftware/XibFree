@@ -17,6 +17,7 @@
 using System;
 using MonoTouch.UIKit;
 using System.Drawing;
+using MonoTouch.CoreAnimation;
 
 namespace XibFree
 {
@@ -221,6 +222,16 @@ namespace XibFree
 				return this;
 			else
 				return null;
+		}
+
+		internal override CALayer GetDisplayLayer()
+		{
+			return _view.Layer;
+		}
+
+		internal override CALayer FindFirstSublayer()
+		{
+			return null;
 		}
 
 

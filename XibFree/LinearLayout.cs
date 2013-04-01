@@ -318,6 +318,7 @@ namespace XibFree
 		// Overridden to layout the subviews
 		protected override void onLayout(RectangleF newPosition)
 		{
+			base.onLayout(newPosition);
 			if (_orientation==Orientation.Vertical)
 			{
 				LayoutVertical(newPosition);
