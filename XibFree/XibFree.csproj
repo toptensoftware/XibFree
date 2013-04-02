@@ -60,5 +60,6 @@
     <Compile Include="FrameLayout.cs" />
     <Compile Include="PublicExtensions.cs" />
     <Compile Include="Visibility.cs" />
+    <Compile Include="UILayoutHostScrollable.cs" />
   </ItemGroup>
 </Project>

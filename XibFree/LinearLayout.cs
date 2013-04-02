@@ -60,6 +60,16 @@ namespace XibFree
 			set;
 		}
 
+		/// <summary>
+		/// Gets or sets the spacing between stacked subviews
+		/// </summary>
+		/// <value>The amount of spacing.</value>
+		public float Spacing
+		{
+			get;
+			set;
+		}
+
 		// Overridden to provide layout measurement
 		protected override void onMeasure(float parentWidth, float parentHeight)
 		{
@@ -107,7 +117,7 @@ namespace XibFree
 				}
 				
 				// Include margins
-				totalFixedSize += v.LayoutParameters.Margins.TotalWidth();
+				totalFixedSize += v.LayoutParameters.Margins.TotalHeight();
 			}
 			
 			
@@ -211,6 +221,7 @@ namespace XibFree
 			// Work out the total fixed size
 			float totalFixedSize = 0;
 			float totalWeight = 0;
+			int visibleViewCount = 0;
 			foreach (var v in SubViews.Where(x=>!x.Gone))
 			{
 				if (v.LayoutParameters.Width==AutoSize.FillParent)
@@ -229,11 +240,17 @@ namespace XibFree
 				
 				// Include margins
 				totalFixedSize += v.LayoutParameters.Margins.TotalWidth();
+
+				visibleViewCount++;
 			}
 			
 			
 			// Also need to include our own padding
 			totalFixedSize += Padding.Left + Padding.Right;
+
+			// And spacing between controls
+			if (visibleViewCount>1)
+				totalFixedSize += (visibleViewCount-1) * Spacing;
 			
 			// Resolve our layout width
 			float layoutWidth = LayoutParameters.Width;
@@ -414,7 +431,9 @@ namespace XibFree
 					break;
 					
 			}
-			
+
+			bool first = true;
+
 			foreach (var v in SubViews)
 			{
 				// Hide hidden views
@@ -423,6 +442,11 @@ namespace XibFree
 					v.Layout(RectangleF.Empty, false);
 					continue;
 				}
+
+				if (!first)
+					x += Spacing;
+				else
+					first = false;
 				
 				x += v.LayoutParameters.Margins.Left;
 				

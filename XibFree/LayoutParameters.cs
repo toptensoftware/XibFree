@@ -81,10 +81,82 @@ namespace XibFree
 		/// <value>The margins sizes</value>
 		public UIEdgeInsets Margins
 		{
-			get;
-			set;
+			get
+			{
+				return _margins;
+			}
+
+			set
+			{
+				_margins = value;
+			}
 		}
 
+
+		/// <summary>
+		/// Gets or sets the left margin.
+		/// </summary>
+		/// <value>The left margin size.</value>
+		public float MarginLeft
+		{
+			get
+			{
+				return Margins.Left;
+			}
+			set
+			{
+				_margins.Left = value;
+			}
+		}
+		
+		/// <summary>
+		/// Gets or sets the right margin.
+		/// </summary>
+		/// <value>The right margin size.</value>
+		public float MarginRight
+		{
+			get
+			{
+				return Margins.Right;
+			}
+			set
+			{
+				_margins.Right = value;
+			}
+		}
+		
+		/// <summary>
+		/// Gets or sets the top margin.
+		/// </summary>
+		/// <value>The top margin size.</value>
+		public float MarginTop
+		{
+			get
+			{
+				return Margins.Top;
+			}
+			set
+			{
+				_margins.Top = value;
+			}
+		}
+		
+		/// <summary>
+		/// Gets or sets the bottom margin.
+		/// </summary>
+		/// <value>The bottom margin size.</value>
+		public float MarginBottom
+		{
+			get
+			{
+				return Margins.Bottom;
+			}
+			set
+			{
+				_margins.Bottom = value;
+			}
+		}
+		
 		/// <summary>
 		/// Gets or sets the gravity for this view within it's parent subview
 		/// </summary>
@@ -104,6 +176,9 @@ namespace XibFree
 			get;
 			set;
 		}
+
+	
+		UIEdgeInsets _margins;
 	}
 }
 
