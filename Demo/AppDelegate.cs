@@ -28,9 +28,13 @@ namespace Demo
 		{
 			window = new UIWindow(UIScreen.MainScreen.Bounds);
 
+			/*
 			var controller = new MainViewController();
 			navigationController = new UINavigationController(controller);
 			window.RootViewController = navigationController;
+			*/
+
+			window.RootViewController = new FullScreenDemo();
 
 			// make the window visible
 			window.MakeKeyAndVisible();

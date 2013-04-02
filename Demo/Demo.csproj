@@ -23,6 +23,8 @@
     <ConsolePause>false</ConsolePause>
     <MtouchLink>None</MtouchLink>
     <MtouchDebug>true</MtouchDebug>
+    <MtouchI18n />
+    <MtouchArch>ARMv7</MtouchArch>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhoneSimulator' ">
     <DebugType>none</DebugType>
@@ -100,6 +102,7 @@
     <Compile Include="ViewGroupLayerDemo.cs" />
     <Compile Include="VisibilityDemo.cs" />
     <Compile Include="RecalculateLayoutDemo.cs" />
+    <Compile Include="FullScreenDemo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -107,6 +110,7 @@
     <BundleResource Include="Resources\tts512.png" />
     <BundleResource Include="Resources\logo320.png" />
     <BundleResource Include="Resources\logo320%402x.png" />
+    <BundleResource Include="Resources\XibFree_512.png" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\XibFree\XibFree.csproj">
