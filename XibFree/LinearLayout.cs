@@ -100,6 +100,7 @@ namespace XibFree
 			// Work out the total fixed size
 			float totalFixedSize = 0;
 			float totalWeight = 0;
+			int visibleViewCount = 0;
 			foreach (var v in SubViews.Where(x=>!x.Gone))
 			{
 				if (v.LayoutParameters.Height==AutoSize.FillParent)
@@ -118,13 +119,18 @@ namespace XibFree
 				
 				// Include margins
 				totalFixedSize += v.LayoutParameters.Margins.TotalHeight();
+				visibleViewCount++;
 			}
 			
 			
 			// Also need to include our own padding
 			totalFixedSize += Padding.Top + Padding.Bottom;
+
+			// And spacing between controls
+			if (visibleViewCount>1)
+				totalFixedSize += (visibleViewCount-1) * Spacing;
 			
-			// Resolve our 
+			// Resolve our height
 			float layoutHeight = LayoutParameters.Height;
 			if (layoutHeight == AutoSize.FillParent)
 				layoutHeight = parentHeight;
@@ -162,7 +168,7 @@ namespace XibFree
 					totalVariableSize += v.GetMeasuredSize().Height;
 				}
 			}
-			
+
 			// Resolve our width
 			float width = LayoutParameters.Width;
 			if (width == AutoSize.FillParent)
@@ -370,6 +376,8 @@ namespace XibFree
 
 			}
 
+			bool first = true;
+
 			foreach (var v in SubViews)
 			{
 				// Hide hidden views
@@ -378,6 +386,12 @@ namespace XibFree
 					v.Layout(RectangleF.Empty, false);
 					continue;
 				}
+
+				if (!first)
+					y += Spacing;
+				else
+					first = false;
+				
 
 				y+= v.LayoutParameters.Margins.Top;
 
