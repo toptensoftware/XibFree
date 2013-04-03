@@ -126,34 +126,20 @@ namespace XibFree
 		/// <param name="parentHeight">Parent height.</param>
 		protected override void onMeasure(float parentWidth, float parentHeight)
 		{
-			// Start with what's specified in out layout parameters
-			float width = LayoutParameters.Width;
-			float height = LayoutParameters.Height;
-
-			// Use parent widths if required
-			if (width == AutoSize.FillParent)
-				width = parentWidth;
-			if (height == AutoSize.FillParent)
-				height = parentHeight;
+			// Resolve width for absolute and parent ratio
+			float width = LayoutParameters.TryResolveWidth(this, parentWidth);
+			float height = LayoutParameters.TryResolveHeight(this, parentHeight);
 
 			// Do we need to measure our content?
-			if (width == AutoSize.WrapContent || height==AutoSize.WrapContent)
+			SizeF sizeMeasured = SizeF.Empty;
+			if (width == float.MaxValue || height == float.MaxValue)
 			{
-				SizeF sizeToFit = new SizeF(
-						width == AutoSize.WrapContent ? float.MaxValue : width,
-						height == AutoSize.WrapContent ? float.MaxValue : height
-					);
-
-				SizeF sizeMeasured = Measurer!=null ? Measurer(_view, sizeToFit) : _view.SizeThatFits(sizeToFit);
-
-				if (width == AutoSize.WrapContent)
-					width = sizeMeasured.Width;
-				if (height == AutoSize.WrapContent)
-					height = sizeMeasured.Height;
+				SizeF sizeToFit = new SizeF(width, height);
+				sizeMeasured = Measurer!=null ? Measurer(_view, sizeToFit) : _view.SizeThatFits(sizeToFit);
 			}
 
 			// Set the measured size
-			SetMeasuredSize(new SizeF(width, height));
+			SetMeasuredSize(LayoutParameters.ResolveSize(new SizeF(width, height), sizeMeasured));
 		}
 
 		/// <summary>

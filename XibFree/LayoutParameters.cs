@@ -16,9 +16,21 @@
 
 using System;
 using MonoTouch.UIKit;
+using System.Drawing;
 
 namespace XibFree
 {
+	public enum Units
+	{
+		Absolute,			// Absolute pixel dimension
+		ParentRatio,		// Ratio of parent size
+		ContentRatio,		// Ratio of content size
+		AspectRatio,		// Ratio of adjacent dimension size
+		ScreenRatio,		// Ratio of the current screen size
+		HostRatio,			// Ratio of the current UIViewHost window size
+	}
+
+
 	/// <summary>
 	/// LayoutParameters declare how a view should be laid out by it's parent view group.
 	/// </summary>
@@ -69,6 +81,85 @@ namespace XibFree
 		{
 			get;
 			set;
+		}
+
+		Units _widthUnits;
+
+		/// <summary>
+		/// Gets or sets the width units.
+		/// </summary>
+		/// <value>The width units.</value>
+		public Units WidthUnits
+		{
+			get
+			{
+				if (_widthUnits == Units.Absolute)
+				{
+					if (Width == AutoSize.FillParent)
+						return Units.ParentRatio;
+					if (Width == AutoSize.WrapContent)
+						return Units.ContentRatio;
+				}
+				return _widthUnits;
+			}
+			set
+			{
+				_widthUnits = value;
+			}
+		}
+		
+		Units _heightUnits;
+		/// <summary>
+		/// Gets or sets the height units.
+		/// </summary>
+		/// <value>The height units.</value>
+		public Units HeightUnits
+		{
+			get
+			{
+				if (_heightUnits == Units.Absolute)
+				{
+					if (Height == AutoSize.FillParent)
+						return Units.ParentRatio;
+					if (Height == AutoSize.WrapContent)
+						return Units.ContentRatio;
+				}
+				return _heightUnits;
+			}
+			set
+			{
+				_heightUnits = value;
+			}
+		}
+
+		internal float HeightRatio
+		{
+			get
+			{
+				if (_heightUnits == Units.Absolute)
+				{
+					return 1;
+				}
+				else
+				{
+					return Height;
+				}
+			}
+		}
+
+		internal float WidthRatio
+		{
+			get
+			{
+				if (_widthUnits == Units.Absolute)
+				{
+					return 1;
+				}
+				else
+				{
+					return Width;
+				}
+			}
 		}
 
 		/// <summary>
@@ -223,7 +314,104 @@ namespace XibFree
 			set;
 		}
 
+		static float TryResolve(Units units, float size, float ratio, float parentSize)
+		{
+			switch (units)
+			{
+				case Units.Absolute:
+					return size;
+					
+				case Units.ParentRatio:
+					return parentSize==float.MaxValue ? float.MaxValue : parentSize * ratio;
+
+				default:
+					return float.MaxValue;
+			}
+		}
+
+		static SizeF GetScreenSize()
+		{
+			var orientation = UIApplication.SharedApplication.StatusBarOrientation;
+			if (orientation == UIInterfaceOrientation.Portrait || orientation == UIInterfaceOrientation.PortraitUpsideDown)
+			{
+				return UIScreen.MainScreen.Bounds.Size;
+			}
+			else
+			{
+				var temp = UIScreen.MainScreen.Bounds.Size;
+				return new SizeF(temp.Height, temp.Width);
+			}
+		}
+
+		internal SizeF GetHostSize(View view)
+		{
+			// Get the host
+			var host = view.GetHost();
+			if (host==null)
+				return GetScreenSize();
+
+			var hostView = host.GetUIView();
+
+			// Use outer scroll view if present
+			var parent = hostView.Superview;
+			if (parent is UIScrollView)
+				hostView = parent;
+
+			// Return size
+			return hostView.Bounds.Size;
+		}
+
+		internal float TryResolveWidth(View view, float parentWidth)
+		{
+			if (WidthUnits==Units.HostRatio)
+			{
+				return GetHostSize(view).Width * WidthRatio;
+			}
+
+			if (WidthUnits==Units.ScreenRatio)
+			{
+				return GetScreenSize().Width * WidthRatio;
+			}
+
+			return TryResolve(WidthUnits, Width, WidthRatio, parentWidth);
+		}
 	
+		internal float TryResolveHeight(View view, float parentHeight)
+		{
+			if (HeightUnits==Units.HostRatio)
+			{
+				return GetHostSize(view).Height * HeightRatio;
+			}
+			
+			if (HeightUnits==Units.ScreenRatio)
+			{
+				return GetScreenSize().Height * HeightRatio;
+			}
+
+			return TryResolve(HeightUnits, Height, HeightRatio, parentHeight);
+		}
+
+		internal SizeF ResolveSize(SizeF size, SizeF sizeMeasured)
+		{
+			// Resolve measured size
+			if (size.Width == float.MaxValue)
+				size.Width = sizeMeasured.Width;
+			if (size.Height == float.MaxValue)
+				size.Height = sizeMeasured.Height;
+
+			// Finally, resolve aspect ratios
+			if (WidthUnits == Units.AspectRatio)
+			{
+				size.Width = size.Height * WidthRatio;
+			}
+			if (HeightUnits == Units.AspectRatio)
+			{
+				size.Height = size.Width * HeightRatio;
+			}
+
+			return size;
+		}
+
 		UIEdgeInsets _margins;
 	}
 }

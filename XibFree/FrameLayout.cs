@@ -31,18 +31,8 @@ namespace XibFree
 		{
 			var unresolved = new List<View>();
 
-			// Resolve our width and height as best we can
-			var width = LayoutParameters.Width;
-			if (width == AutoSize.FillParent)
-				width = parentWidth;
-			else if (width == AutoSize.WrapContent)
-				width = float.MaxValue;
-
-			var height = LayoutParameters.Height;
-			if (height == AutoSize.FillParent)
-				height = parentHeight;
-			else if (height == AutoSize.WrapContent)
-				height = float.MaxValue;
+			var width = LayoutParameters.TryResolveWidth(this, parentWidth);
+			var height = LayoutParameters.TryResolveHeight(this, parentHeight);
 
 			// Remove padding
 			if (width!=float.MaxValue)
@@ -50,15 +40,14 @@ namespace XibFree
 			if (height!=float.MaxValue)
 				height -= Padding.TotalHeight();
 
-
 			// Measure all subviews where both dimensions can be resolved
-			bool haveResolveSize = false;
+			bool haveResolvedSize = false;
 			float maxWidth=0, maxHeight=0;
 			foreach (var v in SubViews.Where(x=>!x.Gone))
 			{
 				// Try to resolve subview width
-				var subViewWidth = v.LayoutParameters.Width;
-				if (subViewWidth == AutoSize.FillParent)
+				var subViewWidth = float.MaxValue;
+				if (v.LayoutParameters.WidthUnits == Units.ParentRatio)
 				{
 					if (width==float.MaxValue)
 					{
@@ -70,14 +59,10 @@ namespace XibFree
 						subViewWidth = width - v.LayoutParameters.Margins.TotalWidth();
 					}
 				}
-				else if (subViewWidth == AutoSize.WrapContent)
-				{
-					subViewWidth = float.MaxValue;
-				}
 
 				// Try to resolve subview height
-				var subViewHeight = v.LayoutParameters.Height;
-				if (subViewHeight == AutoSize.FillParent)
+				var subViewHeight = float.MaxValue;
+				if (v.LayoutParameters.HeightUnits == Units.ParentRatio)
 				{
 					if (height==float.MaxValue)
 					{
@@ -89,18 +74,15 @@ namespace XibFree
 						subViewHeight = height - v.LayoutParameters.Margins.TotalHeight();
 					}
 				}
-				else if (subViewHeight == AutoSize.WrapContent)
-				{
-					subViewHeight = float.MaxValue;
-				}
 
 				// Measure it
 				v.Measure(subViewWidth, subViewHeight);
 
-				if (!haveResolveSize)
+				if (!haveResolvedSize)
 				{
 					maxWidth = v.GetMeasuredSize().Width + v.LayoutParameters.Margins.TotalWidth();
 					maxHeight = v.GetMeasuredSize().Height + v.LayoutParameters.Margins.TotalHeight();
+					haveResolvedSize = true;
 				}
 				else
 				{
@@ -113,74 +95,36 @@ namespace XibFree
 			// that were resolved, or none were, use their natural size
 			foreach (var v in unresolved)
 			{
-				var oldWidth = v.LayoutParameters.Width;
-				var oldHeight = v.LayoutParameters.Height;
+				var subViewWidth = float.MaxValue;
+				if (v.LayoutParameters.WidthUnits == Units.ParentRatio && haveResolvedSize)
+				{
+					subViewWidth = maxWidth - v.LayoutParameters.Margins.TotalWidth();
+				}
 
-				// Resolve subview width
-				var subViewWidth = v.LayoutParameters.Width;
-				if (subViewWidth == AutoSize.FillParent)
+				var subViewHeight = float.MaxValue;
+				if (v.LayoutParameters.HeightUnits == Units.ParentRatio && haveResolvedSize)
 				{
-					if (haveResolveSize)
-						subViewWidth = maxWidth - v.LayoutParameters.Margins.TotalWidth();
-					else
-					{
-						subViewWidth = float.MaxValue;
-						v.LayoutParameters.Width = AutoSize.WrapContent;
-					}
+					subViewHeight = maxHeight - v.LayoutParameters.Margins.TotalHeight();
 				}
-				else if (subViewWidth == AutoSize.WrapContent)
-				{
-					subViewWidth = float.MaxValue;
-				}
-				
-				// Resolve subview height
-				var subViewHeight = v.LayoutParameters.Height;
-				if (subViewHeight == AutoSize.FillParent)
-				{
-					if (haveResolveSize)
-						subViewHeight = maxHeight - v.LayoutParameters.Margins.TotalHeight();
-					else
-					{
-						subViewHeight = float.MaxValue;
-						v.LayoutParameters.Height = AutoSize.WrapContent;
-					}
-				}
-				else if (subViewHeight == AutoSize.WrapContent)
-				{
-					subViewHeight = float.MaxValue;
-				}
-				
+
 				// Measure it
 				v.Measure(subViewWidth, subViewHeight);
-
-				v.LayoutParameters.Width = oldWidth;
-				v.LayoutParameters.Height = oldHeight;
 			}
 
-			// Now really resolve our width
-			width = LayoutParameters.Width;
-			if (width == AutoSize.FillParent)
+			SizeF sizeMeasured = SizeF.Empty;
+
+			if (width == float.MaxValue)
 			{
-				width = parentWidth;
-			}
-			else if (width == AutoSize.WrapContent)
-			{
-				width = SubViews.Max(x=>x.GetMeasuredSize().Width + x.LayoutParameters.Margins.TotalWidth()) + Padding.TotalWidth();
+				sizeMeasured.Width = SubViews.Max(x=>x.GetMeasuredSize().Width + x.LayoutParameters.Margins.TotalWidth()) + Padding.TotalWidth();
 			}
 
-			// And our height
-			height = LayoutParameters.Height;
-			if (height == AutoSize.FillParent)
+			if (height == float.MaxValue)
 			{
-				height = parentHeight;
-			}
-			else if (height == AutoSize.WrapContent)
-			{
-				height = SubViews.Max(x=>x.GetMeasuredSize().Height + x.LayoutParameters.Margins.TotalHeight()) + Padding.TotalHeight();
+				sizeMeasured.Height = SubViews.Max(x=>x.GetMeasuredSize().Height + x.LayoutParameters.Margins.TotalHeight()) + Padding.TotalHeight();
 			}
 
 			// Done!
-			SetMeasuredSize(new SizeF(width, height));
+			SetMeasuredSize(LayoutParameters.ResolveSize(new SizeF(width, height), sizeMeasured));
 		}
 
 		protected override void onLayout(System.Drawing.RectangleF newPosition, bool parentHidden)

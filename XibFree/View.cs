@@ -75,7 +75,7 @@ namespace XibFree
 		}
 
 		// Internal helper to walk the parent view hierachy and find the view that's hosting this view hierarchy
-		protected virtual ViewGroup.IHost GetHost()
+		internal virtual ViewGroup.IHost GetHost()
 		{
 			if (_parent==null)
 				return null;

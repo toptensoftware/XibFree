@@ -118,6 +118,7 @@ namespace XibFree
 
 		#endregion
 
+
 		private ViewGroup _layout;
 	}
 }
