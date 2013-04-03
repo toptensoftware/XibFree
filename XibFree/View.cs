@@ -144,6 +144,15 @@ namespace XibFree
 		/// <param name="size">Size.</param>
 		protected void SetMeasuredSize(SizeF size)
 		{
+			if (LayoutParameters.MinWidth!=0 && size.Width < LayoutParameters.MinWidth)
+				size.Width = LayoutParameters.MinWidth;
+			if (LayoutParameters.MinHeight!=0 && size.Height < LayoutParameters.MinHeight)
+				size.Height = LayoutParameters.MinHeight;
+			if (LayoutParameters.MaxWidth!=0 && size.Width > LayoutParameters.MaxWidth)
+				size.Width = LayoutParameters.MaxWidth;
+			if (LayoutParameters.MaxHeight!=0 && size.Height > LayoutParameters.MaxHeight)
+				size.Height = LayoutParameters.MaxHeight;
+
 			_measuredSize = size;
 			_measuredSizeValid = true;
 		}

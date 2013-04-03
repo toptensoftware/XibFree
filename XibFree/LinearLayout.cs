@@ -156,16 +156,24 @@ namespace XibFree
 				
 				// Work out how much room we've got to share around
 				float room = layoutHeight - totalFixedSize;
-				if (room<0)
-					room = 0;
-				
+
 				// Layout the fill parent items
 				foreach (var v in SubViews.Where(x=>!x.Gone && x.LayoutParameters.Height==AutoSize.FillParent))
 				{
 					// Work out size
-					float size = room * v.LayoutParameters.Weight / totalWeight;
+					if (room<0)
+						room = 0;
+					float size = totalWeight==0 ? room : room * v.LayoutParameters.Weight / totalWeight;
+
+					// Measure it
 					v.Measure(adjustLayoutWidth(layoutWidth, v), size);
+
+					// Update total size
 					totalVariableSize += v.GetMeasuredSize().Height;
+
+					// Adjust the weighting calculation in case the view didn't accept our measurement
+					room -= v.GetMeasuredSize().Height;
+					totalWeight -= v.LayoutParameters.Weight;
 				}
 			}
 
@@ -284,16 +292,24 @@ namespace XibFree
 				
 				// Work out how much room we've got to share around
 				float room = layoutWidth - totalFixedSize;
-				if (room<0)
-					room = 0;
-				
+
 				// Layout the fill parent items
 				foreach (var v in SubViews.Where(x=>!x.Gone && x.LayoutParameters.Width==AutoSize.FillParent))
 				{
 					// Work out size
-					float size = room * v.LayoutParameters.Weight / totalWeight;
+					if (room<0)
+						room = 0;
+					float size = totalWeight==0 ? room : room * v.LayoutParameters.Weight / totalWeight;
+
+					// Measure it
 					v.Measure(size, adjustLayoutHeight(layoutHeight, v));
+
+					// Update total size
 					totalVariableSize += v.GetMeasuredSize().Width;
+
+					// Adjust the weighting calculation in case the view didn't accept our measurement
+					room -= v.GetMeasuredSize().Width;
+					totalWeight -= v.LayoutParameters.Weight;
 				}
 			}
 			
@@ -494,17 +510,29 @@ namespace XibFree
 				x += size.Width + v.LayoutParameters.Margins.Right;
 			}
 		}
+
+		private float getTotalSpacing()
+		{
+			if (Spacing == 0)
+				return 0;
+
+			int visibleViews = SubViews.Count(x=>!x.Gone);
+			if (visibleViews>1)
+				return (visibleViews-1) * Spacing;
+			else
+				return 0;
+		}
 		
 		// Helper to get the total measured height of all subviews, including all padding and margins
 		private float getTotalMeasuredHeight()
 		{
-			return Padding.Top + Padding.Bottom + SubViews.Where(x=>!x.Gone).Sum(x=>x.GetMeasuredSize().Height + x.LayoutParameters.Margins.TotalHeight());
+			return Padding.TotalWidth() + getTotalSpacing() + SubViews.Where(x=>!x.Gone).Sum(x=>x.GetMeasuredSize().Height + x.LayoutParameters.Margins.TotalHeight());
 		}
 		
 		// Helper to get the total measured width of all subviews, including all padding and margins
 		private float getTotalMeasuredWidth()
 		{
-			return Padding.Left + Padding.Right + SubViews.Where(x=>!x.Gone).Sum(x=>x.GetMeasuredSize().Width + x.LayoutParameters.Margins.TotalWidth());
+			return Padding.TotalHeight() + getTotalSpacing() + SubViews.Where(x=>!x.Gone).Sum(x=>x.GetMeasuredSize().Width + x.LayoutParameters.Margins.TotalWidth());
 		}
 
 		// Helper to adjust the parent width passed down to subviews during measurement

@@ -127,6 +127,7 @@ namespace Demo
 
 				// Setup the layout parameters
 				LayoutParameters = new LayoutParameters(AutoSize.FillParent, AutoSize.WrapContent);
+				LayoutParameters.MaxWidth = 160;
 			}
 		}
 
@@ -160,6 +161,7 @@ namespace Demo
 					new LinearLayout(Orientation.Horizontal)
 					{
 						Spacing = 10,
+						Gravity = Gravity.CenterHorizontal,
 						SubViews = new View[]
 						{
 							new Button("Download", () => Alert("Download")),

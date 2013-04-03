@@ -36,6 +36,12 @@ namespace XibFree
 			Gravity = Gravity.None;
 		}
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="XibFree.LayoutParameters"/> class.
+		/// </summary>
+		/// <param name="width">Width.</param>
+		/// <param name="height">Height.</param>
+		/// <param name="weight">Weight.</param>
 		public LayoutParameters(float width, float height, float weight=1)
 		{
 			Width = width;
@@ -172,6 +178,46 @@ namespace XibFree
 		/// </summary>
 		/// <value>One of the Visibility constants</value>
 		public Visibility Visibility
+		{
+			get;
+			set;
+		}
+
+		/// <summary>
+		/// Gets or sets the minimum width.
+		/// </summary>
+		/// <value>The minimum width.</value>
+		public float MinWidth
+		{
+			get;
+			set;
+		}
+
+		/// <summary>
+		/// Gets or sets the maximum width.
+		/// </summary>
+		/// <value>The maximum width.</value>
+		public float MaxWidth
+		{
+			get;
+			set;
+		}
+
+		/// <summary>
+		/// Gets or sets the minimum height.
+		/// </summary>
+		/// <value>The minimum height.</value>
+		public float MinHeight
+		{
+			get;
+			set;
+		}
+
+		/// <summary>
+		/// Gets or sets the max height.
+		/// </summary>
+		/// <value>The maximum height</value>
+		public float MaxHeight
 		{
 			get;
 			set;
