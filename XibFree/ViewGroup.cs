@@ -143,6 +143,7 @@ namespace XibFree
 		/// <param name="index">The zero-based index of the view to remove.</param>
 		public void RemoveSubViewAt(int index)
 		{
+			_subViews[index].Parent = null;
 			_subViews.RemoveAt(index);
 		}
 
