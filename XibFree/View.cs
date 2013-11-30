@@ -31,40 +31,26 @@ namespace XibFree
 		private ViewGroup _parent;
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="XibFree.View"/> class.
-		/// </summary>
-		public View()
-		{
-			LayoutParameters = new LayoutParameters();
-		}
-
-		/// <summary>
 		/// Gets or sets this view's parent view
 		/// </summary>
 		/// <value>A reference to the parent view (or null)</value>
 		public ViewGroup Parent
 		{
-			get
-			{
-				return _parent;
-			}
+			get { return _parent; }
 			internal set
 			{
-				if (_parent!=value)
-				{
-					// Detach old host
-					ViewGroup.IHost host = GetHost();
-					if (host!=null)
-						onDetach();
+				if (_parent == value) return;
 
-					// Store new parent
-					_parent = value;
+				// Detach old host
+				var host = GetHost();
+				if (host != null) OnDetach();
 
-					// Attach to new host
-					host = GetHost();
-					if (host!=null)
-						onAttach(host);
-				}
+				// Store new parent
+				_parent = value;
+
+				// Attach to new host
+				host = GetHost();
+				if (host != null) OnAttach(host);
 			}
 		}
 
@@ -75,31 +61,33 @@ namespace XibFree
 		public virtual LayoutParameters LayoutParameters { get; set; }
 
 		// Internal helper to walk the parent view hierachy and find the view that's hosting this view hierarchy
-		internal virtual ViewGroup.IHost GetHost()
+		internal virtual IHost GetHost()
 		{
 			return (_parent != null) ? _parent.GetHost() : null;
 		}
 
 		// Internal notification that this view has been attached to a hosting view
-		internal virtual void onAttach(ViewGroup.IHost host) { }
+		internal virtual void OnAttach(IHost host) { }
 
 		// Internal notification that this view has been detached from a hosting view
-		internal virtual void onDetach() { }
+		internal virtual void OnDetach() { }
 
 		/// <summary>
 		/// Layout the subviews in this view using dimensions calculated during the last measure cycle
 		/// </summary>
 		/// <param name="newPosition">The new position of this view</param>
+		/// <param name="parentHidden">Whether the parent is hidden</param>
 		public void Layout(RectangleF newPosition, bool parentHidden)
 		{
-			onLayout(newPosition, parentHidden);
+			OnLayout(newPosition, parentHidden);
 		}
 
 		/// <summary>
 		/// Overridden by view groups to perform the actual layout process
 		/// </summary>
 		/// <param name="newPosition">New position.</param>
-		protected abstract void onLayout(RectangleF newPosition, bool parentHidden);
+		/// <param name="parentHidden">Whether the parent is hidden</param>
+		protected abstract void OnLayout(RectangleF newPosition, bool parentHidden);
 
 		/// <summary>
 		/// Measures the subviews of this view
@@ -109,7 +97,7 @@ namespace XibFree
 		public void Measure(float parentWidth, float parentHeight)
 		{
 			_measuredSizeValid = false;
-			onMeasure(parentWidth, parentHeight);
+			OnMeasure(parentWidth, parentHeight);
 			if (!_measuredSizeValid) throw new InvalidOperationException("onMeasure didn't set measurement before returning");
 		}
 
@@ -118,7 +106,7 @@ namespace XibFree
 		/// </summary>
 		/// <param name="parentWidth">Parent width.</param>
 		/// <param name="parentHeight">Parent height.</param>
-		protected abstract void onMeasure(float parentWidth, float parentHeight);
+		protected abstract void OnMeasure(float parentWidth, float parentHeight);
 
 		// Mark the measurement of this view as invalid
 		public void InvalidateMeasure()
@@ -133,11 +121,11 @@ namespace XibFree
 		/// <param name="size">Size.</param>
 		protected void SetMeasuredSize(SizeF size)
 		{
-			if (LayoutParameters.MinWidth != 0 && size.Width < LayoutParameters.MinWidth) size.Width = LayoutParameters.MinWidth;
-			if (LayoutParameters.MinHeight != 0 && size.Height < LayoutParameters.MinHeight) size.Height = LayoutParameters.MinHeight;
+			if (!LayoutParameters.MinWidth.IsEqualTo(0) && size.Width < LayoutParameters.MinWidth) size.Width = LayoutParameters.MinWidth;
+			if (!LayoutParameters.MinHeight.IsEqualTo(0) && size.Height < LayoutParameters.MinHeight) size.Height = LayoutParameters.MinHeight;
 
-			if (LayoutParameters.MaxWidth != 0 && size.Width > LayoutParameters.MaxWidth) size.Width = LayoutParameters.MaxWidth;
-			if (LayoutParameters.MaxHeight != 0 && size.Height > LayoutParameters.MaxHeight) size.Height = LayoutParameters.MaxHeight;
+			if (!LayoutParameters.MaxWidth.IsEqualTo(0) && size.Width > LayoutParameters.MaxWidth) size.Width = LayoutParameters.MaxWidth;
+			if (!LayoutParameters.MaxHeight.IsEqualTo(0) && size.Height > LayoutParameters.MaxHeight) size.Height = LayoutParameters.MaxHeight;
 
 			_measuredSize = size;
 			_measuredSizeValid = true;
@@ -210,7 +198,7 @@ namespace XibFree
 
 		public void RemoveFromSuperview()
 		{
-			if (Parent!=null) Parent.RemoveSubView(this);
+			if (Parent != null) Parent.RemoveSubView(this);
 		}
 	}
 }

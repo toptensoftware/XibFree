@@ -21,13 +21,22 @@ using System.Drawing;
 
 namespace XibFree
 {
-	public class FrameLayout : ViewGroup
+	public sealed class FrameLayout : ViewGroup
 	{
 		public FrameLayout()
 		{
+			LayoutParameters.Width = Dimension.FillParent;
+			LayoutParameters.Height = Dimension.FillParent;
 		}
 
-		protected override void onMeasure(float parentWidth, float parentHeight)
+		public Gravity Gravity { get; set; }
+
+		public Action<FrameLayout> Init
+		{
+			set { value(this); }
+		}
+
+		protected override void OnMeasure(float parentWidth, float parentHeight)
 		{
 			var unresolved = new List<View>();
 
@@ -35,21 +44,21 @@ namespace XibFree
 			var height = LayoutParameters.TryResolveHeight(this, parentHeight);
 
 			// Remove padding
-			if (width!=float.MaxValue)
-				width -= Padding.TotalWidth();
-			if (height!=float.MaxValue)
-				height -= Padding.TotalHeight();
+			if (!width.IsMaxFloat()) width -= Padding.TotalWidth();
+			if (!height.IsMaxFloat()) height -= Padding.TotalHeight();
 
 			// Measure all subviews where both dimensions can be resolved
-			bool haveResolvedSize = false;
-			float maxWidth=0, maxHeight=0;
+			var haveResolvedSize = false;
+			var maxWidth = 0f;
+			var maxHeight = 0f;
+
 			foreach (var v in SubViews.Where(x=>!x.Gone))
 			{
 				// Try to resolve subview width
 				var subViewWidth = float.MaxValue;
 				if (v.LayoutParameters.Width.Unit == Units.ParentRatio)
 				{
-					if (width==float.MaxValue)
+					if (width.IsMaxFloat())
 					{
 						unresolved.Add(v);
 						continue;
@@ -64,7 +73,7 @@ namespace XibFree
 				var subViewHeight = float.MaxValue;
 				if (v.LayoutParameters.Height.Unit == Units.ParentRatio)
 				{
-					if (height==float.MaxValue)
+					if (height.IsMaxFloat())
 					{
 						unresolved.Add(v);
 						continue;
@@ -111,14 +120,14 @@ namespace XibFree
 				v.Measure(subViewWidth, subViewHeight);
 			}
 
-			SizeF sizeMeasured = SizeF.Empty;
+			var sizeMeasured = SizeF.Empty;
 
-			if (width == float.MaxValue)
+			if (width.IsMaxFloat())
 			{
 				sizeMeasured.Width = SubViews.Max(x=>x.GetMeasuredSize().Width + x.LayoutParameters.Margins.TotalWidth()) + Padding.TotalWidth();
 			}
 
-			if (height == float.MaxValue)
+			if (height.IsMaxFloat())
 			{
 				sizeMeasured.Height = SubViews.Max(x=>x.GetMeasuredSize().Height + x.LayoutParameters.Margins.TotalHeight()) + Padding.TotalHeight();
 			}
@@ -127,7 +136,7 @@ namespace XibFree
 			SetMeasuredSize(LayoutParameters.ResolveSize(new SizeF(width, height), sizeMeasured));
 		}
 
-		protected override void onLayout(System.Drawing.RectangleF newPosition, bool parentHidden)
+		protected override void OnLayout(RectangleF newPosition, bool parentHidden)
 		{
 			// Make room for padding
 			newPosition = newPosition.ApplyInsets(Padding);
@@ -145,10 +154,7 @@ namespace XibFree
 
 					// If subview has a gravity specified, use it, otherwise use our own
 					var g = v.LayoutParameters.Gravity;
-					if (g==Gravity.None)
-					{
-						g = this.Gravity;
-					}
+					if (g == Gravity.None) g = Gravity;
 
 					// Get it's size
 					var size = v.GetMeasuredSize();
@@ -159,20 +165,6 @@ namespace XibFree
 					// Position it
 					v.Layout(subViewPosition, false);
 				}
-			}
-		}
-
-		public Gravity Gravity
-		{
-			get;
-			set;
-		}
-
-		public Action<FrameLayout> Init
-		{
-			set
-			{
-				value(this);
 			}
 		}
 	}

@@ -1,16 +1,14 @@
-using System;
 using System.Drawing;
-using System.Collections.Generic;
 
 using MonoTouch.UIKit;
 using MonoTouch.Foundation;
+using MonoTouch.CoreAnimation;
 
 using XibFree;
-using MonoTouch.CoreAnimation;
 
 namespace Demo
 {
-	public partial class VisibilityDemo : UIViewController
+	public sealed class VisibilityDemo : UIViewController
 	{
 		public VisibilityDemo()
 		{
@@ -26,17 +24,24 @@ namespace Demo
 			{
 				SubViews = new View[] 
 				{
-					new NativeView()
+					new NativeView
 					{
-						View = new UIView()	{ BackgroundColor = UIColor.Blue },
-						LayoutParameters = new LayoutParameters(AutoSize.FillParent, 50),
+						View = new UIView
+						{
+							BackgroundColor = UIColor.Blue
+						},
+						LayoutParameters = new LayoutParameters
+						{
+							Width = Dimension.FillParent,
+							Height = Dimension.Absolute(50),
+						},
 					},
 					new LinearLayout(Orientation.Vertical)
 					{
 						Padding = new UIEdgeInsets(10,10,10,10),
-						Layer = new CAGradientLayer()
+						Layer = new CAGradientLayer
 						{
-							Colors = new MonoTouch.CoreGraphics.CGColor[]
+							Colors = new[]
 							{
 								new MonoTouch.CoreGraphics.CGColor(0.9f, 0.9f, 0.9f, 1f),
 								new MonoTouch.CoreGraphics.CGColor(0.7f, 0.7f, 0.7f, 1f)
@@ -48,9 +53,9 @@ namespace Demo
 							},
 							CornerRadius = 5,
 						},
-						SubViews = new View[]
+						SubViews = new[]
 						{
-							new NativeView()
+							new NativeView
 							{
 								View = new UILabel(RectangleF.Empty)
 								{
@@ -59,7 +64,7 @@ namespace Demo
 									BackgroundColor = UIColor.Clear,
 								}
 							},
-							panel = new NativeView()
+							panel = new NativeView
 							{
 								View = new UILabel(RectangleF.Empty)
 								{
@@ -69,22 +74,33 @@ namespace Demo
 								}
 							}
 						},
-						LayoutParameters = new LayoutParameters()
+						LayoutParameters = new LayoutParameters
 						{
-							Width = AutoSize.FillParent,
-							Height = AutoSize.WrapContent,
+							Width = Dimension.FillParent,
+							Height = Dimension.WrapContent,
 							Margins = new UIEdgeInsets(10,10,10,10),
 						},
 					},
-					new NativeView()
+					new NativeView
 					{
-						View = new UIView()	{ BackgroundColor = UIColor.Blue },
-						LayoutParameters = new LayoutParameters(AutoSize.FillParent, 50),
+						View = new UIView
+						{
+							BackgroundColor = UIColor.Blue
+						},
+						LayoutParameters = new LayoutParameters
+						{
+							Width = Dimension.FillParent,
+							Height = Dimension.Absolute(50),
+						},
 					},
-					new NativeView()
+					new NativeView
 					{
 						View = new UIButton(UIButtonType.RoundedRect),
-						LayoutParameters = new LayoutParameters(AutoSize.FillParent, AutoSize.WrapContent),
+						LayoutParameters = new LayoutParameters
+						{
+							Width = Dimension.FillParent,
+							Height = Dimension.FillParent,
+						},
 						Init = v =>
 						{
 							v.As<UIButton>().SetTitle("Change Visibility", UIControlState.Normal);
@@ -103,7 +119,7 @@ namespace Demo
 										break;
 								}
 
-								this.View.SetNeedsLayout();
+								View.SetNeedsLayout();
 							};
 						}
 					}
@@ -111,8 +127,8 @@ namespace Demo
 			};
 
 			// We've now defined our layout, to actually use it we simply create a UILayoutHost control and pass it the layout
-			this.View = new XibFree.UILayoutHost(layout);
-			this.View.BackgroundColor=UIColor.Gray;
+			View = new UILayoutHost(layout);
+			View.BackgroundColor = UIColor.Gray;
 		}
 	}
 }

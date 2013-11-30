@@ -14,7 +14,6 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 
-using System;
 using MonoTouch.UIKit;
 using System.Drawing;
 
@@ -56,10 +55,10 @@ namespace XibFree
 		/// <param name="width">Width.</param>
 		/// <param name="height">Height.</param>
 		/// <param name="weight">Weight.</param>
-		public LayoutParameters(float width, float height, float weight=1)
+		public LayoutParameters(Dimension width, Dimension height, float weight = 1)
 		{
-			Width = new Dimension(width);
-			Height = new Dimension(height);
+			Width = width;
+			Height = height;
 			Margins = UIEdgeInsets.Zero;
 			Weight = weight;
 			Gravity = Gravity.None;
@@ -69,31 +68,19 @@ namespace XibFree
 		/// Gets or sets the width dimension (value and unit of measurement)
 		/// </summary>
 		/// <value>The width.</value>
-		public Dimension Width
-		{
-			get;
-			set;
-		}
+		public Dimension Width { get; set; }
 
 		/// <summary>
 		/// Gets or sets the height dimension (value and unit of measurement)
 		/// </summary>
 		/// <value>The height.</value>
-		public Dimension Height
-		{
-			get;
-			set;
-		}
+		public Dimension Height { get; set; }
 
 		/// <summary>
 		/// Gets or sets the weight of a AutoSize.FillParent view relative to its sibling views
 		/// </summary>
 		/// <value>The weighting value for this view's size.</value>
-		public float Weight
-		{
-			get;
-			set;
-		}
+		public float Weight { get; set; }
 
 		/// <summary>
 		/// Gets or sets the whitepsace margins that should be left around a view
@@ -111,7 +98,6 @@ namespace XibFree
 				_margins = value;
 			}
 		}
-
 
 		/// <summary>
 		/// Gets or sets the left margin.
@@ -181,61 +167,37 @@ namespace XibFree
 		/// Gets or sets the gravity for this view within it's parent subview
 		/// </summary>
 		/// <value>One of the gravity constants</value>
-		public Gravity Gravity
-		{
-			get;
-			set;
-		}
+		public Gravity Gravity { get; set; }
 
 		/// <summary>
 		/// Gets or sets the visibility of this view
 		/// </summary>
 		/// <value>One of the Visibility constants</value>
-		public Visibility Visibility
-		{
-			get;
-			set;
-		}
+		public Visibility Visibility { get; set; }
 
 		/// <summary>
 		/// Gets or sets the minimum width.
 		/// </summary>
 		/// <value>The minimum width.</value>
-		public float MinWidth
-		{
-			get;
-			set;
-		}
+		public float MinWidth { get; set; }
 
 		/// <summary>
 		/// Gets or sets the maximum width.
 		/// </summary>
 		/// <value>The maximum width.</value>
-		public float MaxWidth
-		{
-			get;
-			set;
-		}
+		public float MaxWidth { get; set; }
 
 		/// <summary>
 		/// Gets or sets the minimum height.
 		/// </summary>
 		/// <value>The minimum height.</value>
-		public float MinHeight
-		{
-			get;
-			set;
-		}
+		public float MinHeight { get; set; }
 
 		/// <summary>
 		/// Gets or sets the max height.
 		/// </summary>
 		/// <value>The maximum height</value>
-		public float MaxHeight
-		{
-			get;
-			set;
-		}
+		public float MaxHeight { get; set; }
 
 		private static float TryResolve(Dimension dimension, float parentSize)
 		{
@@ -245,7 +207,7 @@ namespace XibFree
 				case Units.Absolute:
 					return dimension.Value;
 				case Units.ParentRatio:
-					return parentSize == float.MaxValue ? float.MaxValue : parentSize * ratio;
+					return parentSize.IsMaxFloat() ? float.MaxValue : parentSize * ratio;
 				default:
 					return float.MaxValue;
 			}
@@ -269,7 +231,7 @@ namespace XibFree
 		{
 			// Get the host
 			var host = view.GetHost();
-			if (host==null) return GetScreenSize();
+			if (host == null) return GetScreenSize();
 
 			var hostView = host.GetUIView();
 
@@ -300,8 +262,8 @@ namespace XibFree
 		internal SizeF ResolveSize(SizeF size, SizeF sizeMeasured)
 		{
 			// Resolve measured size
-			if (size.Width == float.MaxValue) size.Width = sizeMeasured.Width;
-			if (size.Height == float.MaxValue) size.Height = sizeMeasured.Height;
+			if (size.Width.IsMaxFloat()) size.Width = sizeMeasured.Width;
+			if (size.Height.IsMaxFloat()) size.Height = sizeMeasured.Height;
 
 			// Finally, resolve aspect ratios
 			if (Width.Unit == Units.AspectRatio) size.Width = size.Height * Width.Ratio;

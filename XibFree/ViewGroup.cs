@@ -29,7 +29,7 @@ namespace XibFree
 	public abstract class ViewGroup : View
 	{
 		// Fields
-		private List<View> _subViews = new List<View>();
+		private readonly List<View> _subViews = new List<View>();
 		private CALayer _layer;
 		private IHost _host;
 
@@ -40,15 +40,6 @@ namespace XibFree
 		public UIEdgeInsets Padding { get; set; }
 
 		public int Tag { get; set; }
-
-		/// <summary>
-		/// Initializes a new instance of the <see cref="XibFree.ViewGroup"/> class.
-		/// </summary>
-		public ViewGroup()
-		{
-			LayoutParameters.Width = Dimension.FillParent;
-			LayoutParameters.Height = Dimension.FillParent;
-		}
 
 		/// <summary>
 		/// Gets or sets all the subviews of this view group
@@ -99,7 +90,7 @@ namespace XibFree
 		/// <summary>
 		/// Insert a new subview at the end of the subview collection
 		/// </summary>
-		/// <param name="child">The subview to add</param>
+		/// <param name="view">The subview to add</param>
 		public void AddSubView(View view)
 		{
 			InsertSubView(-1, view);
@@ -111,7 +102,7 @@ namespace XibFree
 		/// <param name="view">The subview to remove.</param>
 		public void RemoveSubView(UIView view)
 		{
-			for (int i=0; i<_subViews.Count; i++)
+			for (var i=0; i<_subViews.Count; i++)
 			{
 				var nv = _subViews[i] as NativeView;
 				if (nv!=null && nv.View == view)
@@ -154,67 +145,61 @@ namespace XibFree
 			_subViews.RemoveAt(index);
 		}
 
-		public interface IHost
-		{
-			UIView GetUIView();
-		}
-
-
 		/// <summary>
 		/// Sets the native host for this view hierachy
 		/// </summary>
 		/// <param name="host">A reference to the host.</param>
 		public void SetHost(IHost host)
 		{
-			if (_host != null) onDetach();
+			if (_host != null) OnDetach();
 
 			_host = host;
 
-			if (_host != null) onAttach(_host);
+			if (_host != null) OnAttach(_host);
 		}
 
 		/// <summary>
 		/// Overridden to locate the parent host for this view hierarchy
 		/// </summary>
 		/// <returns>The host.</returns>
-		internal override ViewGroup.IHost GetHost()
+		internal override IHost GetHost()
 		{
 			// If this view group has been parented into an actual UIView, we'll have a IHost reference
 			// that acts as the host for all views in the hierarchy.  If not, ask our parent
-			return (_host != null) ? _host : base.GetHost();
+			return _host ?? base.GetHost();
 		}
 
 		/// <summary>
 		/// We've been attached to a hosting view, notify all subviews
 		/// </summary>
 		/// <param name="host">The Host.</param>
-		internal override void onAttach(IHost host)
+		internal override void OnAttach(IHost host)
 		{
 			// Add the layer
 			if (_layer!=null) host.GetUIView().Layer.AddSublayer(_layer);
 
 			// Forward on to all children
-			foreach (var c in _subViews) c.onAttach(host);
+			foreach (var c in _subViews) c.OnAttach(host);
 		}
 
 		/// <summary>
 		/// We've been detached from a hosting view, notify all subviews
 		/// </summary>
-		internal override void onDetach()
+		internal override void OnDetach()
 		{
 			// Remove from layer
 			if (_layer != null) _layer.RemoveFromSuperLayer();
 
 			// Forward on to all children
-			foreach (var c in _subViews) c.onDetach();
+			foreach (var c in _subViews) c.OnDetach();
 		}
 
-		protected override void onLayout(RectangleF newPosition, bool parentHidden)
+		protected override void OnLayout(RectangleF newPosition, bool parentHidden)
 		{
 			// Reposition the layer
 			if (_layer != null)
 			{
-				bool newHidden = parentHidden || !Visible;
+				var newHidden = parentHidden || !Visible;
 				if (newHidden != _layer.Hidden)
 				{
 					// If we're changing the visibility, disable animations since
@@ -233,44 +218,26 @@ namespace XibFree
 			}
 
 			// Hide all subviews
-			if (parentHidden || !Visible)
-			{
-				foreach (var v in SubViews) v.Layout(RectangleF.Empty, false);
-				return;
-			}
+			if (!parentHidden && Visible) return;
+
+			foreach (var v in SubViews) v.Layout(RectangleF.Empty, false);
 		}
 
 		internal override View LayoutViewWithTag(int tag)
 		{
 			if (Tag == tag) return this;
 
-			foreach (var v in _subViews)
-			{
-				var result = v.LayoutViewWithTag(tag);
-				if (result != null) return result;
-			}
-
-			return null;
+			return _subViews.Select(v => v.LayoutViewWithTag(tag)).FirstOrDefault(result => result != null);
 		}
 
 		internal override UIView UIViewWithTag(int tag)
 		{
-			foreach (var v in _subViews)
-			{
-				var result = v.UIViewWithTag(tag);
-				if (result != null) return result;
-			}
-			return null;
+			return _subViews.Select(v => v.UIViewWithTag(tag)).FirstOrDefault(result => result != null);
 		}
 
 		public override NativeView FindNativeView(UIView view)
 		{
-			foreach (var v in _subViews)
-			{
-				var result = v.FindNativeView(view);
-				if (result != null) return result;
-			}
-			return null;
+			return _subViews.Select(v => v.FindNativeView(view)).FirstOrDefault(result => result != null);
 		}
 
 		internal override CALayer FindFirstSublayer()
@@ -287,12 +254,10 @@ namespace XibFree
 			return null;
 		}
 
-
 		internal override CALayer GetDisplayLayer()
 		{
 			return _layer;
 		}
-
 
 		public CALayer Layer
 		{
@@ -306,19 +271,16 @@ namespace XibFree
 				_layer = value;
 
 				// If we're attached, add the layer to our host
-				if (_layer!=null)
-				{
-					ViewGroup.IHost host = GetHost();
-					if (host!=null)
-					{
-						UIView hostView = host.GetUIView();
-						var nextSubLayer = FindFirstSublayer();
+				if (_layer == null) return;
 
-						if (nextSubLayer!=null) hostView.Layer.InsertSublayerBelow(_layer, nextSubLayer);
-						else hostView.Layer.AddSublayer(_layer);
-					}
-				}
+				var host = GetHost();
+				if (host == null) return;
 
+				var hostView = host.GetUIView();
+				var nextSubLayer = FindFirstSublayer();
+
+				if (nextSubLayer != null) hostView.Layer.InsertSublayerBelow(_layer, nextSubLayer);
+				else hostView.Layer.AddSublayer(_layer);
 			}
 		}
 	}

@@ -14,7 +14,6 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 
-using System;
 using MonoTouch.UIKit;
 using System.Drawing;
 
@@ -23,7 +22,7 @@ namespace XibFree
 	/// <summary>
 	/// UILayoutHost is the native UIView that hosts that XibFree layout
 	/// </summary>
-	public class UILayoutHost : UIView, ViewGroup.IHost
+	public sealed class UILayoutHost : UIView, IHost
 	{
 		private ViewGroup _layout;
 
@@ -31,23 +30,23 @@ namespace XibFree
 		/// Initializes a new instance of the <see cref="XibFree.UILayoutHost"/> class.
 		/// </summary>
 		/// <param name="layout">Root of the view hierarchy to be hosted by this layout host</param>
+		/// <param name="frame">Frame for the UIView </param>
 		public UILayoutHost(ViewGroup layout, RectangleF frame) : base(frame)
 		{
-			this.AutoresizingMask = UIViewAutoresizing.FlexibleDimensions;
+			AutoresizingMask = UIViewAutoresizing.FlexibleDimensions;
 			Layout = layout;
 		}
 
 		public UILayoutHost() 
 		{
-			this.AutoresizingMask = UIViewAutoresizing.FlexibleDimensions;
+			AutoresizingMask = UIViewAutoresizing.FlexibleDimensions;
 		}
 
 		public UILayoutHost(ViewGroup layout) 
 		{
-			this.AutoresizingMask = UIViewAutoresizing.FlexibleDimensions;
+			AutoresizingMask = UIViewAutoresizing.FlexibleDimensions;
 			Layout = layout;
 		}
-
 
 		/// <summary>
 		/// The ViewGroup declaring the layout to hosted
@@ -55,11 +54,7 @@ namespace XibFree
 		/// <value>The ViewGroup.</value>
 		public ViewGroup Layout
 		{
-			get
-			{
-				return _layout;
-			}
-
+			get { return _layout; }
 			set
 			{
 				if (_layout != null) _layout.SetHost(null);
@@ -82,14 +77,12 @@ namespace XibFree
 
 		public override SizeF SizeThatFits(SizeF size)
 		{
-			if (_layout==null)
-				return new SizeF(0,0);
+			if (_layout == null) return new SizeF(0, 0);
 
 			// Measure the layout
 			_layout.Measure(size.Width, size.Height);
 			return _layout.GetMeasuredSize();
 		}
-
 
 		/// <Docs>Lays out subviews.</Docs>
 		/// <summary>
@@ -97,13 +90,13 @@ namespace XibFree
 		/// </summary>
 		public override void LayoutSubviews()
 		{
-			if (_layout!=null)
-			{
-				// Remeasure
-				_layout.Measure(Bounds.Width, Bounds.Height);
-				// Apply layout
-				_layout.Layout(Bounds, false);
-			}
+			if (_layout == null) return;
+
+			// Remeasure
+			_layout.Measure(Bounds.Width, Bounds.Height);
+
+			// Apply layout
+			_layout.Layout(Bounds, false);
 		}
 
 		#region IHost implementation
@@ -111,7 +104,7 @@ namespace XibFree
 		/// <summary>
 		/// Provide the hosting view
 		/// </summary>
-		UIView ViewGroup.IHost.GetUIView()
+		public UIView GetUIView()
 		{
 			return this;
 		}

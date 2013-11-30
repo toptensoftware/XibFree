@@ -1,15 +1,11 @@
-using System;
 using System.Drawing;
-using System.Collections.Generic;
 
 using MonoTouch.UIKit;
-using MonoTouch.Foundation;
-
 using XibFree;
 
 namespace Demo
 {
-	public partial class Demo1 : UITableViewController
+	public sealed class Demo1 : UITableViewController
 	{
 		public Demo1()
 		{
@@ -25,7 +21,7 @@ namespace Demo
 				SubViews = new View[] 
 				{
 					// A NativeView contains an iOS UIView
-					new NativeView()
+					new NativeView
 					{
 						// This is the UIView
 						View = new UIView(RectangleF.Empty)
@@ -35,33 +31,33 @@ namespace Demo
 						},
 
 						// This controls how it's laid out by its parent view group (in this case the outer linear layout)
-						LayoutParameters = new LayoutParameters()
+						LayoutParameters = new LayoutParameters
 						{
-							Width = AutoSize.FillParent,
-							Height = 50,
+							Width = Dimension.FillParent,
+							Height = Dimension.Absolute(50),
 						},
 					},
 
 					// A second view that will be stacked below the first
-					new NativeView()
+					new NativeView
 					{
 						View = new UIView(RectangleF.Empty)
 						{
 							BackgroundColor = UIColor.Blue,
 						},
 						
-						LayoutParameters = new LayoutParameters()
+						LayoutParameters = new LayoutParameters
 						{
-							Width = AutoSize.FillParent,
-							Height = 50,
+							Width = Dimension.FillParent,
+							Height = Dimension.Absolute(50),
 						},
-					},
+					}
 				},
 			};
 
 			// We've now defined our layout, to actually use it we simply create a UILayoutHost control and pass it the layout
-			this.View = new XibFree.UILayoutHost(layout);
-			this.View.BackgroundColor=UIColor.Gray;
+			View = new UILayoutHost(layout);
+			View.BackgroundColor=UIColor.Gray;
 		}
 	}
 }

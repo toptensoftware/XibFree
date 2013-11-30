@@ -1,26 +1,24 @@
-using System;
-
 namespace XibFree
 {
 	public class Dimension
 	{
-		private float _value;
-		private Units _unit;
+		public float Value { get; private set; }
+		public Units Unit { get; private set; }
 
 		public Dimension(float value, Units units = Units.Absolute)
 		{
-			_value = value;
-			_unit = units;
+			Value = value;
+			Unit = units;
 		}
 
 		public static Dimension FillParent
 		{
-			get { return Dimension.ParentRatio(1.0f); }
+			get { return ParentRatio(1.0f); }
 		}
 
 		public static Dimension WrapContent
 		{
-			get { return Dimension.ContentRatio(1.0f); }
+			get { return ContentRatio(1.0f); }
 		}
 
 		public static Dimension ParentRatio(float value)
@@ -40,17 +38,12 @@ namespace XibFree
 
 		public static Dimension Absolute(float value)
 		{
-			return new Dimension(value, Units.Absolute);
+			return new Dimension(value);
 		}
 
-		public float Value { get { return _value; } }
-		public Units Unit { get { return _unit; } }
 		public float Ratio 
 		{
-			get 
-			{ 
-				return (_unit == Units.Absolute) ? 1 : _value; 
-			} 
+			get  { return (Unit == Units.Absolute) ? 1 : Value; } 
 		}
 	}
 }

@@ -33,7 +33,10 @@ namespace XibFree
 		/// <summary>
 		/// Initializes a new instance of the <see cref="XibFree.NativeView"/> class.
 		/// </summary>
-		public NativeView() {}
+		public NativeView()
+		{
+			LayoutParameters = new LayoutParameters();
+		}
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="XibFree.NativeView"/> class.
@@ -43,10 +46,10 @@ namespace XibFree
 		public NativeView(UIView view, LayoutParameters lp)
 		{
 			_view = view;
-			this.LayoutParameters = lp;
+			LayoutParameters = lp;
 		}
 
-		public override LayoutParameters LayoutParameters
+		public override sealed LayoutParameters LayoutParameters
 		{
 			get
 			{
@@ -68,21 +71,20 @@ namespace XibFree
 			get { return _view; }
 			set
 			{
-				if (_view != value)
-				{
-					// Detach old view from host
-					ViewGroup.IHost host = GetHost();
-					if (host != null) onDetach();
+				if (_view == value) return;
 
-					// Store the new view
-					_view = value;
+				// Detach old view from host
+				var host = GetHost();
+				if (host != null) OnDetach();
 
-					// Turn off auto-resizing, we'll take care of that thanks
-					_view.AutoresizingMask = UIViewAutoresizing.None;
+				// Store the new view
+				_view = value;
 
-					// Attach the new view to the host
-					if (host != null) onAttach(host);
-				}
+				// Turn off auto-resizing, we'll take care of that thanks
+				_view.AutoresizingMask = UIViewAutoresizing.None;
+
+				// Attach the new view to the host
+				if (host != null) OnAttach(host);
 			}
 		}
 
@@ -95,19 +97,18 @@ namespace XibFree
 			return _view as T;
 		}
 
-
 		/// <summary>
 		/// Overridden to set the position of the native view
 		/// </summary>
 		/// <param name="newPosition">New position.</param>
-		protected override void onLayout(RectangleF newPosition, bool parentHidden)
+		/// <param name="parentHidden">If Parent is Hidden </param>
+		protected override void OnLayout(RectangleF newPosition, bool parentHidden)
 		{
+			if (_view == null) return;
+
 			// Simple, just reposition the view!
-			if (_view!=null)
-			{
-				_view.Hidden = parentHidden || !Visible;
-				_view.Frame = newPosition;
-			}
+			_view.Hidden = parentHidden || !Visible;
+			_view.Frame = newPosition;
 		}
 
 		/// <summary>
@@ -115,17 +116,17 @@ namespace XibFree
 		/// </summary>
 		/// <param name="parentWidth">Parent width.</param>
 		/// <param name="parentHeight">Parent height.</param>
-		protected override void onMeasure(float parentWidth, float parentHeight)
+		protected override void OnMeasure(float parentWidth, float parentHeight)
 		{
 			// Resolve width for absolute and parent ratio
-			float width = LayoutParameters.TryResolveWidth(this, parentWidth);
-			float height = LayoutParameters.TryResolveHeight(this, parentHeight);
+			var width = LayoutParameters.TryResolveWidth(this, parentWidth);
+			var height = LayoutParameters.TryResolveHeight(this, parentHeight);
 
 			// Do we need to measure our content?
-			SizeF sizeMeasured = SizeF.Empty;
-			if (width == float.MaxValue || height == float.MaxValue)
+			var sizeMeasured = SizeF.Empty;
+			if (width.IsMaxFloat() || height.IsMaxFloat())
 			{
-				SizeF sizeToFit = new SizeF(width, height);
+				var sizeToFit = new SizeF(width, height);
 				if (Measurer != null) sizeMeasured = Measurer(_view, sizeToFit);
 				else
 				{
@@ -143,7 +144,7 @@ namespace XibFree
 		/// Overridden to add this native view to the parent native view
 		/// </summary>
 		/// <param name="host">Host.</param>
-		internal override void onAttach(ViewGroup.IHost host)
+		internal override void OnAttach(IHost host)
 		{
 			// If we have a view, attach to the hosting view by adding as a subview
 			if (_view != null) host.GetUIView().Add(_view);
@@ -152,7 +153,7 @@ namespace XibFree
 		/// <summary>
 		/// Overridden to remove this native view from the parent native view
 		/// </summary>
-		internal override void onDetach()
+		internal override void OnDetach()
 		{
 			// If we have a view, remove from the hosting view by removing it from the superview
 			if (_view != null) _view.RemoveFromSuperview();
