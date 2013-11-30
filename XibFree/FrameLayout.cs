@@ -47,7 +47,7 @@ namespace XibFree
 			{
 				// Try to resolve subview width
 				var subViewWidth = float.MaxValue;
-				if (v.LayoutParameters.WidthUnits == Units.ParentRatio)
+				if (v.LayoutParameters.Width.Unit == Units.ParentRatio)
 				{
 					if (width==float.MaxValue)
 					{
@@ -62,7 +62,7 @@ namespace XibFree
 
 				// Try to resolve subview height
 				var subViewHeight = float.MaxValue;
-				if (v.LayoutParameters.HeightUnits == Units.ParentRatio)
+				if (v.LayoutParameters.Height.Unit == Units.ParentRatio)
 				{
 					if (height==float.MaxValue)
 					{
@@ -96,13 +96,13 @@ namespace XibFree
 			foreach (var v in unresolved)
 			{
 				var subViewWidth = float.MaxValue;
-				if (v.LayoutParameters.WidthUnits == Units.ParentRatio && haveResolvedSize)
+				if (v.LayoutParameters.Width.Unit == Units.ParentRatio && haveResolvedSize)
 				{
 					subViewWidth = maxWidth - v.LayoutParameters.Margins.TotalWidth();
 				}
 
 				var subViewHeight = float.MaxValue;
-				if (v.LayoutParameters.HeightUnits == Units.ParentRatio && haveResolvedSize)
+				if (v.LayoutParameters.Height.Unit == Units.ParentRatio && haveResolvedSize)
 				{
 					subViewHeight = maxHeight - v.LayoutParameters.Margins.TotalHeight();
 				}

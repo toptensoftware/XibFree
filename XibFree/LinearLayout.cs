@@ -22,6 +22,10 @@ namespace XibFree
 {
 	public class LinearLayout : ViewGroup
 	{
+		// Fields
+		private Orientation _orientation;
+		private float _totalWeight;
+
 		/// <summary>
 		/// Initializes a new instance of the <see cref="XibFree.LinearLayout"/> class.
 		/// </summary>
@@ -70,6 +74,18 @@ namespace XibFree
 			set;
 		}
 
+		/// <summary>
+		/// Sets an init Action that allows performing actions on the View
+		/// </summary>
+		/// <value>The init.</value>
+		public Action<LinearLayout> Init
+		{
+			set
+			{
+				value(this);
+			}
+		}
+
 		// Overridden to provide layout measurement
 		protected override void onMeasure(float parentWidth, float parentHeight)
 		{
@@ -91,19 +107,17 @@ namespace XibFree
 			float height = LayoutParameters.TryResolveHeight(this, parentHeight);
 
 			// Allow room for padding
-			if (width != float.MaxValue)
-				width -= Padding.TotalWidth();
+			if (width != float.MaxValue) width -= Padding.TotalWidth();
 
 			// Work out the total fixed size
 			float totalFixedSize = 0;
 			float totalWeight = 0;
 			int visibleViewCount = 0;
-			foreach (var v in SubViews.Where(x=>!x.Gone))
+			foreach (var v in SubViews.Where(x => !x.Gone))
 			{
-				if (v.LayoutParameters.HeightUnits==Units.ParentRatio)
+				if (v.LayoutParameters.Height.Unit == Units.ParentRatio)
 				{
 					// We'll deal with this later
-					
 					// For now, lets just total up the specified weights
 					totalWeight += v.LayoutParameters.Weight;
 				}
@@ -124,15 +138,14 @@ namespace XibFree
 			totalFixedSize += Padding.TotalHeight();
 
 			// And spacing between controls
-			if (visibleViewCount>1)
-				totalFixedSize += (visibleViewCount-1) * Spacing;
+			if (visibleViewCount > 1) totalFixedSize += (visibleViewCount - 1) * Spacing;
 
 			float totalVariableSize = 0;
-			if (LayoutParameters.HeightUnits == Units.ContentRatio || height == float.MaxValue)
+			if (LayoutParameters.Height.Unit == Units.ContentRatio || height == float.MaxValue)
 			{
 				// This is a weird case: we have a height of wrap content, but child items that want to fill parent too.
 				// Temporarily switch those items to wrap content and use their natural size
-				foreach (var v in SubViews.Where(x=>!x.Gone && x.LayoutParameters.HeightUnits==Units.ParentRatio))
+				foreach (var v in SubViews.Where(x => !x.Gone && x.LayoutParameters.Height.Unit == Units.ParentRatio))
 				{
 					v.Measure(adjustLayoutWidth(width, v), float.MaxValue);
 					totalVariableSize += v.GetMeasuredSize().Height;
@@ -141,19 +154,17 @@ namespace XibFree
 			else
 			{
 				// If we've had an explicit weight passed to us, ignore the calculated total weight and use it instead
-				if (_totalWeight!=0)
-					totalWeight = _totalWeight;
+				if (_totalWeight!=0) totalWeight = _totalWeight;
 				
 				// Work out how much room we've got to share around
 				float room = height - totalFixedSize;
 
 				// Layout the fill parent items
-				foreach (var v in SubViews.Where(x=>!x.Gone && x.LayoutParameters.HeightUnits==Units.ParentRatio))
+				foreach (var v in SubViews.Where(x => !x.Gone && x.LayoutParameters.Height.Unit == Units.ParentRatio))
 				{
 					// Work out size
-					if (room<0)
-						room = 0;
-					float size = totalWeight==0 ? room : room * v.LayoutParameters.Weight / totalWeight;
+					if (room<0) room = 0;
+					float size = (totalWeight == 0) ? room : room * v.LayoutParameters.Weight / totalWeight;
 
 					// Measure it
 					v.Measure(adjustLayoutWidth(width, v), size);
@@ -173,15 +184,14 @@ namespace XibFree
 			{
 				// Work out the maximum width of all children that aren't fill parent
 				sizeMeasured.Width = 0;
-				foreach (var v in SubViews.Where(x=>!x.Gone && x.LayoutParameters.WidthUnits!=Units.ParentRatio))
+				foreach (var v in SubViews.Where(x => !x.Gone && x.LayoutParameters.Width.Unit != Units.ParentRatio))
 				{
 					float totalChildWidth = v.GetMeasuredSize().Width + v.LayoutParameters.Margins.TotalWidth();
-					if (totalChildWidth > sizeMeasured.Width)
-						sizeMeasured.Width = totalChildWidth;
+					if (totalChildWidth > sizeMeasured.Width) sizeMeasured.Width = totalChildWidth;
 				}
 				
 				// Set the width of all children that are fill parent
-				foreach (var v in SubViews.Where(x=>!x.Gone && x.LayoutParameters.WidthUnits==Units.ParentRatio))
+				foreach (var v in SubViews.Where(x => !x.Gone && x.LayoutParameters.Width.Unit == Units.ParentRatio))
 				{
 					v.Measure(sizeMeasured.Width, v.GetMeasuredSize().Height);
 				}
@@ -210,8 +220,7 @@ namespace XibFree
 			float layoutHeight = LayoutParameters.TryResolveHeight(this, parentHeight);
 
 			// Allow room for padding
-			if (layoutHeight != float.MaxValue)
-				layoutHeight -= Padding.TotalHeight();
+			if (layoutHeight != float.MaxValue) layoutHeight -= Padding.TotalHeight();
 
 			// Work out the total fixed size
 			float totalFixedSize = 0;
@@ -219,7 +228,7 @@ namespace XibFree
 			int visibleViewCount = 0;
 			foreach (var v in SubViews.Where(x=>!x.Gone))
 			{
-				if (v.LayoutParameters.WidthUnits==Units.ParentRatio)
+				if (v.LayoutParameters.Width.Unit == Units.ParentRatio)
 				{
 					// We'll deal with this later
 					
@@ -246,11 +255,11 @@ namespace XibFree
 				totalFixedSize += (visibleViewCount-1) * Spacing;
 			
 			float totalVariableSize = 0;
-			if (LayoutParameters.WidthUnits == Units.ContentRatio || layoutWidth == float.MaxValue)
+			if (LayoutParameters.Width.Unit == Units.ContentRatio || layoutWidth == float.MaxValue)
 			{
 				// This is a weird case: we have a width of wrap content, but child items that want to fill parent too.
 				// Temporarily switch those items to wrap content and use their natural size
-				foreach (var v in SubViews.Where(x=>!x.Gone && x.LayoutParameters.WidthUnits==Units.ParentRatio))
+				foreach (var v in SubViews.Where(x => !x.Gone && x.LayoutParameters.Width.Unit == Units.ParentRatio))
 				{
 					v.Measure(float.MaxValue, adjustLayoutHeight(layoutHeight, v));
 					totalVariableSize += v.GetMeasuredSize().Width;
@@ -266,11 +275,10 @@ namespace XibFree
 				float room = layoutWidth - totalFixedSize;
 
 				// Layout the fill parent items
-				foreach (var v in SubViews.Where(x=>!x.Gone && x.LayoutParameters.WidthUnits==Units.ParentRatio))
+				foreach (var v in SubViews.Where(x => !x.Gone && x.LayoutParameters.Width.Unit == Units.ParentRatio))
 				{
 					// Work out size
-					if (room<0)
-						room = 0;
+					if (room<0) room = 0;
 					float size = totalWeight==0 ? room : room * v.LayoutParameters.Weight / totalWeight;
 
 					// Measure it
@@ -291,7 +299,7 @@ namespace XibFree
 			{
 				// Work out the maximum height of all children that aren't fill parent
 				sizeMeasured.Height = 0;
-				foreach (var v in SubViews.Where(x=>!x.Gone && x.LayoutParameters.HeightUnits!=Units.ParentRatio))
+				foreach (var v in SubViews.Where(x => !x.Gone && x.LayoutParameters.Height.Unit != Units.ParentRatio))
 				{
 					float totalChildHeight = v.GetMeasuredSize().Height + v.LayoutParameters.Margins.TotalHeight();
 					if (totalChildHeight > sizeMeasured.Height)
@@ -299,7 +307,7 @@ namespace XibFree
 				}
 				
 				// Set the height of all children that are fill parent
-				foreach (var v in SubViews.Where(x=>!x.Gone && x.LayoutParameters.HeightUnits==Units.ParentRatio))
+				foreach (var v in SubViews.Where(x => !x.Gone && x.LayoutParameters.Height.Unit == Units.ParentRatio))
 				{
 					v.Measure(v.GetMeasuredSize().Width, sizeMeasured.Height);
 				}
@@ -341,7 +349,7 @@ namespace XibFree
 		}
 
 		// Do subview layout when in vertical orientation
-		void LayoutVertical(RectangleF newPosition)
+		private void LayoutVertical(RectangleF newPosition)
 		{
 			float y;
 			switch (Gravity & Gravity.VerticalMask)
@@ -411,7 +419,7 @@ namespace XibFree
 		}
 
 		// Do subview layout when in horizontal orientation
-		void LayoutHorizontal(RectangleF newPosition)
+		private void LayoutHorizontal(RectangleF newPosition)
 		{
 			float x;
 			switch (Gravity & Gravity.HorizontalMask)
@@ -520,18 +528,6 @@ namespace XibFree
 			
 			return height - c.LayoutParameters.Margins.TotalHeight();
 		}
-
-		public Action<LinearLayout> Init
-		{
-			set
-			{
-				value(this);
-			}
-		}
-
-		// Fields
-		private Orientation _orientation;
-		private float _totalWeight;
 	}
 }
 

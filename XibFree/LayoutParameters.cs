@@ -36,13 +36,15 @@ namespace XibFree
 	/// </summary>
 	public class LayoutParameters
 	{
+		private UIEdgeInsets _margins;
+
 		/// <summary>
 		/// Initializes a new instance of the <see cref="XibFree.LayoutParameters"/> class.
 		/// </summary>
 		public LayoutParameters()
 		{
-			Width = AutoSize.WrapContent;
-			Height = AutoSize.WrapContent;
+			Width = Dimension.WrapContent;
+			Height = Dimension.WrapContent;
 			Margins = UIEdgeInsets.Zero;
 			Weight = 1;
 			Gravity = Gravity.None;
@@ -56,110 +58,31 @@ namespace XibFree
 		/// <param name="weight">Weight.</param>
 		public LayoutParameters(float width, float height, float weight=1)
 		{
-			Width = width;
-			Height = height;
+			Width = new Dimension(width);
+			Height = new Dimension(height);
 			Margins = UIEdgeInsets.Zero;
 			Weight = weight;
 			Gravity = Gravity.None;
 		}
 
 		/// <summary>
-		/// Gets or sets the width for this view
+		/// Gets or sets the width dimension (value and unit of measurement)
 		/// </summary>
-		/// <value>The width in pixels, or one of the AutoSize constants.</value>
-		public float Width
+		/// <value>The width.</value>
+		public Dimension Width
 		{
 			get;
 			set;
 		}
 
 		/// <summary>
-		/// Gets or sets the height for this view
+		/// Gets or sets the height dimension (value and unit of measurement)
 		/// </summary>
-		/// <value>The height in pixels, or one of the AutoSize constants.</value>
-		public float Height
+		/// <value>The height.</value>
+		public Dimension Height
 		{
 			get;
 			set;
-		}
-
-		Units _widthUnits;
-
-		/// <summary>
-		/// Gets or sets the width units.
-		/// </summary>
-		/// <value>The width units.</value>
-		public Units WidthUnits
-		{
-			get
-			{
-				if (_widthUnits == Units.Absolute)
-				{
-					if (Width == AutoSize.FillParent)
-						return Units.ParentRatio;
-					if (Width == AutoSize.WrapContent)
-						return Units.ContentRatio;
-				}
-				return _widthUnits;
-			}
-			set
-			{
-				_widthUnits = value;
-			}
-		}
-		
-		Units _heightUnits;
-		/// <summary>
-		/// Gets or sets the height units.
-		/// </summary>
-		/// <value>The height units.</value>
-		public Units HeightUnits
-		{
-			get
-			{
-				if (_heightUnits == Units.Absolute)
-				{
-					if (Height == AutoSize.FillParent)
-						return Units.ParentRatio;
-					if (Height == AutoSize.WrapContent)
-						return Units.ContentRatio;
-				}
-				return _heightUnits;
-			}
-			set
-			{
-				_heightUnits = value;
-			}
-		}
-
-		internal float HeightRatio
-		{
-			get
-			{
-				if (_heightUnits == Units.Absolute)
-				{
-					return 1;
-				}
-				else
-				{
-					return Height;
-				}
-			}
-		}
-
-		internal float WidthRatio
-		{
-			get
-			{
-				if (_widthUnits == Units.Absolute)
-				{
-					return 1;
-				}
-				else
-				{
-					return Width;
-				}
-			}
 		}
 
 		/// <summary>
@@ -314,22 +237,21 @@ namespace XibFree
 			set;
 		}
 
-		static float TryResolve(Units units, float size, float ratio, float parentSize)
+		private static float TryResolve(Dimension dimension, float parentSize)
 		{
-			switch (units)
+			var ratio = dimension.Ratio;
+			switch (dimension.Unit)
 			{
 				case Units.Absolute:
-					return size;
-					
+					return dimension.Value;
 				case Units.ParentRatio:
-					return parentSize==float.MaxValue ? float.MaxValue : parentSize * ratio;
-
+					return parentSize == float.MaxValue ? float.MaxValue : parentSize * ratio;
 				default:
 					return float.MaxValue;
 			}
 		}
 
-		static SizeF GetScreenSize()
+		private static SizeF GetScreenSize()
 		{
 			var orientation = UIApplication.SharedApplication.StatusBarOrientation;
 			if (orientation == UIInterfaceOrientation.Portrait || orientation == UIInterfaceOrientation.PortraitUpsideDown)
@@ -347,15 +269,13 @@ namespace XibFree
 		{
 			// Get the host
 			var host = view.GetHost();
-			if (host==null)
-				return GetScreenSize();
+			if (host==null) return GetScreenSize();
 
 			var hostView = host.GetUIView();
 
 			// Use outer scroll view if present
 			var parent = hostView.Superview;
-			if (parent is UIScrollView)
-				hostView = parent;
+			if (parent is UIScrollView) hostView = parent;
 
 			// Return size
 			return hostView.Bounds.Size;
@@ -363,56 +283,32 @@ namespace XibFree
 
 		internal float TryResolveWidth(View view, float parentWidth)
 		{
-			if (WidthUnits==Units.HostRatio)
-			{
-				return GetHostSize(view).Width * WidthRatio;
-			}
+			if (Width.Unit == Units.HostRatio) return GetHostSize(view).Width * Width.Ratio;
+			if (Width.Unit == Units.ScreenRatio) return GetScreenSize().Width * Width.Ratio;
 
-			if (WidthUnits==Units.ScreenRatio)
-			{
-				return GetScreenSize().Width * WidthRatio;
-			}
-
-			return TryResolve(WidthUnits, Width, WidthRatio, parentWidth);
+			return TryResolve(Width, parentWidth);
 		}
 	
 		internal float TryResolveHeight(View view, float parentHeight)
 		{
-			if (HeightUnits==Units.HostRatio)
-			{
-				return GetHostSize(view).Height * HeightRatio;
-			}
-			
-			if (HeightUnits==Units.ScreenRatio)
-			{
-				return GetScreenSize().Height * HeightRatio;
-			}
+			if (Height.Unit == Units.HostRatio) return GetHostSize(view).Height * Height.Ratio;
+			if (Height.Unit == Units.ScreenRatio) return GetScreenSize().Height * Height.Ratio;
 
-			return TryResolve(HeightUnits, Height, HeightRatio, parentHeight);
+			return TryResolve(Height, parentHeight);
 		}
 
 		internal SizeF ResolveSize(SizeF size, SizeF sizeMeasured)
 		{
 			// Resolve measured size
-			if (size.Width == float.MaxValue)
-				size.Width = sizeMeasured.Width;
-			if (size.Height == float.MaxValue)
-				size.Height = sizeMeasured.Height;
+			if (size.Width == float.MaxValue) size.Width = sizeMeasured.Width;
+			if (size.Height == float.MaxValue) size.Height = sizeMeasured.Height;
 
 			// Finally, resolve aspect ratios
-			if (WidthUnits == Units.AspectRatio)
-			{
-				size.Width = size.Height * WidthRatio;
-			}
-			if (HeightUnits == Units.AspectRatio)
-			{
-				size.Height = size.Width * HeightRatio;
-			}
+			if (Width.Unit == Units.AspectRatio) size.Width = size.Height * Width.Ratio;
+			if (Height.Unit == Units.AspectRatio) size.Height = size.Width * Height.Ratio;
 
 			return size;
 		}
-
-		UIEdgeInsets _margins;
 	}
 }
 

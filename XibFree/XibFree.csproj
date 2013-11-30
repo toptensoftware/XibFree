@@ -61,5 +61,6 @@
     <Compile Include="PublicExtensions.cs" />
     <Compile Include="Visibility.cs" />
     <Compile Include="UILayoutHostScrollable.cs" />
+    <Compile Include="Dimension.cs" />
   </ItemGroup>
 </Project>

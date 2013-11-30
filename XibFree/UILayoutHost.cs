@@ -25,6 +25,8 @@ namespace XibFree
 	/// </summary>
 	public class UILayoutHost : UIView, ViewGroup.IHost
 	{
+		private ViewGroup _layout;
+
 		/// <summary>
 		/// Initializes a new instance of the <see cref="XibFree.UILayoutHost"/> class.
 		/// </summary>
@@ -60,13 +62,11 @@ namespace XibFree
 
 			set
 			{
-				if (_layout!=null)
-					_layout.SetHost(null);
+				if (_layout != null) _layout.SetHost(null);
 
 				_layout = value;
 
-				if (_layout!=null)
-					_layout.SetHost(this);
+				if (_layout != null) _layout.SetHost(this);
 			}
 		}
 
@@ -117,9 +117,6 @@ namespace XibFree
 		}
 
 		#endregion
-
-
-		private ViewGroup _layout;
 	}
 }
 

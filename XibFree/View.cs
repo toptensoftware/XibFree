@@ -26,6 +26,10 @@ namespace XibFree
 	/// </summary>
 	public abstract class View
 	{
+		private SizeF _measuredSize;
+		private bool _measuredSizeValid;
+		private ViewGroup _parent;
+
 		/// <summary>
 		/// Initializes a new instance of the <see cref="XibFree.View"/> class.
 		/// </summary>
@@ -68,31 +72,19 @@ namespace XibFree
 		/// Gets or sets the layout parameters for this view
 		/// </summary>
 		/// <value>The layout parameters.</value>
-		public virtual LayoutParameters LayoutParameters
-		{
-			get;
-			set;
-		}
+		public virtual LayoutParameters LayoutParameters { get; set; }
 
 		// Internal helper to walk the parent view hierachy and find the view that's hosting this view hierarchy
 		internal virtual ViewGroup.IHost GetHost()
 		{
-			if (_parent==null)
-				return null;
-
-			return _parent.GetHost();
+			return (_parent != null) ? _parent.GetHost() : null;
 		}
 
 		// Internal notification that this view has been attached to a hosting view
-		internal virtual void onAttach(ViewGroup.IHost host)
-		{
-		}
+		internal virtual void onAttach(ViewGroup.IHost host) { }
 
 		// Internal notification that this view has been detached from a hosting view
-		internal virtual void onDetach()
-		{
-		}
-
+		internal virtual void onDetach() { }
 
 		/// <summary>
 		/// Layout the subviews in this view using dimensions calculated during the last measure cycle
@@ -118,10 +110,7 @@ namespace XibFree
 		{
 			_measuredSizeValid = false;
 			onMeasure(parentWidth, parentHeight);
-			if (!_measuredSizeValid)
-			{
-				throw new InvalidOperationException("onMeasure didn't set measurement before returning");
-			}
+			if (!_measuredSizeValid) throw new InvalidOperationException("onMeasure didn't set measurement before returning");
 		}
 
 		/// <summary>
@@ -144,14 +133,11 @@ namespace XibFree
 		/// <param name="size">Size.</param>
 		protected void SetMeasuredSize(SizeF size)
 		{
-			if (LayoutParameters.MinWidth!=0 && size.Width < LayoutParameters.MinWidth)
-				size.Width = LayoutParameters.MinWidth;
-			if (LayoutParameters.MinHeight!=0 && size.Height < LayoutParameters.MinHeight)
-				size.Height = LayoutParameters.MinHeight;
-			if (LayoutParameters.MaxWidth!=0 && size.Width > LayoutParameters.MaxWidth)
-				size.Width = LayoutParameters.MaxWidth;
-			if (LayoutParameters.MaxHeight!=0 && size.Height > LayoutParameters.MaxHeight)
-				size.Height = LayoutParameters.MaxHeight;
+			if (LayoutParameters.MinWidth != 0 && size.Width < LayoutParameters.MinWidth) size.Width = LayoutParameters.MinWidth;
+			if (LayoutParameters.MinHeight != 0 && size.Height < LayoutParameters.MinHeight) size.Height = LayoutParameters.MinHeight;
+
+			if (LayoutParameters.MaxWidth != 0 && size.Width > LayoutParameters.MaxWidth) size.Width = LayoutParameters.MaxWidth;
+			if (LayoutParameters.MaxHeight != 0 && size.Height > LayoutParameters.MaxHeight) size.Height = LayoutParameters.MaxHeight;
 
 			_measuredSize = size;
 			_measuredSizeValid = true;
@@ -163,8 +149,7 @@ namespace XibFree
 		/// <returns>The measured size.</returns>
 		public SizeF GetMeasuredSize()
 		{
-			if (!_measuredSizeValid)
-				throw new InvalidOperationException("Attempt to use measured size before measurement");
+			if (!_measuredSizeValid) throw new InvalidOperationException("Attempt to use measured size before measurement");
 			return _measuredSize;
 		}
 
@@ -193,10 +178,8 @@ namespace XibFree
 		/// <typeparam name="T">The type of view to return</typeparam>
 		public T ViewWithTag<T>(int tag)
 		{
-			if (typeof(UIView).IsAssignableFrom(typeof(T)))
-				return (T)(object)UIViewWithTag(tag);
-			else
-			    return (T)(object)LayoutViewWithTag(tag);
+			if (typeof(UIView).IsAssignableFrom(typeof(T))) return (T)(object)UIViewWithTag(tag);
+			else return (T)(object)LayoutViewWithTag(tag);
 		}
 
 		public abstract NativeView FindNativeView(UIView v);
@@ -227,16 +210,8 @@ namespace XibFree
 
 		public void RemoveFromSuperview()
 		{
-			if (Parent!=null)
-			{
-				Parent.RemoveSubView(this);
-			}
+			if (Parent!=null) Parent.RemoveSubView(this);
 		}
-
-
-		internal SizeF _measuredSize;
-		internal bool _measuredSizeValid;
-		internal ViewGroup _parent;
 	}
 }
 
