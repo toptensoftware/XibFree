@@ -35,6 +35,11 @@
       </CustomCommands>
     </CustomCommands>
   </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'AdhocTestServers|AnyCPU' ">
+    <Optimize>false</Optimize>
+    <OutputPath>bin\AdhocTestServers</OutputPath>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
