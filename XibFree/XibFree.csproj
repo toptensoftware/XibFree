@@ -23,7 +23,6 @@
     <ConsolePause>false</ConsolePause>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>none</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release</OutputPath>
     <ErrorReport>prompt</ErrorReport>
@@ -34,11 +33,7 @@
         <Command type="AfterBuild" command="cp ${TargetFile} ${SolutionDir}/out" workingdir="" />
       </CustomCommands>
     </CustomCommands>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'AdhocTestServers|AnyCPU' ">
-    <Optimize>false</Optimize>
-    <OutputPath>bin\AdhocTestServers</OutputPath>
-    <WarningLevel>4</WarningLevel>
+    <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
