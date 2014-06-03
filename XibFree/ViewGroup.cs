@@ -74,7 +74,7 @@ namespace XibFree
 		/// <param name="lp">Layout parameters for the subview.</param>
 		public void InsertSubView(int position, UIView view, LayoutParameters lp)
 		{
-			InsertSubView(-1, new NativeView(view, lp));
+			InsertSubView(position, new NativeView(view, lp));
 		}
 
 		/// <summary>
