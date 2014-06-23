@@ -22,6 +22,16 @@ namespace XibFree
 {
 	internal static class Extensions
 	{
+		public static bool IsEqualTo(this float f, float other)
+		{
+			return Math.Abs(f - other) < float.Epsilon;
+		}
+
+		public static bool IsMaxFloat(this float f)
+		{
+			return Math.Abs(f - float.MaxValue) < float.Epsilon;
+		}
+
 		/// <summary>
 		/// Applies a set of UIEdgeInsets to a RectangleF
 		/// </summary>
@@ -45,26 +55,24 @@ namespace XibFree
 
 		public static RectangleF ApplyGravity(this RectangleF bounds, SizeF size, Gravity g)
 		{
-			float left;
+			float left = 0;
 			switch (g & Gravity.HorizontalMask)
 			{
-				default:
+				case Gravity.Left:
 					left = bounds.Left;
 					break;
-
 				case Gravity.Right:
 					left = bounds.Right - size.Width;
 					break;
-
 				case Gravity.CenterHorizontal:
 					left = (bounds.Left + bounds.Right - size.Width)/2;
 					break;
 			}
 
-			float top;
+			float top = 0;
 			switch (g & Gravity.VerticalMask)
 			{
-				default:
+				case Gravity.Top:
 					top = bounds.Top;
 					break;
 

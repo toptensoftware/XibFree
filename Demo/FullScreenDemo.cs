@@ -7,22 +7,25 @@ using MonoTouch.Foundation;
 
 namespace Demo
 {
-	public class FullScreenDemo : UIViewController
+	public sealed class FullScreenDemo : UIViewController
 	{
 		public FullScreenDemo()
 		{
-			this.Title = "XibFree";
+			Title = "XibFree";
 		}
 
 		[Register("GlassButton")]
-		class GlassButton : UIButton
+		private sealed class GlassButton : UIButton
 		{
+			private readonly CALayer _layerGradient;
+			private readonly CALayer _layerDarken;
+
 			public GlassButton() : base(RectangleF.Empty)
 			{
 				// Create a mostly transparent gradient for the button background
-				_layerGradient = new CAGradientLayer()
+				_layerGradient = new CAGradientLayer
 				{
-					Colors = new MonoTouch.CoreGraphics.CGColor[]
+					Colors = new[]
 					{
 						new MonoTouch.CoreGraphics.CGColor(1,1,1,0.5f),
 						new MonoTouch.CoreGraphics.CGColor(1,1,1,0.1f)
@@ -33,15 +36,15 @@ namespace Demo
 						1.0f
 					},
 					CornerRadius = 5,
-					Frame = this.Bounds,
+					Frame = Bounds,
 				};
 				
 				// Create another mostly transparent layer to darken the button when it's pressed
-				_layerDarken = new CALayer()
+				_layerDarken = new CALayer
 				{
 					BackgroundColor = new MonoTouch.CoreGraphics.CGColor(0,0,0,0.2f),
 					CornerRadius = 5,
-					Frame = this.Bounds,
+					Frame = Bounds,
 					Hidden = true,		// Normally hidden
 				};
 				
@@ -90,13 +93,9 @@ namespace Demo
 					base.Highlighted = value;
 				}
 			}
-			
-			
-			CALayer _layerGradient;
-			CALayer _layerDarken;
 		}
 		
-		class Label : NativeView
+		private class Label : NativeView
 		{
 			public Label(string title, UIFont font)
 			{
@@ -107,12 +106,16 @@ namespace Demo
 					BackgroundColor = UIColor.Clear,
 					TextColor = UIColor.DarkGray,
 				};
-				
-				LayoutParameters = new LayoutParameters(AutoSize.WrapContent, AutoSize.WrapContent);
+
+				LayoutParameters = new LayoutParameters
+				{
+					Width = Dimension.WrapContent,
+					Height = Dimension.WrapContent,
+				};
 			}
 		}
 		
-		class Button : NativeView
+		private class Button : NativeView
 		{
 			public Button(string title, Action handler)
 			{
@@ -126,8 +129,12 @@ namespace Demo
 				button.TouchUpInside += (sender, e) => handler();
 
 				// Setup the layout parameters
-				LayoutParameters = new LayoutParameters(AutoSize.FillParent, AutoSize.WrapContent);
-				LayoutParameters.MaxWidth = 160;
+				LayoutParameters = new LayoutParameters
+				{
+					Width = Dimension.FillParent,
+					Height = Dimension.WrapContent,
+					MaxWidth = 160,
+				};
 			}
 		}
 
@@ -138,20 +145,24 @@ namespace Demo
 			{
 				Padding = new UIEdgeInsets(10,10,10,10),
 				Gravity = Gravity.CenterHorizontal,
-				LayoutParameters = new LayoutParameters(AutoSize.FillParent, AutoSize.WrapContent),
+				LayoutParameters = new LayoutParameters
+				{
+					Width = Dimension.FillParent,
+					Height = Dimension.WrapContent,
+				},
 				SubViews = new View[]
 				{
-					new NativeView()
+					new NativeView
 					{
-						View = new UIImageView()
+						View = new UIImageView
 						{
 							Image = UIImage.FromBundle("XibFree_512.png"),
 							ContentMode = UIViewContentMode.ScaleAspectFit,
 						},
-						LayoutParameters = new LayoutParameters()
+						LayoutParameters = new LayoutParameters
 						{
-							Width = 120,
-							Height = 120,
+							Width = Dimension.Absolute(120),
+							Height = Dimension.Absolute(120),
 							MarginTop = 30,
 							MarginBottom = 20,
 						}
@@ -165,42 +176,42 @@ namespace Demo
 						SubViews = new View[]
 						{
 							new Button("Download", () => Alert("Download")),
-							new Button("View Samples", () => Alert("Samples")),
+							new Button("View Samples", () => Alert("Samples"))
 						},
-						LayoutParameters = new LayoutParameters()
+						LayoutParameters = new LayoutParameters
 						{
-							Width = AutoSize.FillParent,
-							Height = AutoSize.WrapContent,
+							Width = Dimension.FillParent,
+							Height = Dimension.WrapContent,
 							MarginTop = 50,
 						}
 					},
-					new NativeView()
+					new NativeView
 					{
-						View = new UIView()
+						View = new UIView
 						{
 							BackgroundColor = UIColor.FromRGBA(0, 0, 0, 10),
 						},
-						LayoutParameters = new LayoutParameters()
+						LayoutParameters = new LayoutParameters
 						{
-							Width = AutoSize.FillParent,
-							Height = 2,
+							Width = Dimension.FillParent,
+							Height = Dimension.Absolute(2),
 							MarginTop = 20,
 							MarginBottom = 20,
 						}
 					},
-					new Label("Step away from the mouse, build your UI in code!", UIFont.SystemFontOfSize(12)),
+					new Label("Step away from the mouse, build your UI in code!", UIFont.SystemFontOfSize(12))
 				}
 			};
 
 			// Create a UILayoutHost view to host the layout
-			this.View = new UILayoutHostScrollable(layout)
+			View = new UILayoutHostScrollable(layout)
 			{
 				// Yellowish background color
 				BackgroundColor = UIColor.FromRGB(0xF1, 0xE8, 0xDC),
 			};
 		}
 
-		void Alert(string message)
+		private static void Alert(string message)
 		{
 			new UIAlertView(message, "",  null, "OK").Show();
 		}

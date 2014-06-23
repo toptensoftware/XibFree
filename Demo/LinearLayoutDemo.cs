@@ -1,15 +1,12 @@
-using System;
 using System.Drawing;
-using System.Collections.Generic;
 
 using MonoTouch.UIKit;
-using MonoTouch.Foundation;
 
 using XibFree;
 
 namespace Demo
 {
-	public partial class LinearLayoutDemo : UITableViewController
+	public sealed class LinearLayoutDemo : UITableViewController
 	{
 		public LinearLayoutDemo()
 		{
@@ -18,23 +15,14 @@ namespace Demo
 			// Custom initialization
 		}
 
-		public override void DidReceiveMemoryWarning()
+		public override UIInterfaceOrientationMask GetSupportedInterfaceOrientations()
 		{
-			// Releases the view if it doesn't have a superview.
-			base.DidReceiveMemoryWarning();
-			
-			// Release any cached data, images, etc that aren't in use.
+			return UIInterfaceOrientationMask.All;
 		}
 
-		[Obsolete ("Deprecated in iOS6. Replace it with both GetSupportedInterfaceOrientations and PreferredInterfaceOrientationForPresentation")]
-		public override bool ShouldAutorotateToInterfaceOrientation(UIInterfaceOrientation toInterfaceOrientation)
+		public override UIInterfaceOrientation PreferredInterfaceOrientationForPresentation()
 		{
-			return true;
-		}
-		
-		public override void ViewDidLoad()
-		{
-			base.ViewDidLoad();
+			return UIInterfaceOrientation.Portrait;
 		}
 
 		public override void LoadView()
@@ -48,7 +36,7 @@ namespace Demo
 				SubViews = new View[] 
 				{
 					// A NativeView contains an iOS UIView
-					new NativeView()
+					new NativeView
 					{
 						// This is the UIView
 						View = new UIView(RectangleF.Empty)
@@ -58,10 +46,10 @@ namespace Demo
 						},
 
 						// This controls how it's laid out by its parent view group (in this case the outer linear layout)
-						LayoutParameters = new LayoutParameters()
+						LayoutParameters = new LayoutParameters
 						{
-							Width = AutoSize.FillParent,
-							Height = 50,
+							Width = Dimension.FillParent,
+							Height = Dimension.Absolute(50),
 						},
 					},
 
@@ -69,16 +57,16 @@ namespace Demo
 					new LinearLayout(Orientation.Horizontal)
 					{
 						// How to layout this linear layout within the outer one
-						LayoutParameters = new LayoutParameters()
+						LayoutParameters = new LayoutParameters
 						{
-							Height = AutoSize.WrapContent,
-							Width = AutoSize.FillParent,
+							Height = Dimension.WrapContent,
+							Width = Dimension.FillParent,
 						},
 
 						// Sub view collection
 						SubViews = new View[]
 						{
-							new NativeView()
+							new NativeView
 							{
 								// This time we're showing a UILabel
 								View = new UILabel(RectangleF.Empty)
@@ -90,24 +78,24 @@ namespace Demo
 									TextColor = UIColor.White
 								},
 
-								LayoutParameters = new LayoutParameters()
+								LayoutParameters = new LayoutParameters
 								{
-									Width = AutoSize.FillParent,
-									Height = AutoSize.WrapContent,		// Height calculated automatically based on text content!
+									Width = Dimension.FillParent,
+									Height = Dimension.WrapContent,		// Height calculated automatically based on text content!
 								},
 							},
 
-							new NativeView()
+							new NativeView
 							{
 								// Here we're hosting a button
 								View = new UIButton(UIButtonType.RoundedRect)
 								{
 									Tag = 123,
 								},
-								LayoutParameters = new LayoutParameters()
+								LayoutParameters = new LayoutParameters
 								{
-									Width = AutoSize.WrapContent,				// Size of button determined by it's content
-									Height = AutoSize.WrapContent,
+									Width = Dimension.WrapContent,				// Size of button determined by it's content
+									Height = Dimension.WrapContent,
 									Gravity = Gravity.CenterVertical,
 									Margins = new UIEdgeInsets(0, 10, 0, 0),	// Put a margin on the left to separate it from the text
 
@@ -120,25 +108,22 @@ namespace Demo
 									v.As<UIButton>().SetTitle("Hello", UIControlState.Normal);
 
 									// We can also setup an event handler
-									v.As<UIButton>().TouchUpInside += (sender,args) =>
-									{
-										new UIAlertView("Clicked", "", null, "OK").Show();
-									};
+									v.As<UIButton>().TouchUpInside += (sender,args) => new UIAlertView("Clicked", "", null, "OK").Show();
 								}
-							},
+							}
 						}
 					},
-					new NativeView()
+					new NativeView
 					{
 						View = new UIImageView(UIImage.FromBundle("logo320.png"))
 						{
 							ContentMode = UIViewContentMode.ScaleAspectFit,
 							//BackgroundColor = UIColor.White
 						},
-						LayoutParameters = new LayoutParameters()
+						LayoutParameters = new LayoutParameters
 						{
-							Width = AutoSize.FillParent,		// Overrall size determined by parent container width
-							Height = AutoSize.WrapContent,		// Height will be calculated by calling Measurer below
+							Width = Dimension.FillParent,		// Overrall size determined by parent container width
+							Height = Dimension.WrapContent,		// Height will be calculated by calling Measurer below
 							Margins = new UIEdgeInsets(10, 0, 0, 0)
 						},
 						Measurer = (v,s) =>
@@ -155,8 +140,8 @@ namespace Demo
 			};
 
 			// We've now defined our layout, to actually use it we simply create a UILayoutHost control and pass it the layout
-			this.View = new XibFree.UILayoutHost(layout);
-			this.View.BackgroundColor=UIColor.Gray;
+			View = new UILayoutHost(layout);
+			View.BackgroundColor = UIColor.Gray;
 		}
 	}
 }

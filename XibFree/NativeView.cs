@@ -27,12 +27,15 @@ namespace XibFree
 	/// </summary>
 	public class NativeView : View
 	{
+		// The hosted native view
+		private UIView _view;
+
 		/// <summary>
 		/// Initializes a new instance of the <see cref="XibFree.NativeView"/> class.
 		/// </summary>
 		public NativeView()
 		{
-
+			LayoutParameters = new LayoutParameters();
 		}
 
 		/// <summary>
@@ -43,15 +46,15 @@ namespace XibFree
 		public NativeView(UIView view, LayoutParameters lp)
 		{
 			_view = view;
-			this.LayoutParameters = lp;
+			LayoutParameters = lp;
 		}
 
-		public override LayoutParameters LayoutParameters
+		public override sealed LayoutParameters LayoutParameters
 		{
 			get
 			{
 				var nestedHost = _view as UILayoutHost;
-				if (nestedHost!=null && nestedHost.Layout!=null)
+				if (nestedHost != null && nestedHost.Layout != null)
 				{
 					return nestedHost.Layout.LayoutParameters;
 				}
@@ -65,33 +68,23 @@ namespace XibFree
 		/// <value>The view.</value>
 		public UIView View
 		{
-			get
-			{
-				return _view;
-			}
+			get { return _view; }
 			set
 			{
-				if (_view!=value)
-				{
-					// Detach old view from host
-					ViewGroup.IHost host = GetHost();
-					if (host!=null)
-					{
-						onDetach();
-					}
+				if (_view == value) return;
 
-					// Store the new view
-					_view = value;
+				// Detach old view from host
+				var host = GetHost();
+				if (host != null) OnDetach();
 
-					// Turn off auto-resizing, we'll take care of that thanks
-					_view.AutoresizingMask = UIViewAutoresizing.None;
+				// Store the new view
+				_view = value;
 
-					// Attach the new view to the host
-					if (host!=null)
-					{
-						onAttach(host);
-					}
-				}
+				// Turn off auto-resizing, we'll take care of that thanks
+				_view.AutoresizingMask = UIViewAutoresizing.None;
+
+				// Attach the new view to the host
+				if (host != null) OnAttach(host);
 			}
 		}
 
@@ -104,19 +97,18 @@ namespace XibFree
 			return _view as T;
 		}
 
-
 		/// <summary>
 		/// Overridden to set the position of the native view
 		/// </summary>
 		/// <param name="newPosition">New position.</param>
-		protected override void onLayout(RectangleF newPosition, bool parentHidden)
+		/// <param name="parentHidden">If Parent is Hidden </param>
+		protected override void OnLayout(RectangleF newPosition, bool parentHidden)
 		{
+			if (_view == null) return;
+
 			// Simple, just reposition the view!
-			if (_view!=null)
-			{
-				_view.Hidden = parentHidden || !Visible;
-				_view.Frame = newPosition;
-			}
+			_view.Hidden = parentHidden || !Visible;
+			_view.Frame = newPosition;
 		}
 
 		/// <summary>
@@ -124,18 +116,24 @@ namespace XibFree
 		/// </summary>
 		/// <param name="parentWidth">Parent width.</param>
 		/// <param name="parentHeight">Parent height.</param>
-		protected override void onMeasure(float parentWidth, float parentHeight)
+		protected override void OnMeasure(float parentWidth, float parentHeight)
 		{
 			// Resolve width for absolute and parent ratio
-			float width = LayoutParameters.TryResolveWidth(this, parentWidth);
-			float height = LayoutParameters.TryResolveHeight(this, parentHeight);
+			var width = LayoutParameters.TryResolveWidth(this, parentWidth);
+			var height = LayoutParameters.TryResolveHeight(this, parentHeight);
 
 			// Do we need to measure our content?
-			SizeF sizeMeasured = SizeF.Empty;
-			if (width == float.MaxValue || height == float.MaxValue)
+			var sizeMeasured = SizeF.Empty;
+			if (width.IsMaxFloat() || height.IsMaxFloat())
 			{
-				SizeF sizeToFit = new SizeF(width, height);
-				sizeMeasured = Measurer!=null ? Measurer(_view, sizeToFit) : _view.SizeThatFits(sizeToFit);
+				var sizeToFit = new SizeF(width, height);
+				if (Measurer != null) sizeMeasured = Measurer(_view, sizeToFit);
+				else
+				{
+					sizeMeasured = _view.SizeThatFits(sizeToFit);
+					if (LayoutParameters.Width.Unit == Units.ContentRatio) sizeMeasured.Width = sizeMeasured.Width * LayoutParameters.Width.Value;
+					if (LayoutParameters.Height.Unit == Units.ContentRatio) sizeMeasured.Height = sizeMeasured.Height * LayoutParameters.Height.Value;
+				}
 			}
 
 			// Set the measured size
@@ -146,35 +144,25 @@ namespace XibFree
 		/// Overridden to add this native view to the parent native view
 		/// </summary>
 		/// <param name="host">Host.</param>
-		internal override void onAttach(ViewGroup.IHost host)
+		internal override void OnAttach(IHost host)
 		{
 			// If we have a view, attach to the hosting view by adding as a subview
-			if (_view!=null)
-			{
-				host.GetUIView().Add(_view);
-			}
+			if (_view != null) host.GetUIView().Add(_view);
 		}
 
 		/// <summary>
 		/// Overridden to remove this native view from the parent native view
 		/// </summary>
-		internal override void onDetach()
+		internal override void OnDetach()
 		{
 			// If we have a view, remove from the hosting view by removing it from the superview
-			if (_view!=null)
-			{
-				_view.RemoveFromSuperview();
-			}
+			if (_view != null) _view.RemoveFromSuperview();
 		}
 
 		/// Delegate for a plugin measurement support
 		public delegate SizeF NativeMeasurer(UIView native, SizeF constraint);
 
-		public NativeMeasurer Measurer
-		{
-			get;
-			set;
-		}
+		public NativeMeasurer Measurer { get; set; }
 
 		/// <summary>
 		/// Sets a an action to be immediately called.  Provided to allowing execution of code inline
@@ -183,32 +171,22 @@ namespace XibFree
 		/// <value>An Action to be called immediately</value>
 		public Action<NativeView> Init
 		{
-			set
-			{
-				value(this);
-			}
+			set { value(this); }
 		}
 
 		internal override UIView UIViewWithTag(int tag)
 		{
-			if (_view!=null)
-				return _view.ViewWithTag(tag);
-			return null;
+			return (_view != null) ? _view.ViewWithTag(tag) : null;
 		}
 
 		internal override View LayoutViewWithTag(int tag)
 		{
-			if (_view!=null && _view.Tag==tag)
-				return this;
-			return null;
+			return (_view != null && _view.Tag == tag) ? this : null;
 		}
 
 		public override NativeView FindNativeView(UIView v)
 		{
-			if (_view == v)
-				return this;
-			else
-				return null;
+			return (_view == v) ? this : null;
 		}
 
 		internal override CALayer GetDisplayLayer()
@@ -220,11 +198,6 @@ namespace XibFree
 		{
 			return null;
 		}
-
-
-
-		// The hosted native view
-		private UIView _view;
 	}
 }
 

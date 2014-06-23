@@ -1,15 +1,10 @@
-using System;
 using System.Drawing;
-using System.Collections.Generic;
-
 using MonoTouch.UIKit;
-using MonoTouch.Foundation;
-
 using XibFree;
 
 namespace Demo
 {
-	public partial class NestedDemo : UIViewController
+	public sealed class NestedDemo : UIViewController
 	{
 		public NestedDemo()
 		{
@@ -24,14 +19,21 @@ namespace Demo
 			{
 				SubViews = new View[] 
 				{
-					new NativeView()
+					new NativeView
 					{
-						View = new UIView()	{ BackgroundColor = UIColor.Blue },
-						LayoutParameters = new LayoutParameters(AutoSize.FillParent, 50),
+						View = new UIView
+						{
+							BackgroundColor = UIColor.Blue
+						},
+						LayoutParameters = new LayoutParameters
+						{
+							Width = Dimension.FillParent,
+							Height = Dimension.Absolute(50),
+						},
 					},
-					new NativeView()
+					new NativeView
 					{
-						View = new UILayoutHost()
+						View = new UILayoutHost
 						{
 							BackgroundColor = UIColor.Yellow,
 							Layout = new LinearLayout(Orientation.Vertical)
@@ -39,7 +41,7 @@ namespace Demo
 								Padding = new UIEdgeInsets(3,3,3,3),
 								SubViews = new View[]
 								{
-									new NativeView()
+									new NativeView
 									{
 										View = new UILabel(RectangleF.Empty)
 										{
@@ -48,7 +50,7 @@ namespace Demo
 											BackgroundColor = UIColor.Clear,
 										}
 									},
-									new NativeView()
+									new NativeView
 									{
 										View = new UILabel(RectangleF.Empty)
 										{
@@ -58,10 +60,10 @@ namespace Demo
 										}
 									}
 								},
-								LayoutParameters = new LayoutParameters()
+								LayoutParameters = new LayoutParameters
 								{
-									Width = AutoSize.FillParent,
-									Height = AutoSize.WrapContent,
+									Width = Dimension.FillParent,
+									Height = Dimension.WrapContent,
 									Margins = new UIEdgeInsets(10,10,10,10),
 								},
 							},
@@ -72,17 +74,24 @@ namespace Demo
 							v.View.Layer.MasksToBounds = true;
 						}
 					},
-					new NativeView()
+					new NativeView
 					{
-						View = new UIView()	{ BackgroundColor = UIColor.Blue },
-						LayoutParameters = new LayoutParameters(AutoSize.FillParent, 50),
-					},
+						View = new UIView
+						{
+							BackgroundColor = UIColor.Blue
+						},
+						LayoutParameters = new LayoutParameters
+						{
+							Width = Dimension.FillParent, 
+							Height = Dimension.Absolute(50),
+						}
+					}
 				},
 			};
 
 			// We've now defined our layout, to actually use it we simply create a UILayoutHost control and pass it the layout
-			this.View = new XibFree.UILayoutHost(layout);
-			this.View.BackgroundColor=UIColor.Gray;
+			View = new UILayoutHost(layout);
+			View.BackgroundColor=UIColor.Gray;
 		}
 	}
 }

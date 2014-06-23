@@ -1,60 +1,48 @@
-
 using System;
-using System.Drawing;
-
 using MonoTouch.Foundation;
 using MonoTouch.UIKit;
-using XibFree;
 
 namespace Demo
 {
-	public partial class MainViewController : UITableViewController
+	public sealed class MainViewController : UITableViewController
 	{
 		public MainViewController() : base(UITableViewStyle.Grouped)
 		{
-			this.Title = "XibFree Demos";
+			Title = "XibFree Demos";
 		}
-		
-		public override void DidReceiveMemoryWarning()
-		{
-			// Releases the view if it doesn't have a superview.
-			base.DidReceiveMemoryWarning();
-			
-			// Release any cached data, images, etc that aren't in use.
-		}
-		
+
 		public override void ViewDidLoad()
 		{
 			base.ViewDidLoad();
-			this.TableView.Source = new Source(this);
+			TableView.Source = new Source(this);
 		}
 
-		class Source : UITableViewSource
+		private class Source : UITableViewSource
 		{
+			private readonly MainViewController _owner;
+
 			public Source(MainViewController owner)
 			{
 				_owner = owner;
 			}
 
-			MainViewController _owner;
-
-			class Demo
+			private class Demo
 			{
 				public string Title;
-				public Type TClass;
+				public Type Class;
 			};
 
-			Demo[] _demos = new Demo[]
+			private readonly Demo[] _demos = new[]
 			{
-				new Demo() { Title = "#1 Basics", TClass = typeof(Demo1) },
-				new Demo() { Title = "LinearLayout", TClass = typeof(LinearLayoutDemo) },
-				new Demo() { Title = "FrameLayout", TClass = typeof(FrameLayoutDemo) },
-				new Demo() { Title = "Nested Hosts", TClass = typeof(NestedDemo) },
-				new Demo() { Title = "ViewGroup Layers", TClass = typeof(ViewGroupLayerDemo) },
-				new Demo() { Title = "TableViewCell", TClass = typeof(TableViewCellDemo) },
-				new Demo() { Title = "TableViewCell Variable", TClass = typeof(TableViewCellDemo2) },
-				new Demo() { Title = "Visibility", TClass = typeof(VisibilityDemo) },
-				new Demo() { Title = "Recalculate Layout", TClass = typeof(RecalculateLayoutDemo) },
+				new Demo { Title = "#1 Basics", Class = typeof(Demo1) },
+				new Demo { Title = "LinearLayout", Class = typeof(LinearLayoutDemo) },
+				new Demo { Title = "FrameLayout", Class = typeof(FrameLayoutDemo) },
+				new Demo { Title = "Nested Hosts", Class = typeof(NestedDemo) },
+				new Demo { Title = "ViewGroup Layers", Class = typeof(ViewGroupLayerDemo) },
+				new Demo { Title = "TableViewCell", Class = typeof(TableViewCellDemo) },
+				new Demo { Title = "TableViewCell Variable", Class = typeof(TableViewCellDemo2) },
+				new Demo { Title = "Visibility", Class = typeof(VisibilityDemo) },
+				new Demo { Title = "Recalculate Layout", Class = typeof(RecalculateLayoutDemo) }
 			};
 
 			#region implemented abstract members of UITableViewSource
@@ -78,7 +66,7 @@ namespace Demo
 
 			public override void RowSelected(UITableView tableView, NSIndexPath indexPath)
 			{
-				var vc = (UIViewController)Activator.CreateInstance(_demos[indexPath.Row].TClass);
+				var vc = (UIViewController)Activator.CreateInstance(_demos[indexPath.Row].Class);
 				_owner.NavigationController.PushViewController(vc, true);
 			}
 			#endregion

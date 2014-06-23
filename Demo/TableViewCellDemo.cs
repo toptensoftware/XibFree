@@ -9,11 +9,11 @@ using System.Collections.Generic;
 
 namespace Demo
 {
-	public partial class TableViewCellDemo : UITableViewController
+	public sealed class TableViewCellDemo : UITableViewController
 	{
 		public TableViewCellDemo() : base(UITableViewStyle.Grouped)
 		{
-			this.Title = "TableViewCell";
+			Title = "TableViewCell";
 		}
 		
 		public override void ViewDidLoad()
@@ -22,105 +22,109 @@ namespace Demo
 
 			// Create some items
 			var r = new Random();
-			for (int i=0; i<100; i++)
+			for (var i=0; i<100; i++)
 			{
-				var item = new Item();
-				item.Title =  string.Format("Item {0}", i+1);
-				item.Total = r.Next(1000);
+				var item = new Item
+				{
+					Title = string.Format("Item {0}", i + 1), 
+					Total = r.Next(1000)
+				};
 				item.Count = r.Next(item.Total);
 				_items.Add(item);
 			}
 
-			this.TableView.Source = new Source(this);
-			this.TableView.RowHeight = new DemoTableViewCell().MeasureHeight();
+			TableView.Source = new Source(this);
+			TableView.RowHeight = new DemoTableViewCell().MeasureHeight();
 		}
 
-		class Item
+		private class Item
 		{
 			public string Title;
 			public int Count;
 			public int Total;
 			public int Percentage
 			{
-				get
-				{
-					return Count * 100 / Total;
-				}
+				get { return Count * 100 / Total; }
 			}
 		};
 
-		List<Item> _items = new List<Item>();
+		private readonly List<Item> _items = new List<Item>();
 
-		class DemoTableViewCell : UITableViewCell
+		private sealed class DemoTableViewCell : UITableViewCell
 		{
+			private readonly ViewGroup _layout;
+			private readonly UILabel _labelTitle;
+			private readonly UILabel _labelSubTitle;
+			private readonly UILabel _labelPercent;
+
 			public DemoTableViewCell() : base(UITableViewCellStyle.Default, "DemoTableViewCell")
 			{
 				_layout = new LinearLayout(Orientation.Horizontal)
 				{
 					Padding = new UIEdgeInsets(5,5,5,5),
-					LayoutParameters = new LayoutParameters()
+					LayoutParameters = new LayoutParameters
 					{
-						Width = AutoSize.FillParent,
-						Height = AutoSize.WrapContent,
+						Width = Dimension.FillParent,
+						Height = Dimension.WrapContent,
 					},
 					SubViews = new View[]
 					{
-						new NativeView()
+						new NativeView
 						{
 							View = new UIImageView(RectangleF.Empty)
 							{
 								Image = UIImage.FromBundle("tts512.png"),
 							},
-							LayoutParameters = new LayoutParameters()
+							LayoutParameters = new LayoutParameters
 							{
-								Width = 40,
-								Height = 40,
+								Width = Dimension.Absolute(40),
+								Height = Dimension.Absolute(40),
 								Margins = new UIEdgeInsets(0,0,0,10),
 							}
 						},
 						new LinearLayout(Orientation.Vertical)
 						{
-							LayoutParameters = new LayoutParameters()
+							LayoutParameters = new LayoutParameters
 							{
-								Width = AutoSize.FillParent,
-								Height = AutoSize.WrapContent,
+								Width = Dimension.FillParent,
+								Height = Dimension.WrapContent,
 							},
 							SubViews = new View[]
 							{
-								new NativeView()
+								new NativeView
 								{
-									View = _labelTitle = new UILabel()
+									View = _labelTitle = new UILabel
 									{
 										BackgroundColor = UIColor.Clear,
 										Font = UIFont.BoldSystemFontOfSize(18),
 										HighlightedTextColor = UIColor.White,
 									},
-									LayoutParameters = new LayoutParameters()
+									LayoutParameters = new LayoutParameters
 									{
-										Width = AutoSize.FillParent,
-										Height = AutoSize.WrapContent,
+										Width = Dimension.FillParent,
+										Height = Dimension.WrapContent,
 									}
 								},
-								new NativeView()
+								new NativeView
 								{
-									View = _labelSubTitle = new UILabel()
+									View = _labelSubTitle = new UILabel
 									{
 										BackgroundColor = UIColor.Clear,
 										Font = UIFont.SystemFontOfSize(12),
 										TextColor = UIColor.DarkGray,
 										HighlightedTextColor = UIColor.White,
 									},
-									LayoutParameters = new LayoutParameters()
+									LayoutParameters = new LayoutParameters
 									{
-										Width = AutoSize.FillParent,
-										Height = AutoSize.WrapContent,
+										Width = Dimension.FillParent,
+										Height = Dimension.WrapContent,
 									}
-								},
+								}
 							}
 						},
-						new NativeView()
+						new NativeView
 						{
-							View = _labelPercent = new UILabel()
+							View = _labelPercent = new UILabel
 							{
 								BackgroundColor = UIColor.Clear,
 								TextColor = UIColor.FromRGB(51,102,153),
@@ -128,10 +132,10 @@ namespace Demo
 								Font = UIFont.BoldSystemFontOfSize(24),
 								TextAlignment = UITextAlignment.Right,
 							},
-							LayoutParameters = new LayoutParameters()
+							LayoutParameters = new LayoutParameters
 							{
-								Width = 50,
-								Height = AutoSize.FillParent,
+								Width = Dimension.Absolute(50),
+								Height = Dimension.FillParent,
 								Margins = new UIEdgeInsets(0, 10, 0, 0),
 							}
 						}
@@ -139,8 +143,8 @@ namespace Demo
 				};
 
 
-				this.ContentView.Add(new UILayoutHost(_layout, this.ContentView.Bounds));
-				this.Accessory = UITableViewCellAccessory.DisclosureIndicator;
+				ContentView.Add(new UILayoutHost(_layout, ContentView.Bounds));
+				Accessory = UITableViewCellAccessory.DisclosureIndicator;
 			}
 
 			public void Init(Item i)
@@ -157,21 +161,16 @@ namespace Demo
 				_layout.Measure(float.MaxValue, float.MaxValue);
 				return _layout.GetMeasuredSize().Height;
 			}
-
-			ViewGroup _layout;
-			UILabel _labelTitle;
-			UILabel _labelSubTitle;
-			UILabel _labelPercent;
 		}
 
 		class Source : UITableViewSource
 		{
+			private readonly TableViewCellDemo _owner;
+
 			public Source(TableViewCellDemo owner)
 			{
 				_owner = owner;
 			}
-
-			TableViewCellDemo _owner;
 
 			#region implemented abstract members of UITableViewSource
 
@@ -182,11 +181,7 @@ namespace Demo
 
 			public override UITableViewCell GetCell(UITableView tableView, NSIndexPath indexPath)
 			{
-				var cell = (DemoTableViewCell)tableView.DequeueReusableCell("DemoTableViewCell");
-				if (cell==null)
-				{
-					cell = new DemoTableViewCell();
-				}
+				var cell = (DemoTableViewCell)tableView.DequeueReusableCell("DemoTableViewCell") ?? new DemoTableViewCell();
 
 				var item = _owner._items[indexPath.Row];
 				cell.Init(item);

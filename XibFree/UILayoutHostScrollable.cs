@@ -14,7 +14,6 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 
-using System;
 using MonoTouch.UIKit;
 using System.Drawing;
 
@@ -23,29 +22,29 @@ namespace XibFree
 	/// <summary>
 	/// UILayoutHostScrollable is the native UIView that hosts that XibFree layout
 	/// </summary>
-	public class UILayoutHostScrollable : UIScrollView
+	public sealed class UILayoutHostScrollable : UIScrollView
 	{
+		private readonly UILayoutHost _layoutHost;
+
 		/// <summary>
 		/// Initializes a new instance of the <see cref="XibFree.UILayoutHostScrollable"/> class.
 		/// </summary>
 		/// <param name="layout">Root of the view hierarchy to be hosted by this layout host</param>
+		/// <param name="frame">Frame for the UIView </param>
 		public UILayoutHostScrollable(ViewGroup layout, RectangleF frame) : base(frame)
 		{
-			_layoutHost = new UILayoutHost(layout);
-			_layoutHost.AutoresizingMask = UIViewAutoresizing.None;
-			this.AutoresizingMask = UIViewAutoresizing.FlexibleDimensions;
-			this.AddSubview(_layoutHost);
+			_layoutHost = new UILayoutHost(layout)
+			{
+				AutoresizingMask = UIViewAutoresizing.None
+			};
+
+			AutoresizingMask = UIViewAutoresizing.FlexibleDimensions;
+			AddSubview(_layoutHost);
 		}
 
-		public UILayoutHostScrollable() : this(null, RectangleF.Empty)
-		{
-		}
+		public UILayoutHostScrollable() : this(null, RectangleF.Empty) { }
 
-		public UILayoutHostScrollable(ViewGroup layout) : this(layout, RectangleF.Empty)
-		{
-		}
-
-		UILayoutHost _layoutHost;
+		public UILayoutHostScrollable(ViewGroup layout) : this(layout, RectangleF.Empty) { }
 
 		/// <summary>
 		/// The ViewGroup declaring the layout to hosted
@@ -60,7 +59,7 @@ namespace XibFree
 
 			set
 			{
-				_layoutHost.Layout = Layout;
+				_layoutHost.Layout = value;
 				SetNeedsLayout();
 			}
 		}
@@ -77,19 +76,18 @@ namespace XibFree
 		/// </summary>
 		public override void LayoutSubviews()
 		{
-			if (Layout!=null)
-			{
-				// Remeasure the layout
-				Layout.Measure(Bounds.Width, float.MaxValue);
+			if (Layout == null) return;
 
-				var size = Layout.GetMeasuredSize();
+			// Remeasure the layout
+			Layout.Measure(Bounds.Width, float.MaxValue);
 
-				// Reposition the layout host
-				_layoutHost.Frame = new RectangleF(PointF.Empty, size);
+			var size = Layout.GetMeasuredSize();
 
-				// Update the scroll view content
-				ContentSize = size;
-			}
+			// Reposition the layout host
+			_layoutHost.Frame = new RectangleF(PointF.Empty, size);
+
+			// Update the scroll view content
+			ContentSize = size;
 		}
 	}
 }

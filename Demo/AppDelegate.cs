@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-
 using MonoTouch.Foundation;
 using MonoTouch.UIKit;
 
@@ -11,11 +7,10 @@ namespace Demo
 	// User Interface of the application, as well as listening (and optionally responding) to 
 	// application events from iOS.
 	[Register ("AppDelegate")]
-	public partial class AppDelegate : UIApplicationDelegate
+	public class AppDelegate : UIApplicationDelegate
 	{
 		// class-level declarations
-		UINavigationController navigationController;
-		UIWindow window;
+		UIWindow _window;
 		
 		//
 		// This method is invoked when the application has loaded and is ready to run. In this 
@@ -26,18 +21,13 @@ namespace Demo
 		//
 		public override bool FinishedLaunching(UIApplication app, NSDictionary options)
 		{
-			window = new UIWindow(UIScreen.MainScreen.Bounds);
-
-			/*
-			var controller = new MainViewController();
-			navigationController = new UINavigationController(controller);
-			window.RootViewController = navigationController;
-			*/
-
-			window.RootViewController = new FullScreenDemo();
+			_window = new UIWindow(UIScreen.MainScreen.Bounds)
+			{
+				RootViewController = new FullScreenDemo()
+			};
 
 			// make the window visible
-			window.MakeKeyAndVisible();
+			_window.MakeKeyAndVisible();
 			
 			return true;
 		}
