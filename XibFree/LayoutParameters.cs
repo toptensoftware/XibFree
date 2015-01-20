@@ -15,8 +15,8 @@
 //    limitations under the License.
 
 using System;
-using MonoTouch.UIKit;
-using System.Drawing;
+using UIKit;
+using CoreGraphics;
 
 namespace XibFree
 {
@@ -54,7 +54,7 @@ namespace XibFree
 		/// <param name="width">Width.</param>
 		/// <param name="height">Height.</param>
 		/// <param name="weight">Weight.</param>
-		public LayoutParameters(float width, float height, float weight=1)
+		public LayoutParameters(nfloat width, nfloat height, double weight=1.0)
 		{
 			Width = width;
 			Height = height;
@@ -67,7 +67,7 @@ namespace XibFree
 		/// Gets or sets the width for this view
 		/// </summary>
 		/// <value>The width in pixels, or one of the AutoSize constants.</value>
-		public float Width
+		public nfloat Width
 		{
 			get;
 			set;
@@ -77,7 +77,7 @@ namespace XibFree
 		/// Gets or sets the height for this view
 		/// </summary>
 		/// <value>The height in pixels, or one of the AutoSize constants.</value>
-		public float Height
+		public nfloat Height
 		{
 			get;
 			set;
@@ -132,7 +132,7 @@ namespace XibFree
 			}
 		}
 
-		internal float HeightRatio
+		internal nfloat HeightRatio
 		{
 			get
 			{
@@ -147,7 +147,7 @@ namespace XibFree
 			}
 		}
 
-		internal float WidthRatio
+		internal nfloat WidthRatio
 		{
 			get
 			{
@@ -166,7 +166,7 @@ namespace XibFree
 		/// Gets or sets the weight of a AutoSize.FillParent view relative to its sibling views
 		/// </summary>
 		/// <value>The weighting value for this view's size.</value>
-		public float Weight
+		public double Weight
 		{
 			get;
 			set;
@@ -194,7 +194,7 @@ namespace XibFree
 		/// Gets or sets the left margin.
 		/// </summary>
 		/// <value>The left margin size.</value>
-		public float MarginLeft
+		public nfloat MarginLeft
 		{
 			get
 			{
@@ -210,7 +210,7 @@ namespace XibFree
 		/// Gets or sets the right margin.
 		/// </summary>
 		/// <value>The right margin size.</value>
-		public float MarginRight
+		public nfloat MarginRight
 		{
 			get
 			{
@@ -226,7 +226,7 @@ namespace XibFree
 		/// Gets or sets the top margin.
 		/// </summary>
 		/// <value>The top margin size.</value>
-		public float MarginTop
+		public nfloat MarginTop
 		{
 			get
 			{
@@ -242,7 +242,7 @@ namespace XibFree
 		/// Gets or sets the bottom margin.
 		/// </summary>
 		/// <value>The bottom margin size.</value>
-		public float MarginBottom
+		public nfloat MarginBottom
 		{
 			get
 			{
@@ -278,7 +278,7 @@ namespace XibFree
 		/// Gets or sets the minimum width.
 		/// </summary>
 		/// <value>The minimum width.</value>
-		public float MinWidth
+		public nfloat MinWidth
 		{
 			get;
 			set;
@@ -288,7 +288,7 @@ namespace XibFree
 		/// Gets or sets the maximum width.
 		/// </summary>
 		/// <value>The maximum width.</value>
-		public float MaxWidth
+		public nfloat MaxWidth
 		{
 			get;
 			set;
@@ -298,7 +298,7 @@ namespace XibFree
 		/// Gets or sets the minimum height.
 		/// </summary>
 		/// <value>The minimum height.</value>
-		public float MinHeight
+		public nfloat MinHeight
 		{
 			get;
 			set;
@@ -308,13 +308,13 @@ namespace XibFree
 		/// Gets or sets the max height.
 		/// </summary>
 		/// <value>The maximum height</value>
-		public float MaxHeight
+		public nfloat MaxHeight
 		{
 			get;
 			set;
 		}
 
-		static float TryResolve(Units units, float size, float ratio, float parentSize)
+		static nfloat TryResolve(Units units, nfloat size, nfloat ratio, nfloat parentSize)
 		{
 			switch (units)
 			{
@@ -322,14 +322,14 @@ namespace XibFree
 					return size;
 					
 				case Units.ParentRatio:
-					return parentSize==float.MaxValue ? float.MaxValue : parentSize * ratio;
+					return parentSize==nfloat.MaxValue ? nfloat.MaxValue : parentSize * ratio;
 
 				default:
-					return float.MaxValue;
+					return nfloat.MaxValue;
 			}
 		}
 
-		static SizeF GetScreenSize()
+		static CGSize GetScreenSize()
 		{
 			var orientation = UIApplication.SharedApplication.StatusBarOrientation;
 			if (orientation == UIInterfaceOrientation.Portrait || orientation == UIInterfaceOrientation.PortraitUpsideDown)
@@ -339,11 +339,11 @@ namespace XibFree
 			else
 			{
 				var temp = UIScreen.MainScreen.Bounds.Size;
-				return new SizeF(temp.Height, temp.Width);
+				return new CGSize(temp.Height, temp.Width);
 			}
 		}
 
-		internal SizeF GetHostSize(View view)
+		internal CGSize GetHostSize(View view)
 		{
 			// Get the host
 			var host = view.GetHost();
@@ -361,7 +361,7 @@ namespace XibFree
 			return hostView.Bounds.Size;
 		}
 
-		internal float TryResolveWidth(View view, float parentWidth)
+		internal nfloat TryResolveWidth(View view, nfloat parentWidth)
 		{
 			if (WidthUnits==Units.HostRatio)
 			{
@@ -376,7 +376,7 @@ namespace XibFree
 			return TryResolve(WidthUnits, Width, WidthRatio, parentWidth);
 		}
 	
-		internal float TryResolveHeight(View view, float parentHeight)
+		internal nfloat TryResolveHeight(View view, nfloat parentHeight)
 		{
 			if (HeightUnits==Units.HostRatio)
 			{
@@ -391,12 +391,12 @@ namespace XibFree
 			return TryResolve(HeightUnits, Height, HeightRatio, parentHeight);
 		}
 
-		internal SizeF ResolveSize(SizeF size, SizeF sizeMeasured)
+		internal CGSize ResolveSize(CGSize size, CGSize sizeMeasured)
 		{
 			// Resolve measured size
-			if (size.Width == float.MaxValue)
+			if (size.Width == nfloat.MaxValue)
 				size.Width = sizeMeasured.Width;
-			if (size.Height == float.MaxValue)
+			if (size.Height == nfloat.MaxValue)
 				size.Height = sizeMeasured.Height;
 
 			// Finally, resolve aspect ratios

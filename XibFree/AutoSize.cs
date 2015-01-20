@@ -19,7 +19,7 @@ using System;
 namespace XibFree
 {
 	/// <summary>
-	/// AutoSize defines special float constants to indicate that views dimensions should
+	/// AutoSize defines special nfloat constants to indicate that views dimensions should
 	/// be automatically determined by wrapping the views content, or matching the parent view's size
 	/// </summary>
 	public static class AutoSize

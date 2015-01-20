@@ -1,9 +1,9 @@
 
 using System;
-using System.Drawing;
+using CoreGraphics;
 
-using MonoTouch.Foundation;
-using MonoTouch.UIKit;
+using Foundation;
+using UIKit;
 using XibFree;
 
 namespace Demo
@@ -58,7 +58,7 @@ namespace Demo
 			};
 
 			#region implemented abstract members of UITableViewSource
-			public override int RowsInSection(UITableView tableview, int section)
+			public override nint RowsInSection(UITableView tableview, nint section)
 			{
 				return _demos.Length;
 			}

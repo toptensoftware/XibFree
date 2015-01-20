@@ -1,9 +1,9 @@
 using System;
-using MonoTouch.UIKit;
+using UIKit;
 using XibFree;
-using System.Drawing;
-using MonoTouch.CoreAnimation;
-using MonoTouch.Foundation;
+using CoreGraphics;
+using CoreAnimation;
+using Foundation;
 
 namespace Demo
 {
@@ -17,15 +17,15 @@ namespace Demo
 		[Register("GlassButton")]
 		class GlassButton : UIButton
 		{
-			public GlassButton() : base(RectangleF.Empty)
+			public GlassButton() : base(CGRect.Empty)
 			{
 				// Create a mostly transparent gradient for the button background
 				_layerGradient = new CAGradientLayer()
 				{
-					Colors = new MonoTouch.CoreGraphics.CGColor[]
+					Colors = new CoreGraphics.CGColor[]
 					{
-						new MonoTouch.CoreGraphics.CGColor(1,1,1,0.5f),
-						new MonoTouch.CoreGraphics.CGColor(1,1,1,0.1f)
+						new CoreGraphics.CGColor(1,1,1,0.5f),
+						new CoreGraphics.CGColor(1,1,1,0.1f)
 					},
 					Locations = new NSNumber[]
 					{
@@ -39,7 +39,7 @@ namespace Demo
 				// Create another mostly transparent layer to darken the button when it's pressed
 				_layerDarken = new CALayer()
 				{
-					BackgroundColor = new MonoTouch.CoreGraphics.CGColor(0,0,0,0.2f),
+					BackgroundColor = new CoreGraphics.CGColor(0,0,0,0.2f),
 					CornerRadius = 5,
 					Frame = this.Bounds,
 					Hidden = true,		// Normally hidden
@@ -51,14 +51,14 @@ namespace Demo
 				
 				// Put on a rounded border
 				Layer.BorderWidth = 1;
-				Layer.BorderColor = new MonoTouch.CoreGraphics.CGColor(0,0,0,0.2f);
+				Layer.BorderColor = new CoreGraphics.CGColor(0,0,0,0.2f);
 				Layer.CornerRadius = 5;
 				
 				// Setup the title text color
 				SetTitleColor(UIColor.DarkGray, UIControlState.Normal);
 			}
 			
-			public override RectangleF Frame
+			public override CGRect Frame
 			{
 				set
 				{
@@ -75,9 +75,9 @@ namespace Demo
 			
 			// SizeThatFits is called by XibFree to measure the layout.  UIButton doesn't include much padding by default so we'll
 			// add a bit to height to make it look better
-			public override SizeF SizeThatFits(SizeF size)
+			public override CGSize SizeThatFits(CGSize size)
 			{
-				return base.SizeThatFits(size) + new SizeF(0,10);
+				return base.SizeThatFits(size) + new CGSize(0,10);
 			}
 			
 			public override bool Highlighted
@@ -100,7 +100,7 @@ namespace Demo
 		{
 			public Label(string title, UIFont font)
 			{
-				View = new UILabel(RectangleF.Empty)
+				View = new UILabel(CGRect.Empty)
 				{
 					Text = title,
 					Font = font,

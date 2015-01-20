@@ -1,9 +1,9 @@
 
 using System;
-using System.Drawing;
+using CoreGraphics;
 
-using MonoTouch.Foundation;
-using MonoTouch.UIKit;
+using Foundation;
+using UIKit;
 using XibFree;
 using System.Collections.Generic;
 
@@ -67,7 +67,7 @@ namespace Demo
 					{
 						new NativeView()
 						{
-							View = new UIImageView(RectangleF.Empty)
+							View = new UIImageView(CGRect.Empty)
 							{
 								Image = UIImage.FromBundle("tts512.png"),
 							},
@@ -151,10 +151,10 @@ namespace Demo
 			}
 
 			// Helper to get the required height for a cell
-			public float MeasureHeight()
+			public nfloat MeasureHeight()
 			{
 				// Get the layout to measure itself, and then retrieve the measured height
-				_layout.Measure(float.MaxValue, float.MaxValue);
+				_layout.Measure(nfloat.MaxValue, nfloat.MaxValue);
 				return _layout.GetMeasuredSize().Height;
 			}
 
@@ -175,7 +175,7 @@ namespace Demo
 
 			#region implemented abstract members of UITableViewSource
 
-			public override int RowsInSection(UITableView tableview, int section)
+			public override nint RowsInSection(UITableView tableview, nint section)
 			{
 				return _owner._items.Count;
 			}

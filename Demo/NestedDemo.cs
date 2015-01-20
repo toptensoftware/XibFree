@@ -1,9 +1,9 @@
 using System;
-using System.Drawing;
+using CoreGraphics;
 using System.Collections.Generic;
 
-using MonoTouch.UIKit;
-using MonoTouch.Foundation;
+using UIKit;
+using Foundation;
 
 using XibFree;
 
@@ -41,7 +41,7 @@ namespace Demo
 								{
 									new NativeView()
 									{
-										View = new UILabel(RectangleF.Empty)
+										View = new UILabel(CGRect.Empty)
 										{
 											Text="Hello World",
 											Font = UIFont.SystemFontOfSize(24),
@@ -50,7 +50,7 @@ namespace Demo
 									},
 									new NativeView()
 									{
-										View = new UILabel(RectangleF.Empty)
+										View = new UILabel(CGRect.Empty)
 										{
 											Text="Goodbye",
 											Font = UIFont.SystemFontOfSize(24),

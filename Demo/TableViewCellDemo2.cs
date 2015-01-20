@@ -1,9 +1,9 @@
 
 	using System;
-	using System.Drawing;
+	using CoreGraphics;
 
-	using MonoTouch.Foundation;
-	using MonoTouch.UIKit;
+	using Foundation;
+	using UIKit;
 	using XibFree;
 	using System.Collections.Generic;
 
@@ -78,7 +78,7 @@
 						{
 							new NativeView()
 							{
-								View  = new UIImageView(RectangleF.Empty)
+								View  = new UIImageView(CGRect.Empty)
 								{
 									Image = UIImage.FromBundle("tts512.png"),
 								},
@@ -181,14 +181,14 @@
 					_labelLongText.Text = i.LongText;
 				}
 
-				public float MeasureHeight(UITableView tableView, Item i)
+				public nfloat MeasureHeight(UITableView tableView, Item i)
 				{
 					// Initialize the view's so they have the correct content for height calculations
 					Init(i);
 
 					// Remeasure the layout using the tableView width, allowing for grouped table view margins
 					// and the disclosure indicator
-					Layout.Measure(tableView.Bounds.Width - 20 - 18, float.MaxValue);
+					Layout.Measure(tableView.Bounds.Width - 20 - 18, nfloat.MaxValue);
 
 					// Grab the measured height
 					return Layout.GetMeasuredSize().Height;
@@ -218,7 +218,7 @@
 				DemoTableViewCell _prototype = new DemoTableViewCell();
 
 				#region implemented abstract members of UITableViewSource
-				public override int RowsInSection(UITableView tableview, int section)
+				public override nint RowsInSection(UITableView tableview, nint section)
 				{
 					return _owner._items.Count;
 				}
@@ -240,7 +240,7 @@
 				{
 				}
 
-				public override float GetHeightForRow(UITableView tableView, NSIndexPath indexPath)
+				public override nfloat GetHeightForRow(UITableView tableView, NSIndexPath indexPath)
 				{
 					return _prototype.MeasureHeight(tableView, _owner._items[indexPath.Row]);
 				}

@@ -2,8 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-using MonoTouch.Foundation;
-using MonoTouch.UIKit;
+using Foundation;
+using UIKit;
 
 namespace Demo
 {
@@ -14,7 +14,6 @@ namespace Demo
 	public partial class AppDelegate : UIApplicationDelegate
 	{
 		// class-level declarations
-		UINavigationController navigationController;
 		UIWindow window;
 		
 		//

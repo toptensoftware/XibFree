@@ -1,12 +1,12 @@
 using System;
-using System.Drawing;
+using CoreGraphics;
 using System.Collections.Generic;
 
-using MonoTouch.UIKit;
-using MonoTouch.Foundation;
+using UIKit;
+using Foundation;
 
 using XibFree;
-using MonoTouch.CoreAnimation;
+using CoreAnimation;
 
 namespace Demo
 {
@@ -35,10 +35,10 @@ namespace Demo
 						Padding = new UIEdgeInsets(10,10,10,10),
 						Layer = new CAGradientLayer()
 						{
-							Colors = new MonoTouch.CoreGraphics.CGColor[]
+							Colors = new CoreGraphics.CGColor[]
 							{
-								new MonoTouch.CoreGraphics.CGColor(0.9f, 0.9f, 0.9f, 1f),
-								new MonoTouch.CoreGraphics.CGColor(0.7f, 0.7f, 0.7f, 1f)
+								new CoreGraphics.CGColor(0.9f, 0.9f, 0.9f, 1f),
+								new CoreGraphics.CGColor(0.7f, 0.7f, 0.7f, 1f)
 							},
 							Locations = new NSNumber[]
 							{
@@ -51,7 +51,7 @@ namespace Demo
 						{
 							new NativeView()
 							{
-								View = new UILabel(RectangleF.Empty)
+								View = new UILabel(CGRect.Empty)
 								{
 									Text="Hello World",
 									Font = UIFont.SystemFontOfSize(24),
@@ -60,7 +60,7 @@ namespace Demo
 							},
 							new NativeView()
 							{
-								View = new UILabel(RectangleF.Empty)
+								View = new UILabel(CGRect.Empty)
 								{
 									Text="Goodbye",
 									Font = UIFont.SystemFontOfSize(24),

@@ -15,11 +15,11 @@
 //    limitations under the License.
 
 using System;
-using MonoTouch.UIKit;
+using UIKit;
 using System.Collections.Generic;
 using System.Linq;
-using MonoTouch.CoreAnimation;
-using System.Drawing;
+using CoreAnimation;
+using CoreGraphics;
 
 namespace XibFree
 {
@@ -230,7 +230,7 @@ namespace XibFree
 				c.onDetach();
 		}
 
-		protected override void onLayout(System.Drawing.RectangleF newPosition, bool parentHidden)
+		protected override void onLayout(CGRect newPosition, bool parentHidden)
 		{
 			// Reposition the layer
 			if (_layer!=null)
@@ -261,7 +261,7 @@ namespace XibFree
 			{
 				foreach (var v in SubViews)
 				{
-					v.Layout(RectangleF.Empty, false);
+					v.Layout(CGRect.Empty, false);
 				}
 				return;
 			}

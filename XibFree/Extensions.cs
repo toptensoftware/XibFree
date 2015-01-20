@@ -15,8 +15,8 @@
 //    limitations under the License.
 
 using System;
-using System.Drawing;
-using MonoTouch.UIKit;
+using CoreGraphics;
+using UIKit;
 
 namespace XibFree
 {
@@ -28,24 +28,24 @@ namespace XibFree
 		/// <returns>The adjusted rectangle</returns>
 		/// <param name="rect">The rectangle to be adjusted.</param>
 		/// <param name="insets">The edge insets to be applied</param>
-		public static RectangleF ApplyInsets(this RectangleF rect, UIEdgeInsets insets)
+		public static CGRect ApplyInsets(this CGRect rect, UIEdgeInsets insets)
 		{
-			return new RectangleF(rect.Left + insets.Left, rect.Top + insets.Top, rect.Width - insets.TotalWidth(), rect.Height- insets.TotalHeight());
+			return new CGRect(rect.Left + insets.Left, rect.Top + insets.Top, rect.Width - insets.TotalWidth(), rect.Height- insets.TotalHeight());
 		}
 
-		public static float TotalWidth(this UIEdgeInsets insets)
+		public static nfloat TotalWidth(this UIEdgeInsets insets)
 		{
 			return insets.Left + insets.Right;
 		}
 
-		public static float TotalHeight(this UIEdgeInsets insets)
+		public static nfloat TotalHeight(this UIEdgeInsets insets)
 		{
 			return insets.Top + insets.Bottom;
 		}
 
-		public static RectangleF ApplyGravity(this RectangleF bounds, SizeF size, Gravity g)
+		public static CGRect ApplyGravity(this CGRect bounds, CGSize size, Gravity g)
 		{
-			float left;
+			nfloat left;
 			switch (g & Gravity.HorizontalMask)
 			{
 				default:
@@ -61,7 +61,7 @@ namespace XibFree
 					break;
 			}
 
-			float top;
+			nfloat top;
 			switch (g & Gravity.VerticalMask)
 			{
 				default:
@@ -77,7 +77,7 @@ namespace XibFree
 					break;
 			}
 
-			return new RectangleF(left, top, size.Width, size.Height);
+			return new CGRect(left, top, size.Width, size.Height);
 		}
 	}
 }

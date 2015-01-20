@@ -15,9 +15,9 @@
 //    limitations under the License.
 
 using System;
-using MonoTouch.UIKit;
-using System.Drawing;
-using MonoTouch.CoreAnimation;
+using UIKit;
+using CoreGraphics;
+using CoreAnimation;
 
 namespace XibFree
 {
@@ -109,7 +109,7 @@ namespace XibFree
 		/// Overridden to set the position of the native view
 		/// </summary>
 		/// <param name="newPosition">New position.</param>
-		protected override void onLayout(RectangleF newPosition, bool parentHidden)
+		protected override void onLayout(CGRect newPosition, bool parentHidden)
 		{
 			// Simple, just reposition the view!
 			if (_view!=null)
@@ -124,22 +124,22 @@ namespace XibFree
 		/// </summary>
 		/// <param name="parentWidth">Parent width.</param>
 		/// <param name="parentHeight">Parent height.</param>
-		protected override void onMeasure(float parentWidth, float parentHeight)
+		protected override void onMeasure(nfloat parentWidth, nfloat parentHeight)
 		{
 			// Resolve width for absolute and parent ratio
-			float width = LayoutParameters.TryResolveWidth(this, parentWidth);
-			float height = LayoutParameters.TryResolveHeight(this, parentHeight);
+			nfloat width = LayoutParameters.TryResolveWidth(this, parentWidth);
+			nfloat height = LayoutParameters.TryResolveHeight(this, parentHeight);
 
 			// Do we need to measure our content?
-			SizeF sizeMeasured = SizeF.Empty;
-			if (width == float.MaxValue || height == float.MaxValue)
+			CGSize sizeMeasured = CGSize.Empty;
+			if (width == nfloat.MaxValue || height == nfloat.MaxValue)
 			{
-				SizeF sizeToFit = new SizeF(width, height);
+				CGSize sizeToFit = new CGSize(width, height);
 				sizeMeasured = Measurer!=null ? Measurer(_view, sizeToFit) : _view.SizeThatFits(sizeToFit);
 			}
 
 			// Set the measured size
-			SetMeasuredSize(LayoutParameters.ResolveSize(new SizeF(width, height), sizeMeasured));
+			SetMeasuredSize(LayoutParameters.ResolveSize(new CGSize(width, height), sizeMeasured));
 		}
 
 		/// <summary>
@@ -168,7 +168,7 @@ namespace XibFree
 		}
 
 		/// Delegate for a plugin measurement support
-		public delegate SizeF NativeMeasurer(UIView native, SizeF constraint);
+		public delegate CGSize NativeMeasurer(UIView native, CGSize constraint);
 
 		public NativeMeasurer Measurer
 		{

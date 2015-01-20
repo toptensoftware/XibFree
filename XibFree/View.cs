@@ -15,9 +15,9 @@
 //    limitations under the License.
 
 using System;
-using MonoTouch.UIKit;
-using System.Drawing;
-using MonoTouch.CoreAnimation;
+using UIKit;
+using CoreGraphics;
+using CoreAnimation;
 
 namespace XibFree
 {
@@ -98,7 +98,7 @@ namespace XibFree
 		/// Layout the subviews in this view using dimensions calculated during the last measure cycle
 		/// </summary>
 		/// <param name="newPosition">The new position of this view</param>
-		public void Layout(RectangleF newPosition, bool parentHidden)
+		public void Layout(CGRect newPosition, bool parentHidden)
 		{
 			onLayout(newPosition, parentHidden);
 		}
@@ -107,14 +107,14 @@ namespace XibFree
 		/// Overridden by view groups to perform the actual layout process
 		/// </summary>
 		/// <param name="newPosition">New position.</param>
-		protected abstract void onLayout(RectangleF newPosition, bool parentHidden);
+		protected abstract void onLayout(CGRect newPosition, bool parentHidden);
 
 		/// <summary>
 		/// Measures the subviews of this view
 		/// </summary>
-		/// <param name="parentWidth">Available width of the parent view group (might be float.MaxValue).</param>
-		/// <param name="parentHeight">Available height of the parent view group(might be float.MaxValue)</param>
-		public void Measure(float parentWidth, float parentHeight)
+		/// <param name="parentWidth">Available width of the parent view group (might be nfloat.MaxValue).</param>
+		/// <param name="parentHeight">Available height of the parent view group(might be nfloat.MaxValue)</param>
+		public void Measure(nfloat parentWidth, nfloat parentHeight)
 		{
 			_measuredSizeValid = false;
 			onMeasure(parentWidth, parentHeight);
@@ -129,7 +129,7 @@ namespace XibFree
 		/// </summary>
 		/// <param name="parentWidth">Parent width.</param>
 		/// <param name="parentHeight">Parent height.</param>
-		protected abstract void onMeasure(float parentWidth, float parentHeight);
+		protected abstract void onMeasure(nfloat parentWidth, nfloat parentHeight);
 
 		// Mark the measurement of this view as invalid
 		public void InvalidateMeasure()
@@ -142,7 +142,7 @@ namespace XibFree
 		/// of this view
 		/// </summary>
 		/// <param name="size">Size.</param>
-		protected void SetMeasuredSize(SizeF size)
+		protected void SetMeasuredSize(CGSize size)
 		{
 			if (LayoutParameters.MinWidth!=0 && size.Width < LayoutParameters.MinWidth)
 				size.Width = LayoutParameters.MinWidth;
@@ -161,7 +161,7 @@ namespace XibFree
 		/// Retrieve the measured dimensions of this view
 		/// </summary>
 		/// <returns>The measured size.</returns>
-		public SizeF GetMeasuredSize()
+		public CGSize GetMeasuredSize()
 		{
 			if (!_measuredSizeValid)
 				throw new InvalidOperationException("Attempt to use measured size before measurement");
@@ -234,7 +234,7 @@ namespace XibFree
 		}
 
 
-		internal SizeF _measuredSize;
+		internal CGSize _measuredSize;
 		internal bool _measuredSizeValid;
 		internal ViewGroup _parent;
 	}

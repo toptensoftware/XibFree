@@ -1,9 +1,9 @@
 using System;
-using System.Drawing;
+using CoreGraphics;
 using System.Collections.Generic;
 
-using MonoTouch.UIKit;
-using MonoTouch.Foundation;
+using UIKit;
+using Foundation;
 
 using XibFree;
 
@@ -51,7 +51,7 @@ namespace Demo
 					new NativeView()
 					{
 						// This is the UIView
-						View = new UIView(RectangleF.Empty)
+						View = new UIView(CGRect.Empty)
 						{
 							// Set properties here
 							BackgroundColor = UIColor.Red,
@@ -81,7 +81,7 @@ namespace Demo
 							new NativeView()
 							{
 								// This time we're showing a UILabel
-								View = new UILabel(RectangleF.Empty)
+								View = new UILabel(CGRect.Empty)
 								{
 									BackgroundColor = UIColor.Purple,
 									Text="Hello World, this is a test to see if things wrap and measure correctly",
@@ -148,7 +148,7 @@ namespace Demo
 							// to match the parent, whereas the height is wrapped.  To calculate the height, XibFree will
 							// call this function.
 							var iv = (UIImageView)v;
-							return new SizeF(s.Width, iv.Image.Size.Height * s.Width / iv.Image.Size.Width);
+							return new CGSize(s.Width, iv.Image.Size.Height * s.Width / iv.Image.Size.Width);
 						},
 					}
 				},

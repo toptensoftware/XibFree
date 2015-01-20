@@ -15,8 +15,8 @@
 //    limitations under the License.
 
 using System;
-using MonoTouch.UIKit;
-using System.Drawing;
+using UIKit;
+using CoreGraphics;
 
 namespace XibFree
 {
@@ -29,7 +29,7 @@ namespace XibFree
 		/// Initializes a new instance of the <see cref="XibFree.UILayoutHost"/> class.
 		/// </summary>
 		/// <param name="layout">Root of the view hierarchy to be hosted by this layout host</param>
-		public UILayoutHost(ViewGroup layout, RectangleF frame) : base(frame)
+		public UILayoutHost(ViewGroup layout, CGRect frame) : base(frame)
 		{
 			this.AutoresizingMask = UIViewAutoresizing.FlexibleDimensions;
 			Layout = layout;
@@ -80,10 +80,10 @@ namespace XibFree
 			return _layout.FindNativeView(view);
 		}
 
-		public override SizeF SizeThatFits(SizeF size)
+		public override CGSize SizeThatFits(CGSize size)
 		{
 			if (_layout==null)
-				return new SizeF(0,0);
+				return new CGSize(0,0);
 
 			// Measure the layout
 			_layout.Measure(size.Width, size.Height);
