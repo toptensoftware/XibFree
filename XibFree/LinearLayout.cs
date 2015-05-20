@@ -494,13 +494,13 @@ namespace XibFree
 		// Helper to get the total measured height of all subviews, including all padding and margins
 		private nfloat getTotalMeasuredHeight()
 		{
-			return (nfloat)(Padding.TotalWidth() + getTotalSpacing() + SubViews.Where(x=>!x.Gone).Sum(x=>x.GetMeasuredSize().Height + x.LayoutParameters.Margins.TotalHeight()));
+			return (nfloat)(Padding.TotalHeight() + getTotalSpacing() + SubViews.Where(x=>!x.Gone).Sum(x=>x.GetMeasuredSize().Height + x.LayoutParameters.Margins.TotalHeight()));
 		}
 		
 		// Helper to get the total measured width of all subviews, including all padding and margins
 		private nfloat getTotalMeasuredWidth()
 		{
-			return (nfloat)(Padding.TotalHeight() + getTotalSpacing() + SubViews.Where(x=>!x.Gone).Sum(x=>x.GetMeasuredSize().Width + x.LayoutParameters.Margins.TotalWidth()));
+			return (nfloat)(Padding.TotalWidth() + getTotalSpacing() + SubViews.Where(x=>!x.Gone).Sum(x=>x.GetMeasuredSize().Width + x.LayoutParameters.Margins.TotalWidth()));
 		}
 
 		// Helper to adjust the parent width passed down to subviews during measurement
