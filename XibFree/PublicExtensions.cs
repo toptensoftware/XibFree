@@ -16,6 +16,7 @@
 
 using System;
 using UIKit;
+using System.Collections.Generic;
 
 namespace XibFree
 {
@@ -47,5 +48,53 @@ namespace XibFree
 			var host = view.GetLayoutHost();
 			return host.Layout;
 		}
+
+        /// <summary>
+        /// Returns the top-level ViewGroup that this view is
+        /// a part of. Returns null if it is not under a group
+        /// yet.
+        /// </summary>
+        public static ViewGroup FindRootGroup(this View view)
+        {
+            ViewGroup parent = null;
+            while (view.Parent != null)
+            {
+                view = parent = view.Parent;
+            }
+            return parent;
+        }
+
+        /// <summary>
+        /// Returns the top-level UIView that this view is being hosted under.
+        /// Returns null if not hosted.
+        /// </summary>
+        public static UIView FindRootView(this View view)
+        {
+            var vg = FindRootGroup(view);
+            if (vg == null)
+                return null;
+            else
+                return vg.GetHost().GetUIView();
+        }
+
+        /// <summary>
+        /// Returns all UIViews at or under the passed view.
+        /// </summary>
+        public static IEnumerable<UIView> FindUIViews(this View view)
+        {
+            var views = new List<UIView>();
+            if (view is NativeView)
+            {
+                views.Add((view as NativeView).View);
+            }
+            else if (view is ViewGroup)
+            {
+                foreach (var child in (view as ViewGroup).SubViews)
+                {
+                    views.AddRange(FindUIViews(child));
+                }
+            }
+            return views;
+        }
 	}
 }

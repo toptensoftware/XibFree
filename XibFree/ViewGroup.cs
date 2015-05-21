@@ -191,7 +191,7 @@ namespace XibFree
 		/// Overridden to locate the parent host for this view hierarchy
 		/// </summary>
 		/// <returns>The host.</returns>
-		internal override ViewGroup.IHost GetHost()
+		public override ViewGroup.IHost GetHost()
 		{
 			// If this view group has been parented into an actual UIView, we'll have a IHost reference
 			// that acts as the host for all views in the hierarchy.  If not, ask our parent

@@ -75,7 +75,7 @@ namespace XibFree
 		}
 
 		// Internal helper to walk the parent view hierachy and find the view that's hosting this view hierarchy
-		internal virtual ViewGroup.IHost GetHost()
+		public virtual ViewGroup.IHost GetHost()
 		{
 			if (_parent==null)
 				return null;
@@ -225,6 +225,33 @@ namespace XibFree
 			}
 		}
 
+        public void Hide(bool collapsed, bool animate)
+        {
+            LayoutParameters.Visibility = (collapsed) ? Visibility.Gone : Visibility.Invisible;
+            ShowHide(false, animate);
+        }
+
+        public void Show(bool animate)
+        {
+            LayoutParameters.Visibility = Visibility.Visible;
+            ShowHide(true, animate);
+        }
+
+        private void ShowHide(bool show, bool animate)
+        {
+            var root = this.FindRootView();
+            UIView.Animate(0.25f, delegate
+            {
+                foreach (var uiview in this.FindUIViews())
+                {
+                    uiview.Alpha = (show) ? 1.0f : 0.0f;
+                }
+            }, delegate
+            {
+                root.SetNeedsLayout();
+            });
+        }
+            
 		public void RemoveFromSuperview()
 		{
 			if (Parent!=null)
