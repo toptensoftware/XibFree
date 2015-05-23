@@ -397,9 +397,12 @@ namespace XibFree
 						x = newPosition.Right - Padding.Right - v.LayoutParameters.Margins.Right - size.Width;
 						break;
 
-					case Gravity.CenterHorizontal:
-						x = (newPosition.Left + newPosition.Right)/2
-							- (size.Width + v.LayoutParameters.Margins.TotalWidth())/2;
+                    case Gravity.CenterHorizontal:
+                        nfloat boxWidth = newPosition.Right - newPosition.Left - 
+                            Padding.TotalWidth() - v.LayoutParameters.Margins.TotalWidth();
+                        nfloat offsetInBox = (boxWidth - size.Width)/2;
+                        x =  newPosition.Left + Padding.Left + v.LayoutParameters.Margins.Left +
+                            offsetInBox;
 						break;
 				}
 
