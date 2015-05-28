@@ -239,7 +239,7 @@ namespace XibFree
 
         private void ShowHide(bool show, bool animate)
         {
-            var root = this.FindRootView();
+            var root = this.FindRootUIView();
             UIView.Animate(0.25f, delegate
             {
                 foreach (var uiview in this.FindUIViews())
