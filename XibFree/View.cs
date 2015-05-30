@@ -224,7 +224,7 @@ namespace XibFree
 				LayoutParameters.Visibility = value ? Visibility.Visible : Visibility.Invisible;
 			}
 		}
-
+            
         public void Hide(bool collapsed, bool animate)
         {
             LayoutParameters.Visibility = (collapsed) ? Visibility.Gone : Visibility.Invisible;
@@ -237,10 +237,28 @@ namespace XibFree
             ShowHide(true, animate);
         }
 
+        public void SetVisibility(bool visible, bool animate)
+        {
+            if (visible)
+                Show(animate);
+            else
+                Hide(true, animate);
+        }
+
+        public void SetVisibility(Visibility visibility, bool animate)
+        {
+            if (LayoutParameters.Visibility != visibility)
+            {
+                LayoutParameters.Visibility = visibility;
+                ShowHide(visibility == Visibility.Visible, animate);
+            }
+        }
+            
         private void ShowHide(bool show, bool animate)
         {
+            double delay = animate ? 0.25 : 0.0;
             var root = this.FindRootUIView();
-            UIView.Animate(0.25f, delegate
+            UIView.Animate(delay, delegate
             {
                 foreach (var uiview in this.FindUIViews())
                 {

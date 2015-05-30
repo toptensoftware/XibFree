@@ -367,7 +367,16 @@ namespace XibFree
 				// Hide hidden views
 				if (v.Gone)
 				{
-					v.Layout(CGRect.Empty, false);
+                    try
+                    {
+                        v.Layout(CGRect.Empty, false);
+                    }
+                    catch (Exception ex)
+                    {
+                        // mmuegel: see exception when Visibility=Gone initially; could
+                        // not figure it out, so this *appears* to be hack work around
+                        System.Diagnostics.Debug.WriteLine("error laying out Gone view " + v);
+                    }
 					continue;
 				}
 

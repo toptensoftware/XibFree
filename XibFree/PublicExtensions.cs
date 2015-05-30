@@ -108,7 +108,7 @@ namespace XibFree
         /// </summary>
         public static UIView FindNearestGroupUIView(this View view)
         {
-            return view.FindNearestGroup()?.GetHost().GetUIView();
+            return view.FindNearestGroup()?.GetHost()?.GetUIView();
         }
 
         /// <summary>
