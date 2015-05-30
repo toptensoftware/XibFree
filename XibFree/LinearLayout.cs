@@ -371,7 +371,7 @@ namespace XibFree
                     {
                         v.Layout(CGRect.Empty, false);
                     }
-                    catch (Exception ex)
+                    catch
                     {
                         // mmuegel: see exception when Visibility=Gone initially; could
                         // not figure it out, so this *appears* to be hack work around
