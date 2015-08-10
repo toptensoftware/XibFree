@@ -261,7 +261,7 @@ namespace XibFree
 			{
 				foreach (var v in SubViews)
 				{
-					v.Layout(CGRect.Empty, false);
+					v.Layout(CGRect.Empty, true);
 				}
 				return;
 			}
