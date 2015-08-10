@@ -256,16 +256,20 @@ namespace XibFree
 				}
 			}
 
-			// Hide all subviews
-			if (parentHidden || !Visible)
-			{
-				foreach (var v in SubViews)
-				{
-					v.Layout(CGRect.Empty, true);
-				}
-				return;
-			}
+            HideSubviewsIfNeeded(parentHidden);
 		}
+
+        protected void HideSubviewsIfNeeded(bool parentHidden) 
+        {
+            // Hide all subviews
+            if (parentHidden || !Visible)
+            {
+                foreach (var v in SubViews)
+                {
+                    v.Layout(CGRect.Empty, true);
+                }
+            }
+        }
 		public int Tag
 		{
 			get;

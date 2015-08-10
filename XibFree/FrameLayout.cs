@@ -160,6 +160,8 @@ namespace XibFree
 					v.Layout(subViewPosition, false);
 				}
 			}
+
+            HideSubviewsIfNeeded(parentHidden);
 		}
 
 		public Gravity Gravity
