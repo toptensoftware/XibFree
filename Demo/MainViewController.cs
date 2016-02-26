@@ -48,6 +48,8 @@ namespace Demo
 			{
 				new Demo() { Title = "#1 Basics", TClass = typeof(Demo1) },
 				new Demo() { Title = "LinearLayout", TClass = typeof(LinearLayoutDemo) },
+				new Demo() { Title = "LinearLayout2", TClass = typeof(LinearLayoutDemo2) },
+				new Demo() { Title = "GridLayout", TClass = typeof(GridLayoutDemo) },
 				new Demo() { Title = "FrameLayout", TClass = typeof(FrameLayoutDemo) },
 				new Demo() { Title = "Nested Hosts", TClass = typeof(NestedDemo) },
 				new Demo() { Title = "Nested Hosts Visibility Bug", TClass = typeof(NestedDemoVisibilityBug) },

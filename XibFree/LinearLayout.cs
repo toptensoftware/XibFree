@@ -215,6 +215,7 @@ namespace XibFree
 
 			// Work out the total fixed size
 			nfloat totalFixedSize = 0;
+			nfloat totalWidth = 0;
 			double totalWeight = 0;
 			int visibleViewCount = 0;
 			foreach (var v in SubViews.Where(x=>!x.Gone))
@@ -229,12 +230,12 @@ namespace XibFree
 				else
 				{
 					// Lay it out
-					v.Measure(nfloat.MaxValue, adjustLayoutHeight(layoutHeight, v));
-					totalFixedSize += v.GetMeasuredSize().Width;
+					v.Measure(parentWidth, adjustLayoutHeight(layoutHeight, v));
+					totalWidth += v.GetMeasuredSize().Width;
 				}
 				
 				// Include margins
-				totalFixedSize += v.LayoutParameters.Margins.TotalWidth();
+				totalFixedSize += v.LayoutParameters.Margins.TotalWidth() + v.LayoutParameters.MinWidth;
 				visibleViewCount++;
 			}
 
@@ -242,9 +243,37 @@ namespace XibFree
 			totalFixedSize += Padding.TotalWidth();
 
 			// And spacing between controls
-			if (visibleViewCount>1)
-				totalFixedSize += (visibleViewCount-1) * Spacing;
-			
+			if (visibleViewCount > 1) {
+				totalFixedSize += (visibleViewCount - 1) * Spacing;
+			}
+
+            if ((totalFixedSize + totalWidth) > parentWidth)
+            {
+                totalWidth = 0;
+                var leftWidth = parentWidth - totalFixedSize;
+                foreach (var v in SubViews.Where(x=>!x.Gone))
+                {
+                    if (v.LayoutParameters.WidthUnits == Units.ParentRatio)
+                    {
+                        // We'll deal with this later
+
+                        // For now, lets just total up the specified weights
+                        //totalWeight += v.LayoutParameters.Weight;
+                    }
+                    else
+                    {
+                        // Lay it out
+                        v.Measure((nfloat)Math.Max(leftWidth + v.LayoutParameters.MinWidth, v.LayoutParameters.MinWidth), adjustLayoutHeight(layoutHeight, v));
+                        totalWidth += v.GetMeasuredSize().Width - v.LayoutParameters.MinWidth;
+                        leftWidth -= v.GetMeasuredSize().Width - v.LayoutParameters.MinWidth;
+                    }
+                }
+            }
+            else
+            {
+                totalFixedSize += totalWidth;
+            }
+
 			nfloat totalVariableSize = 0;
 			if (LayoutParameters.WidthUnits == Units.ContentRatio || layoutWidth == nfloat.MaxValue)
 			{
@@ -381,6 +410,11 @@ namespace XibFree
 
 				CGSize size = v.GetMeasuredSize();
 
+				if (size.Width > newPosition.Width) {
+					v.Measure (newPosition.Width, nfloat.MaxValue);
+					size = v.GetMeasuredSize();
+				}
+
 				// Work out horizontal gravity for this control
 				var g = v.LayoutParameters.Gravity & Gravity.HorizontalMask;
 				if (g == Gravity.None)
@@ -473,7 +507,7 @@ namespace XibFree
 				}
 				
 				
-				v.Layout(new CGRect(x, y, size.Width, size.Height), false);
+				v.Layout(new CGRect(x, y, (nfloat)Math.Min(size.Width, newPosition.Width), size.Height), false);
 				
 				x += size.Width + v.LayoutParameters.Margins.Right;
 			}
