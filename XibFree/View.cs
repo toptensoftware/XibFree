@@ -237,6 +237,11 @@ namespace XibFree
 		internal CGSize _measuredSize;
 		internal bool _measuredSizeValid;
 		internal ViewGroup _parent;
+
+
+		//for displaying inside GridLayout
+		public virtual int Row { get; set; }
+		public virtual int Column { get; set; }
 	}
 }
 
