@@ -29,14 +29,14 @@
 				};
 
 				// Create some items
-				var r = new Random();
+				//var r = new Random();
 				for (int i=0; i<100; i++)
 				{
 					var item = new Item();
 					item.Title =  string.Format("Item {0}", i+1);
-					item.Total = r.Next(1000);
-					item.Count = r.Next(item.Total);
-					item.LongText = messages[r.Next(messages.Length)];
+					item.Total = i + 1;
+                item.Count = (int)(i*0.85);
+					item.LongText = messages[i%messages.Length];
 					_items.Add(item);
 				}
 

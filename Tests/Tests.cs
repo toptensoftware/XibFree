@@ -5,6 +5,7 @@ using NUnit.Framework;
 using Xamarin.UITest;
 using Xamarin.UITest.iOS;
 using Xamarin.UITest.Queries;
+using System.Drawing;
 
 namespace Tests
 {
@@ -70,13 +71,13 @@ namespace Tests
         {
             TestScreen("Nested Hosts Visibility Bug", () => {
                 app.Tap(x=>x.Button("Hide/Show"));
-                ScreenshotAndCompare("NestedHosts_VisibilityBug_1");
+                ScreenshotAndCompare("Nested Hosts Visibility Bug 1");
 
                 app.Tap(x=>x.Button("Hide/Show"));
-                ScreenshotAndCompare("NestedHosts_VisibilityBug_2");
+                ScreenshotAndCompare("Nested Hosts Visibility Bug 2");
 
                 app.Tap(x=>x.Button("Hide/Show"));
-                ScreenshotAndCompare("NestedHosts_VisibilityBug_3");
+                ScreenshotAndCompare("Nested Hosts Visibility Bug 3");
             });
         }
         [Test]
@@ -114,13 +115,13 @@ namespace Tests
         {
             TestScreen("Recalculate Layout", () => {
                 app.Tap(x=>x.Button("Change"));
-                ScreenshotAndCompare("RecalculateLayout_1");
+                ScreenshotAndCompare("Recalculate Layout 1");
 
                 app.Tap(x=>x.Button("Change"));
-                ScreenshotAndCompare("RecalculateLayout_2");
+                ScreenshotAndCompare("Recalculate Layout 2");
 
                 app.Tap(x=>x.Button("Change"));
-                ScreenshotAndCompare("RecalculateLayout_3");
+                ScreenshotAndCompare("Recalculate Layout 3");
 
             });
         }
@@ -156,11 +157,28 @@ namespace Tests
             
             try
             {
-                var bytes1 = File.ReadAllBytes(file1);
-                var bytes2 = File.ReadAllBytes(file2);
+                var image1 = Bitmap.FromFile(file1);
+                var image2 = Bitmap.FromFile(file2);
 
+                byte[] image1Bytes;
+                byte[] image2Bytes;
 
-                if ((new FileInfo(file1).Length) != (new FileInfo(file2).Length)) 
+                using(var mstream = new MemoryStream())
+                {
+                    image1.Save(mstream, image1.RawFormat);
+                    image1Bytes = mstream.ToArray();
+                }
+
+                using(var mstream = new MemoryStream())
+                {
+                    image2.Save(mstream, image2.RawFormat);
+                    image2Bytes = mstream.ToArray();
+                }
+
+                var image164 = Convert.ToBase64String(image1Bytes);
+                var image264 = Convert.ToBase64String(image2Bytes);
+
+                if (!string.Equals(image164, image264)) 
                 {
                     throw new InvalidOperationException("images don't match");
                 }

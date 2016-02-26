@@ -52,7 +52,7 @@ namespace Demo
 				new Demo() { Title = "GridLayout", TClass = typeof(GridLayoutDemo) },
 				new Demo() { Title = "FrameLayout", TClass = typeof(FrameLayoutDemo) },
 				new Demo() { Title = "Nested Hosts", TClass = typeof(NestedDemo) },
-				new Demo() { Title = "Nested Hosts Visibility Bug", TClass = typeof(NestedDemoVisibilityBug) },
+                new Demo() { Title = "Nested Hosts Visibility Bug", TClass = typeof(NestedDemoVisibilityBug) },
 				new Demo() { Title = "ViewGroup Layers", TClass = typeof(ViewGroupLayerDemo) },
 				new Demo() { Title = "TableViewCell", TClass = typeof(TableViewCellDemo) },
 				new Demo() { Title = "TableViewCell Variable", TClass = typeof(TableViewCellDemo2) },
