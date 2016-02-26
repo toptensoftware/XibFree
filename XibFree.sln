@@ -5,6 +5,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XibFree", "XibFree\XibFree.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Demo", "Demo\Demo.csproj", "{3AB2BCA1-4E9C-44FD-81AD-5B8F2B4F6BE0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{31DC5CDA-7F17-4B7F-8AF8-71B6A9D70B89}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|iPhoneSimulator = Debug|iPhoneSimulator
@@ -15,6 +17,18 @@ Global
 		AppStore|iPhone = AppStore|iPhone
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{31DC5CDA-7F17-4B7F-8AF8-71B6A9D70B89}.Ad-Hoc|iPhone.ActiveCfg = Release|Any CPU
+		{31DC5CDA-7F17-4B7F-8AF8-71B6A9D70B89}.Ad-Hoc|iPhone.Build.0 = Release|Any CPU
+		{31DC5CDA-7F17-4B7F-8AF8-71B6A9D70B89}.AppStore|iPhone.ActiveCfg = Release|Any CPU
+		{31DC5CDA-7F17-4B7F-8AF8-71B6A9D70B89}.AppStore|iPhone.Build.0 = Release|Any CPU
+		{31DC5CDA-7F17-4B7F-8AF8-71B6A9D70B89}.Debug|iPhone.ActiveCfg = Debug|Any CPU
+		{31DC5CDA-7F17-4B7F-8AF8-71B6A9D70B89}.Debug|iPhone.Build.0 = Debug|Any CPU
+		{31DC5CDA-7F17-4B7F-8AF8-71B6A9D70B89}.Debug|iPhoneSimulator.ActiveCfg = Debug|Any CPU
+		{31DC5CDA-7F17-4B7F-8AF8-71B6A9D70B89}.Debug|iPhoneSimulator.Build.0 = Debug|Any CPU
+		{31DC5CDA-7F17-4B7F-8AF8-71B6A9D70B89}.Release|iPhone.ActiveCfg = Release|Any CPU
+		{31DC5CDA-7F17-4B7F-8AF8-71B6A9D70B89}.Release|iPhone.Build.0 = Release|Any CPU
+		{31DC5CDA-7F17-4B7F-8AF8-71B6A9D70B89}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
+		{31DC5CDA-7F17-4B7F-8AF8-71B6A9D70B89}.Release|iPhoneSimulator.Build.0 = Release|Any CPU
 		{3AB2BCA1-4E9C-44FD-81AD-5B8F2B4F6BE0}.Ad-Hoc|iPhone.ActiveCfg = Ad-Hoc|iPhone
 		{3AB2BCA1-4E9C-44FD-81AD-5B8F2B4F6BE0}.Ad-Hoc|iPhone.Build.0 = Ad-Hoc|iPhone
 		{3AB2BCA1-4E9C-44FD-81AD-5B8F2B4F6BE0}.AppStore|iPhone.ActiveCfg = AppStore|iPhone

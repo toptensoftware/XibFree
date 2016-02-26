@@ -38,6 +38,10 @@ namespace Demo
 			// make the window visible
 			window.MakeKeyAndVisible();
 			
+            //#if ENABLE_TEST_CLOUD
+            Xamarin.Calabash.Start();
+            //#endif
+
 			return true;
 		}
 	}

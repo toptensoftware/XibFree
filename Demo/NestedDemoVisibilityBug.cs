@@ -73,6 +73,7 @@ namespace Demo
                         {
                             Font = UIFont.SystemFontOfSize(24),
                             BackgroundColor = UIColor.Clear,
+                                        AccessibilityIdentifier = "Hide/Show",
                         },
                         Init = v =>
                         {

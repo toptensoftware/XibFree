@@ -75,7 +75,8 @@ namespace Demo
 				}
 
 				cell.TextLabel.Text = _demos[indexPath.Row].Title;
-
+                cell.AccessibilityIdentifier = _demos[indexPath.Row].Title;
+                cell.AccessibilityLabel = _demos[indexPath.Row].Title;
 				return cell;
 			}
 
