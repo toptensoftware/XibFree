@@ -95,6 +95,13 @@ namespace Tests
         {
             TestScreen("TableViewCell Variable");
         }
+
+        [Test]
+        public void WrapLayout()
+        {
+            TestScreen("Wrap Layout");
+        }
+
         [Test]
         public void Visibility()
         {

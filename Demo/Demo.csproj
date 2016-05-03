@@ -118,6 +118,7 @@
     <Compile Include="NestedDemoVisibilityBug.cs" />
     <Compile Include="LinearLayoutDemo2.cs" />
     <Compile Include="GridLayoutDemo.cs" />
+    <Compile Include="WrapLayoutDemo.cs" />
   </ItemGroup>
   <ItemGroup>
     <BundleResource Include="Resources\chrome_topten.png" />

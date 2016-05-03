@@ -507,7 +507,7 @@ namespace XibFree
 				}
 				
 				
-				v.Layout(new CGRect(x, y, (nfloat)Math.Min(size.Width, newPosition.Width), size.Height), false);
+                v.Layout(new CGRect(x, y, (nfloat)Math.Min(size.Width, newPosition.Width), size.Height), false);
 				
 				x += size.Width + v.LayoutParameters.Margins.Right;
 			}
