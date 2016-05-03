@@ -34,8 +34,16 @@ namespace Demo
 				SubViews = new View[] 
 				{
 					// Here we're nesting a horizontal linear layout inside the outer vertical linear layout
-					new LinearLayout(Orientation.Vertical)
+					new GridLayout()
 					{
+                                RowDefinitions = new[] {
+                                    new RowDefinition(),
+                                    new RowDefinition(),
+                                },
+                                ColumnDefinitions = new[] {
+                                    new ColumnDefinition(),
+                                    new ColumnDefinition(),
+                                },
 						// How to layout this linear layout within the outer one
 						LayoutParameters = new LayoutParameters()
 						{
@@ -45,7 +53,7 @@ namespace Demo
 
 						// Sub view collection
 						SubViews = new View[]
-						{/*
+						{
 							new NativeView()
 							{
 								// This time we're showing a UILabel
@@ -121,7 +129,7 @@ namespace Demo
 									Width = AutoSize.WrapContent,
 									Height = AutoSize.WrapContent,		// Height calculated automatically based on text content!
 								},
-							},*/
+							},
 						}
 					},
 				},

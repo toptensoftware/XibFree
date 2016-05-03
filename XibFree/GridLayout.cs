@@ -17,520 +17,301 @@
 using System;
 using CoreGraphics;
 using System.Linq;
+using System.Collections.Generic;
 
 namespace XibFree
 {
-	public class GridLayout : ViewGroup
-	{
-		/// <summary>
-		/// Initializes a new instance of the <see cref="XibFree.LinearLayout"/> class.
-		/// </summary>
-		/// <param name="orientation">Specifies the horizontal or vertical orientation of this layout.</param>
-		public GridLayout()
-		{
-			Gravity = Gravity.TopLeft;
-		}
+    public class RowDefinition
+    {
+        public nfloat Height { get; set; }
+        public nfloat MaxHeight { get; set; }
+        public nfloat MinHeight { get; set; }
 
-		/// <summary>
-		/// Explicitly specify the total weight of the sub views that have size of FillParent
-		/// </summary>
-		/// <value>The total weight.</value>
-		/// <description>If not specified, the total weight is calculated by adding the LayoutParameters.Weight of
-		/// each subview that has a size of FillParent.</description>
-		public nfloat TotalWeight
-		{
-			get
-			{
-				return _totalWeight;
-			}
-			set
-			{
-				_totalWeight = value;
-			}
-		}
+        public Units Unit { get; set; }
 
-		/// <summary>
-		/// Specifies the gravity for views contained within this layout
-		/// </summary>
-		/// <value>One of the Gravity constants</value>
-		public Gravity Gravity
-		{
-			get;
-			set;
-		}
+        /// <summary>
+        /// Gets or sets the weight of a AutoSize.FillParent view relative to its sibling views
+        /// </summary>
+        /// <value>The weighting value for this view's size.</value>
+        public double Weight
+        {
+            get;
+            set;
+        }
 
-		/// <summary>
-		/// Gets or sets the spacing between stacked subviews
-		/// </summary>
-		/// <value>The amount of spacing.</value>
-		public nfloat Spacing
-		{
-			get;
-			set;
-		}
+        public RowDefinition()
+        {
+            Height = AutoSize.WrapContent;
+            Weight = 1;
+        }
 
-		// Overridden to provide layout measurement
-		protected override void onMeasure(nfloat parentWidth, nfloat parentHeight)
-		{
-			if (_orientation==Orientation.Vertical)
-			{
-				MeasureVertical(parentWidth, parentHeight);
-			}
-			else
-			{
-				MeasureHorizontal(parentWidth, parentHeight);
-			}
-		}
+        internal nfloat YPosition { get; set; }
 
-		// Do measurement when in vertical orientation
-		private void MeasureVertical(nfloat parentWidth, nfloat parentHeight)
-		{
-			// Work out our width
-			var width = LayoutParameters.TryResolveWidth(this, parentWidth);
-			var height = LayoutParameters.TryResolveHeight(this, parentHeight);
+        internal nfloat CalculatedHeight { get; set; }
+    }
 
-			// Allow room for padding
-			if (width != nfloat.MaxValue)
-				width -= Padding.TotalWidth();
+    public class ColumnDefinition
+    {
+        public nfloat Width { get; set; }
+        public nfloat MinWidth { get; set; }
+        public nfloat MaxWidth { get; set; }
 
-			// Work out the total fixed size
-			nfloat totalFixedSize = 0;
-			double totalWeight = 0;
-			int visibleViewCount = 0;
-			foreach (var v in SubViews.Where(x=>!x.Gone))
-			{
-				if (v.LayoutParameters.HeightUnits==Units.ParentRatio)
-				{
-					// We'll deal with this later
-					
-					// For now, lets just total up the specified weights
-					totalWeight += v.LayoutParameters.Weight;
-				}
-				else
-				{
-					// Lay it out
-					v.Measure(adjustLayoutWidth(width, v), nfloat.MaxValue);
-					totalFixedSize += v.GetMeasuredSize().Height;
-				}
-				
-				// Include margins
-				totalFixedSize += v.LayoutParameters.Margins.TotalHeight();
-				visibleViewCount++;
-			}
-			
-			
-			// Also need to include our own padding
-			totalFixedSize += Padding.TotalHeight();
+        public Units Unit { get; set; }
 
-			// And spacing between controls
-			if (visibleViewCount>1)
-				totalFixedSize += (visibleViewCount-1) * Spacing;
+        /// <summary>
+        /// Gets or sets the weight of a AutoSize.FillParent view relative to its sibling views
+        /// </summary>
+        /// <value>The weighting value for this view's size.</value>
+        public double Weight
+        {
+            get;
+            set;
+        }
 
-			nfloat totalVariableSize = 0;
-			if (LayoutParameters.HeightUnits == Units.ContentRatio || height == nfloat.MaxValue)
-			{
-				// This is a weird case: we have a height of wrap content, but child items that want to fill parent too.
-				// Temporarily switch those items to wrap content and use their natural size
-				foreach (var v in SubViews.Where(x=>!x.Gone && x.LayoutParameters.HeightUnits==Units.ParentRatio))
-				{
-					v.Measure(adjustLayoutWidth(width, v), nfloat.MaxValue);
-					totalVariableSize += v.GetMeasuredSize().Height;
-				}
-			}
-			else
-			{
-				// If we've had an explicit weight passed to us, ignore the calculated total weight and use it instead
-				if (_totalWeight!=0)
-					totalWeight = _totalWeight;
-				
-				// Work out how much room we've got to share around
-				nfloat room = height - totalFixedSize;
+        public ColumnDefinition()
+        {
+            Width = AutoSize.WrapContent;
+            Weight = 1;
+        }
 
-				// Layout the fill parent items
-				foreach (var v in SubViews.Where(x=>!x.Gone && x.LayoutParameters.HeightUnits==Units.ParentRatio))
-				{
-					// Work out size
-					if (room<0)
-						room = 0;
-					nfloat size = (nfloat)(totalWeight==0 ? room : room * v.LayoutParameters.Weight / totalWeight);
+        internal nfloat XPosition { get; set; }
 
-					// Measure it
-					v.Measure(adjustLayoutWidth(width, v), size);
+        internal nfloat CalculatedWidth { get; set; }
+    }
 
-					// Update total size
-					totalVariableSize += v.GetMeasuredSize().Height;
+    public class GridLayout : ViewGroup
+    {
 
-					// Adjust the weighting calculation in case the view didn't accept our measurement
-					room -= v.GetMeasuredSize().Height;
-					totalWeight -= v.LayoutParameters.Weight;
-				}
-			}
+        public IList<RowDefinition> RowDefinitions { get; set; }
 
-			CGSize sizeMeasured = CGSize.Empty;
+        public IList<ColumnDefinition> ColumnDefinitions { get; set; }
 
-			if (width == nfloat.MaxValue)
-			{
-				// Work out the maximum width of all children that aren't fill parent
-				sizeMeasured.Width = 0;
-				foreach (var v in SubViews.Where(x=>!x.Gone && x.LayoutParameters.WidthUnits!=Units.ParentRatio))
-				{
-					nfloat totalChildWidth = v.GetMeasuredSize().Width + v.LayoutParameters.Margins.TotalWidth();
-					if (totalChildWidth > sizeMeasured.Width)
-						sizeMeasured.Width = totalChildWidth;
-				}
-				
-				// Set the width of all children that are fill parent
-				foreach (var v in SubViews.Where(x=>!x.Gone && x.LayoutParameters.WidthUnits==Units.ParentRatio))
-				{
-					v.Measure(sizeMeasured.Width, v.GetMeasuredSize().Height);
-				}
+        /// <summary>
+        /// Initializes a new instance of the <see cref="XibFree.LinearLayout"/> class.
+        /// </summary>
+        /// <param name="orientation">Specifies the horizontal or vertical orientation of this layout.</param>
+        public GridLayout()
+        {
+            Gravity = Gravity.TopLeft;
+        }
 
-				sizeMeasured.Width += Padding.TotalWidth();
-			}
-			else
-			{
-				width += Padding.TotalWidth();
-			}
+        /// <summary>
+        /// Explicitly specify the total weight of the sub views that have size of FillParent
+        /// </summary>
+        /// <value>The total weight.</value>
+        /// <description>If not specified, the total weight is calculated by adding the LayoutParameters.Weight of
+        /// each subview that has a size of FillParent.</description>
+        public nfloat TotalWeight
+        {
+            get
+            {
+                return _totalWeight;
+            }
+            set
+            {
+                _totalWeight = value;
+            }
+        }
 
-			if (height == nfloat.MaxValue)
-			{
-				height = totalFixedSize + totalVariableSize;
-			}
-			
-			// And finally, set our measure dimensions
-			SetMeasuredSize(LayoutParameters.ResolveSize(new CGSize(width, height), sizeMeasured));
-		}
+        /// <summary>
+        /// Specifies the gravity for views contained within this layout
+        /// </summary>
+        /// <value>One of the Gravity constants</value>
+        public Gravity Gravity
+        {
+            get;
+            set;
+        }
 
-		// Do measurement when in horizontal orientation
-		private void MeasureHorizontal(nfloat parentWidth, nfloat parentHeight)
-		{
-			// Work out our height
-			nfloat layoutWidth = LayoutParameters.TryResolveWidth(this, parentWidth);
-			nfloat layoutHeight = LayoutParameters.TryResolveHeight(this, parentHeight);
+        /// <summary>
+        /// Gets or sets the spacing between stacked subviews
+        /// </summary>
+        /// <value>The amount of spacing.</value>
+        public nfloat ColSpacing
+        {
+            get;
+            set;
+        }
 
-			// Allow room for padding
-			if (layoutHeight != nfloat.MaxValue)
-				layoutHeight -= Padding.TotalHeight();
+        /// <summary>
+        /// Gets or sets the spacing between stacked subviews
+        /// </summary>
+        /// <value>The amount of spacing.</value>
+        public nfloat RowSpacing
+        {
+            get;
+            set;
+        }
 
-			// Work out the total fixed size
-			nfloat totalFixedSize = 0;
-			double totalWeight = 0;
-			int visibleViewCount = 0;
-			foreach (var v in SubViews.Where(x=>!x.Gone))
-			{
-				if (v.LayoutParameters.WidthUnits==Units.ParentRatio)
-				{
-					// We'll deal with this later
-					
-					// For now, lets just total up the specified weights
-					totalWeight += v.LayoutParameters.Weight;
-				}
-				else
-				{
-					// Lay it out
-					v.Measure(nfloat.MaxValue, adjustLayoutHeight(layoutHeight, v));
-					totalFixedSize += v.GetMeasuredSize().Width;
-				}
-				
-				// Include margins
-				totalFixedSize += v.LayoutParameters.Margins.TotalWidth();
-				visibleViewCount++;
-			}
+        // Overridden to provide layout measurement
+        protected override void onMeasure(nfloat parentWidth, nfloat parentHeight)
+        {
+            Measure(parentWidth, parentHeight);
+        }
 
-			// Also need to include our own padding
-			totalFixedSize += Padding.TotalWidth();
 
-			// And spacing between controls
-			if (visibleViewCount>1)
-				totalFixedSize += (visibleViewCount-1) * Spacing;
-			
-			nfloat totalVariableSize = 0;
-			if (LayoutParameters.WidthUnits == Units.ContentRatio || layoutWidth == nfloat.MaxValue)
-			{
-				// This is a weird case: we have a width of wrap content, but child items that want to fill parent too.
-				// Temporarily switch those items to wrap content and use their natural size
-				foreach (var v in SubViews.Where(x=>!x.Gone && x.LayoutParameters.WidthUnits==Units.ParentRatio))
-				{
-					v.Measure(nfloat.MaxValue, adjustLayoutHeight(layoutHeight, v));
-					totalVariableSize += v.GetMeasuredSize().Width;
-				}
-			}
-			else
-			{
-				// If we've had an explicit weight passed to us, ignore the calculated total weight and use it instead
-				if (_totalWeight!=0)
-					totalWeight = _totalWeight;
-				
-				// Work out how much room we've got to share around
-				nfloat room = layoutWidth - totalFixedSize;
+        // Do measurement when in horizontal orientation
+        private void Measure(nfloat parentWidth, nfloat parentHeight)
+        {
+            // Work out our height
+            nfloat layoutWidth = LayoutParameters.TryResolveWidth(this, parentWidth);
+            nfloat layoutHeight = LayoutParameters.TryResolveHeight(this, parentHeight);
 
-				// Layout the fill parent items
-				foreach (var v in SubViews.Where(x=>!x.Gone && x.LayoutParameters.WidthUnits==Units.ParentRatio))
-				{
-					// Work out size
-					if (room<0)
-						room = 0;
-					nfloat size = (nfloat)(totalWeight==0 ? room : room * v.LayoutParameters.Weight / totalWeight);
+            // Work out the total fixed size
+            var paddings = Padding.TotalWidth();
 
-					// Measure it
-					v.Measure(size, adjustLayoutHeight(layoutHeight, v));
+            _goneViews = new List<View>();
+            _views = new Dictionary<Tuple<int, int>, View>();
 
-					// Update total size
-					totalVariableSize += v.GetMeasuredSize().Width;
 
-					// Adjust the weighting calculation in case the view didn't accept our measurement
-					room -= v.GetMeasuredSize().Width;
-					totalWeight -= v.LayoutParameters.Weight;
-				}
-			}
+            //Func<nfloat> spacing = () => visibleViewCount == 0 ? 0 : Spacing;
+            foreach (var v in SubViews)
+            {
+                _views[Tuple.Create(v.Row, v.Column)] = v;
+                var columnDefinition = ColumnDefinitions[v.Column];
+                var rowDefinition = RowDefinitions[v.Column];
+                var width = columnDefinition.MaxWidth > 0 ? ColumnDefinitions[v.Column].MaxWidth : parentWidth- paddings;
+                v.Measure(width  - v.LayoutParameters.Margins.TotalWidth(), adjustLayoutHeight(layoutHeight, v));
+            
+                var measured = v.GetMeasuredSize();
+                columnDefinition.CalculatedWidth = NMath.Max(columnDefinition.CalculatedWidth, measured.Width);
+                rowDefinition.CalculatedHeight = NMath.Max(rowDefinition.CalculatedHeight, measured.Height);
+            }
 
-			CGSize sizeMeasured = CGSize.Empty;
+//
+//                var width = v.GetMeasuredSize().Width + v.LayoutParameters.Margins.TotalWidth();
+//
+//                if (row.Width + width + spacing() > parentWidth)
+//                {
+//                    visibleViewCount = 0;
+//                    var newRow = new Row();
+//                    newRow.YPosition = row.YPosition + row.Height;
+//                    row = newRow;
+//                    _rows.Add(row);
+//                }
+//                row.Width += v.GetMeasuredSize().Width + v.LayoutParameters.Margins.TotalWidth() + spacing();
+//                row.Height = NMath.Max(row.Height, v.GetMeasuredSize().Height);
+//
+//                visibleViewCount++;
+//                layoutWidth = NMath.Max(layoutWidth, row.Width);
+//                row.Views.Add(v);
+//            }
+//
+//            layoutHeight = row.YPosition + row.Height;
+//
+            CGSize sizeMeasured = CGSize.Empty;
+//
+//            layoutHeight += Padding.TotalHeight();
+//            layoutWidth += Padding.TotalWidth();
 
-			if (layoutHeight == nfloat.MaxValue)
-			{
-				// Work out the maximum height of all children that aren't fill parent
-				sizeMeasured.Height = 0;
-				foreach (var v in SubViews.Where(x=>!x.Gone && x.LayoutParameters.HeightUnits!=Units.ParentRatio))
-				{
-					nfloat totalChildHeight = v.GetMeasuredSize().Height + v.LayoutParameters.Margins.TotalHeight();
-					if (totalChildHeight > sizeMeasured.Height)
-						sizeMeasured.Height = totalChildHeight;
-				}
-				
-				// Set the height of all children that are fill parent
-				foreach (var v in SubViews.Where(x=>!x.Gone && x.LayoutParameters.HeightUnits==Units.ParentRatio))
-				{
-					v.Measure(v.GetMeasuredSize().Width, sizeMeasured.Height);
-				}
+            // And finally, set our measure dimensions
+            SetMeasuredSize(LayoutParameters.ResolveSize(new CGSize(layoutWidth, layoutHeight), sizeMeasured));
+        }
 
-				sizeMeasured.Height += Padding.TotalHeight();
-			}
-			else
-			{
-				layoutHeight += Padding.TotalHeight();
-			}
 
-			
 
-			if (layoutWidth == nfloat.MaxValue)
-			{
-				layoutWidth = totalFixedSize + totalVariableSize;
-			}
-			
-			// And finally, set our measure dimensions
-			SetMeasuredSize(LayoutParameters.ResolveSize(new CGSize(layoutWidth, layoutHeight), sizeMeasured));
-		}
+        // Overridden to layout the subviews
+        protected override void onLayout(CGRect newPosition, bool parentHidden)
+        {
+            base.onLayout(newPosition, parentHidden);
 
-		// Overridden to layout the subviews
-		protected override void onLayout(CGRect newPosition, bool parentHidden)
-		{
-			base.onLayout(newPosition, parentHidden);
+            if (!parentHidden && Visible)
+            {
+                Layout(newPosition);
+            }
+        }
 
-			if (!parentHidden && Visible)
-			{
-				if (_orientation==Orientation.Vertical)
-				{
-					LayoutVertical(newPosition);
-				}
-				else
-				{
-					LayoutHorizontal(newPosition);
-				}
-			}
-		}
+        private Dictionary<Tuple<int, int>, View> _views;
+        private List<View> _goneViews;
+        void Layout(CGRect newPosition)
+        {
+            foreach (var v in _goneViews)
+            {
+                v.Layout(CGRect.Empty, false);
+            }
 
-		// Do subview layout when in vertical orientation
-		void LayoutVertical(CGRect newPosition)
-		{
-			nfloat y;
-			switch (Gravity & Gravity.VerticalMask)
-			{
-				default:
-					y= newPosition.Top + Padding.Top;
-					break;
+            var startingY = newPosition.Y;
+            for (int row = 0; row < RowDefinitions.Count; row++)
+            {
+                var rowDefinition = RowDefinitions[row];
+                var startingX = newPosition.Left + Padding.Left;
+                for (int column = 0; row < ColumnDefinitions.Count; row++)
+                {
+                    var columnDefinition = ColumnDefinitions[row];
+                    View v;
+                    if (_views.TryGetValue(Tuple.Create(row, column), out v))
+                    {
+                        var horizontalGravity = v.LayoutParameters.Gravity & Gravity.HorizontalMask;
+                        if (horizontalGravity == Gravity.None)
+                            horizontalGravity = Gravity & Gravity.HorizontalMask;
+                    
+                        nfloat x = startingX;
+                        switch (Gravity & Gravity.HorizontalMask)
+                        {
+                            case Gravity.Right:
+                                x = x + columnDefinition.CalculatedWidth - v.GetMeasuredSize().Width;
+                                break;
 
-				case Gravity.Bottom:
-					y = newPosition.Bottom - getTotalMeasuredHeight() + Padding.Top;
-					break;
+                            case Gravity.CenterHorizontal:
+                                x = x + (columnDefinition.CalculatedWidth - v.GetMeasuredSize().Width) / 2;
+                                break;
+                        }
 
-				case Gravity.CenterVertical:
-					y = (newPosition.Top + newPosition.Bottom)/2 - getTotalMeasuredHeight()/2 + Padding.Top;
-					break;
+                        var verticalGravity = v.LayoutParameters.Gravity & Gravity.VerticalMask;
+                        if (verticalGravity == Gravity.None)
+                            verticalGravity = Gravity & Gravity.VerticalMask;
 
-			}
+                        nfloat y;
+                        y = startingY;
+                        switch (verticalGravity)
+                        {
+                            case Gravity.Bottom:
+                                y = y + rowDefinition.CalculatedHeight - v.GetMeasuredSize().Height;
+                                break;
 
-			bool first = true;
+                            case Gravity.CenterVertical:
+                                y = y + (rowDefinition.Height - v.GetMeasuredSize().Height) / 2;
+                                break;
+                        }
 
-			foreach (var v in SubViews)
-			{
-				// Hide hidden views
-				if (v.Gone)
-				{
-					v.Layout(CGRect.Empty, false);
-					continue;
-				}
+                        v.Layout(new CGRect(new CGPoint(x, y), v.GetMeasuredSize()), false);
+                    }
+                    startingX += columnDefinition.CalculatedWidth;
+                }
+                startingY += rowDefinition.CalculatedHeight;
+            }
+        }
 
-				if (!first)
-					y += Spacing;
-				else
-					first = false;
-				
-
-				y+= v.LayoutParameters.Margins.Top;
-
-				CGSize size = v.GetMeasuredSize();
-
-				// Work out horizontal gravity for this control
-				var g = v.LayoutParameters.Gravity & Gravity.HorizontalMask;
-				if (g == Gravity.None)
-					g = Gravity & Gravity.HorizontalMask;
-
-				nfloat x;
-				switch (g)
-				{
-					default:
-						x = newPosition.Left + Padding.Left + v.LayoutParameters.Margins.Left;
-						break;
-
-					case Gravity.Right:
-						x = newPosition.Right - Padding.Right - v.LayoutParameters.Margins.Right - size.Width;
-						break;
-
-					case Gravity.CenterHorizontal:
-						x = (newPosition.Left + newPosition.Right)/2
-							- (size.Width + v.LayoutParameters.Margins.TotalWidth())/2;
-						break;
-				}
-
-				
-				v.Layout(new CGRect(x, y, size.Width, size.Height), false);
-
-				y += size.Height + v.LayoutParameters.Margins.Bottom;
-			}
-		}
-
-		// Do subview layout when in horizontal orientation
-		void LayoutHorizontal(CGRect newPosition)
-		{
-			nfloat x;
-			switch (Gravity & Gravity.HorizontalMask)
-			{
-				default:
-					x = newPosition.Left + Padding.Left;
-					break;
-					
-				case Gravity.Right:
-					x = newPosition.Right - getTotalMeasuredWidth() + Padding.Left;
-					break;
-					
-				case Gravity.CenterHorizontal:
-					x = (newPosition.Left + newPosition.Right)/2 - getTotalMeasuredWidth()/2 + Padding.Left;
-					break;
-					
-			}
-
-			bool first = true;
-
-			foreach (var v in SubViews)
-			{
-				// Hide hidden views
-				if (v.Gone)
-				{
-					v.Layout(CGRect.Empty, false);
-					continue;
-				}
-
-				if (!first)
-					x += Spacing;
-				else
-					first = false;
-				
-				x += v.LayoutParameters.Margins.Left;
-				
-				CGSize size = v.GetMeasuredSize();
-				
-				// Work out vertical gravity for this control
-				var g = v.LayoutParameters.Gravity & Gravity.VerticalMask;
-				if (g == Gravity.None)
-					g = Gravity & Gravity.VerticalMask;
-				
-				nfloat y;
-				switch (g)
-				{
-					default:
-						y = newPosition.Top + Padding.Top + v.LayoutParameters.Margins.Top;
-						break;
-						
-					case Gravity.Bottom:
-						y = newPosition.Bottom - Padding.Top - v.LayoutParameters.Margins.Bottom - size.Height;
-						break;
-						
-					case Gravity.CenterVertical:
-						y = (newPosition.Top + newPosition.Bottom)/2
-							- (size.Height + v.LayoutParameters.Margins.TotalHeight())/2;
-						break;
-				}
-				
-				
-				v.Layout(new CGRect(x, y, size.Width, size.Height), false);
-				
-				x += size.Width + v.LayoutParameters.Margins.Right;
-			}
-		}
-
-		private nfloat getTotalSpacing()
-		{
-			if (Spacing == 0)
-				return 0;
-
-			int visibleViews = SubViews.Count(x=>!x.Gone);
-			if (visibleViews>1)
-				return (visibleViews-1) * Spacing;
-			else
-				return 0;
-		}
 		
-		// Helper to get the total measured height of all subviews, including all padding and margins
-		private nfloat getTotalMeasuredHeight()
-		{
-			return (nfloat)(Padding.TotalWidth() + getTotalSpacing() + SubViews.Where(x=>!x.Gone).Sum(x=>x.GetMeasuredSize().Height + x.LayoutParameters.Margins.TotalHeight()));
-		}
-		
-		// Helper to get the total measured width of all subviews, including all padding and margins
-		private nfloat getTotalMeasuredWidth()
-		{
-			return (nfloat)(Padding.TotalHeight() + getTotalSpacing() + SubViews.Where(x=>!x.Gone).Sum(x=>x.GetMeasuredSize().Width + x.LayoutParameters.Margins.TotalWidth()));
-		}
-
-		// Helper to adjust the parent width passed down to subviews during measurement
-		private nfloat adjustLayoutWidth(nfloat width, View c)
-		{
-			if (width == nfloat.MaxValue)
-				return width;
+        // Helper to adjust the parent width passed down to subviews during measurement
+        private nfloat adjustLayoutWidth(nfloat width, View c)
+        {
+            if (width == nfloat.MaxValue)
+                return width;
 			
-			return width - c.LayoutParameters.Margins.TotalWidth();
-		}
+            return width - c.LayoutParameters.Margins.TotalWidth();
+        }
 
-		// Helper to adjust the parent height passed down to subviews during measurement
-		private nfloat adjustLayoutHeight(nfloat height, View c)
-		{
-			if (height == nfloat.MaxValue)
-				return height;
+        // Helper to adjust the parent height passed down to subviews during measurement
+        private nfloat adjustLayoutHeight(nfloat height, View c)
+        {
+            if (height == nfloat.MaxValue)
+                return height;
 			
-			return height - c.LayoutParameters.Margins.TotalHeight();
-		}
+            return height - c.LayoutParameters.Margins.TotalHeight();
+        }
 
-		public Action<GridLayout> Init
-		{
-			set
-			{
-				value(this);
-			}
-		}
+        public Action<GridLayout> Init
+        {
+            set
+            {
+                value(this);
+            }
+        }
 
-		// Fields
-		private Orientation _orientation;
-		private nfloat _totalWeight;
-	}
+        // Fields
+        private Orientation _orientation;
+        private nfloat _totalWeight;
+    }
 }
 

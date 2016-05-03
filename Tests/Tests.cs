@@ -23,6 +23,7 @@ namespace Tests
 				.iOS
                 .EnableLocalScreenshots()
 				.StartApp();
+                
             }
         }
 
@@ -182,6 +183,14 @@ namespace Tests
                     image2Bytes = mstream.ToArray();
                 }
 
+                if (image1Bytes.Length != image2Bytes.Length)
+                    throw new InvalidOperationException("Size is different, images don't match");
+
+                for (int i = 0; i < image1Bytes.Length-1; i++) {
+                    if (image1Bytes[i] != image2Bytes[i])
+                        throw new InvalidOperationException("Images don't match at byte " + i);
+                }
+
                 var image164 = Convert.ToBase64String(image1Bytes);
                 var image264 = Convert.ToBase64String(image2Bytes);
 
@@ -196,7 +205,7 @@ namespace Tests
                 File.Delete(newName);
                 File.Copy(file2, newName);
 
-                Assert.Fail(ex.ToString());
+                Assert.Fail(file1 + " " + ex.ToString());
             }
 
         }
