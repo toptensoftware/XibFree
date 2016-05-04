@@ -52,7 +52,7 @@ namespace Tests
         {
             TestScreen("LinearLayout2");
         }
-        [Test]
+        [Test, Ignore]
         public void GridLayout()
         {
             TestScreen("GridLayout");
