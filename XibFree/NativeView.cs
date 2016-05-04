@@ -132,7 +132,7 @@ namespace XibFree
 
 			// Do we need to measure our content?
 			CGSize sizeMeasured = CGSize.Empty;
-			if (width == nfloat.MaxValue || height == nfloat.MaxValue)
+			//if (width == nfloat.MaxValue || height == nfloat.MaxValue)
 			{
 				CGSize sizeToFit = new CGSize(width, height);
 				sizeMeasured = Measurer!=null ? Measurer(_view, sizeToFit) : _view.SizeThatFits(sizeToFit);

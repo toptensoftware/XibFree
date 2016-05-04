@@ -9,171 +9,264 @@ using XibFree;
 
 namespace Demo
 {
-	public partial class LinearLayoutDemo2 : UITableViewController
-	{
-		public LinearLayoutDemo2()
-		{
-			Title = "LinearLayout2";
+    public partial class LinearLayoutDemo2 : UITableViewController
+    {
+        public LinearLayoutDemo2()
+        {
+            Title = "LinearLayout2";
 
-			// Custom initialization
-		}
-		
-		public override void ViewDidLoad()
-		{
-			base.ViewDidLoad();
-		}
+            // Custom initialization
+        }
 
-		public override void LoadView()
-		{
-			// This is a simple vertical LinearLayout.   ViewGroups are not implemented as UIViews - they're simply scaffolding for 
-			// the layout of the contained NativeViews
-			var layout = new LinearLayout(Orientation.Vertical)
-			{
-				Padding = new UIEdgeInsets(10,10,10,10),
-				Gravity = Gravity.CenterVertical,
-				SubViews = new View[] 
-				{
-					new NativeView()
-					{
-						// This time we're showing a UILabel
-						View = new UILabel()
-						{
-							BackgroundColor = UIColor.Purple,
-							Text="Hello World, this is a test to see if things wrap and measure correctly",
-							Lines = 0,
-							TextAlignment = UITextAlignment.Center,
-							TextColor = UIColor.White
-						},
+        public override void ViewDidLoad()
+        {
+            base.ViewDidLoad();
+        }
 
-						LayoutParameters = new LayoutParameters()
-						{
-							Width = AutoSize.WrapContent,
-							Height = AutoSize.WrapContent,		// Height calculated automatically based on text content!
-						},
-					},
+        public override void LoadView()
+        {
+            // This is a simple vertical LinearLayout.   ViewGroups are not implemented as UIViews - they're simply scaffolding for 
+            // the layout of the contained NativeViews
+            var layout = new LinearLayout(Orientation.Vertical)
+            {
+                Padding = new UIEdgeInsets(10, 10, 10, 10),
+                Gravity = Gravity.CenterVertical,
+                SubViews = new View[]
+                {
+                    new NativeView()
+                    {
+                        // This time we're showing a UILabel
+                        View = new UILabel()
+                        {
+                            BackgroundColor = UIColor.Purple,
+                            Text = "Hello World, this is a test to see if things wrap and measure correctly",
+                            Lines = 0,
+                            TextAlignment = UITextAlignment.Center,
+                            TextColor = UIColor.White
+                        },
 
-					new LinearLayout(Orientation.Horizontal)
-					{
-						// How to layout this linear layout within the outer one
-						LayoutParameters = new LayoutParameters()
-						{
-							Height = AutoSize.WrapContent,
-							Width = AutoSize.FillParent,
-						},
+                        LayoutParameters = new LayoutParameters()
+                        {
+                            Width = AutoSize.WrapContent,
+                            Height = AutoSize.WrapContent,		// Height calculated automatically based on text content!
+                        },
+                    },
 
-						// Sub view collection
-						SubViews = new View[]
-						{
-							new NativeView()
-							{
-								// This time we're showing a UILabel
-								View = new UILabel()
-								{
-									BackgroundColor = UIColor.Purple,
-									Text="Hello World, this is a test to see if things wrap and measure correctly",
-									Lines = 0,
-									TextAlignment = UITextAlignment.Center,
-									TextColor = UIColor.White
-								},
+                    new LinearLayout(Orientation.Horizontal)
+                    {
+                        // How to layout this linear layout within the outer one
+                        LayoutParameters = new LayoutParameters()
+                        {
+                            Height = AutoSize.WrapContent,
+                            Width = AutoSize.FillParent,
+                        },
 
-								LayoutParameters = new LayoutParameters()
-								{
-									Width = AutoSize.WrapContent,
-									Height = AutoSize.WrapContent,		// Height calculated automatically based on text content!
-								},
-							},
-							new NativeView()
-							{
-								// This time we're showing a UILabel
-								View = new UIView()
-								{
-									BackgroundColor = UIColor.Yellow,
-								},
+                        // Sub view collection
+                        SubViews = new View[]
+                        {
+                            new NativeView()
+                            {
+                                // This time we're showing a UILabel
+                                View = new UILabel()
+                                {
+                                    BackgroundColor = UIColor.Purple,
+                                    Text = "Hello World, this is a test to see if things wrap and measure correctly",
+                                    Lines = 0,
+                                    TextAlignment = UITextAlignment.Center,
+                                    TextColor = UIColor.White
+                                },
 
-								LayoutParameters = new LayoutParameters()
-								{
-									Width = 60,
-									Height = AutoSize.FillParent,		// Height calculated automatically based on text content!
-									MinWidth = 60,
-								},
-							},
-						}
-					},
+                                LayoutParameters = new LayoutParameters()
+                                {
+                                    Width = AutoSize.WrapContent,
+                                    Height = AutoSize.WrapContent,		// Height calculated automatically based on text content!
+                                },
+                            },
+                            new NativeView()
+                            {
+                                // This time we're showing a UILabel
+                                View = new UIView()
+                                {
+                                    BackgroundColor = UIColor.Yellow,
+                                },
+
+                                LayoutParameters = new LayoutParameters()
+                                {
+                                    Width = 60,
+                                    Height = AutoSize.FillParent,		// Height calculated automatically based on text content!
+                                    MinWidth = 60,
+                                },
+                            },
+                        }
+                    },
 					
-					// Here we're nesting a horizontal linear layout inside the outer vertical linear layout
-					new LinearLayout(Orientation.Horizontal)
-					{
-						// How to layout this linear layout within the outer one
-						LayoutParameters = new LayoutParameters()
-						{
-							Height = AutoSize.WrapContent,
-							Width = AutoSize.FillParent,
-						},
+                    // Here we're nesting a horizontal linear layout inside the outer vertical linear layout
+                    new LinearLayout(Orientation.Horizontal)
+                    {
+                        // How to layout this linear layout within the outer one
+                        LayoutParameters = new LayoutParameters()
+                        {
+                            Height = AutoSize.WrapContent,
+                            Width = AutoSize.FillParent,
+                        },
 
-						// Sub view collection
-						SubViews = new View[]
-						{
-							new NativeView()
-							{
-								// This time we're showing a UILabel
-								View = new UILabel()
-								{
-									BackgroundColor = UIColor.Purple,
-									Text="Hello World, this is a test to see if things wrap and measure correctly",
-									Lines = 0,
-									TextAlignment = UITextAlignment.Center,
-									TextColor = UIColor.White
-								},
+                        // Sub view collection
+                        SubViews = new View[]
+                        {
+                            new NativeView()
+                            {
+                                // This time we're showing a UILabel
+                                View = new UILabel()
+                                {
+                                    BackgroundColor = UIColor.Purple,
+                                    Text = "Hello World, this is a test to see if things wrap and measure correctly",
+                                    Lines = 0,
+                                    TextAlignment = UITextAlignment.Center,
+                                    TextColor = UIColor.White
+                                },
 
-								LayoutParameters = new LayoutParameters()
-								{
-									Width = AutoSize.WrapContent,
-									Height = AutoSize.WrapContent,		// Height calculated automatically based on text content!
-									MinWidth = 50,
-								},
-							},
-							new NativeView()
-							{
-								// This time we're showing a UILabel
-								View = new UIView()
-								{
-									BackgroundColor = UIColor.Purple,
-								},
+                                LayoutParameters = new LayoutParameters()
+                                {
+                                    Width = AutoSize.WrapContent,
+                                    Height = AutoSize.WrapContent,		// Height calculated automatically based on text content!
+                                    MinWidth = 50,
+                                },
+                            },
+                            new NativeView()
+                            {
+                                // This time we're showing a UILabel
+                                View = new UIView()
+                                {
+                                    BackgroundColor = UIColor.Purple,
+                                },
 
-								LayoutParameters = new LayoutParameters()
-								{
-									Width = 20,
-									MinWidth = 20,
-									Height = AutoSize.FillParent,		// Height calculated automatically based on text content!
-								},
-							},
-							new NativeView()
-							{
-								// This time we're showing a UILabel
-								View = new UILabel()
-								{
-									BackgroundColor = UIColor.Purple,
-									Text="Hello World, this is a test to see if things wrap and measure correctly",
-									Lines = 0,
-									TextAlignment = UITextAlignment.Center,
-									TextColor = UIColor.White
-								},
+                                LayoutParameters = new LayoutParameters()
+                                {
+                                    Width = 20,
+                                    MinWidth = 20,
+                                    Height = AutoSize.FillParent,		// Height calculated automatically based on text content!
+                                },
+                            },
+                            new NativeView()
+                            {
+                                // This time we're showing a UILabel
+                                View = new UILabel()
+                                {
+                                    BackgroundColor = UIColor.Purple,
+                                    Text = "Hello World, this is a test to see if things wrap and measure correctly",
+                                    Lines = 0,
+                                    TextAlignment = UITextAlignment.Center,
+                                    TextColor = UIColor.White
+                                },
 
-								LayoutParameters = new LayoutParameters()
-								{
-									Width = AutoSize.WrapContent,
-									Height = AutoSize.WrapContent,		// Height calculated automatically based on text content!
-									MinWidth = 50,
-								},
-							},
-						}
-					},
-				},
-			};
+                                LayoutParameters = new LayoutParameters()
+                                {
+                                    Width = AutoSize.WrapContent,
+                                    Height = AutoSize.WrapContent,		// Height calculated automatically based on text content!
+                                    MinWidth = 50,
+                                },
+                            },
+                        }
+                    },
+                    new LinearLayout(Orientation.Horizontal)
+                    {
+                        LayoutParameters = new LayoutParameters(AutoSize.WrapContent, AutoSize.WrapContent),
+                        Spacing = 5,
+                        SubViews = new View[]
+                        {
+                            new NativeView()
+                            {
+                                LayoutParameters = new LayoutParameters(AutoSize.WrapContent, AutoSize.WrapContent)
+                                    {
+                                    },
+                                View = new CustomButton("234"),
+                            },
+                            new NativeView()
+                            {
+                                LayoutParameters = new LayoutParameters(AutoSize.WrapContent, AutoSize.WrapContent)
+                                    {
+                                    },
+                                View = new CustomButton("xcv"),
+                            },
+                            new NativeView()
+                            {
+                                LayoutParameters = new LayoutParameters(AutoSize.WrapContent, AutoSize.WrapContent)
+                                {
+                                },
+                                View = new CustomButton("asd"),
+                            },
 
-			// We've now defined our layout, to actually use it we simply create a UILayoutHost control and pass it the layout
-			this.View = new XibFree.UILayoutHost(layout);
-			this.View.BackgroundColor=UIColor.Gray;
-		}
-	}
+                            new NativeView()
+                            {
+                                LayoutParameters = new LayoutParameters(30, 30),
+                                View = new UIView() { BackgroundColor = UIColor.Green },
+                            }
+                        },
+                    }
+                },
+            };
+
+            // We've now defined our layout, to actually use it we simply create a UILayoutHost control and pass it the layout
+            this.View = new XibFree.UILayoutHost(layout);
+            this.View.BackgroundColor = UIColor.Gray;
+        }
+
+        public class CustomButton : UIButton 
+        {
+            private UILayoutHost _host;
+            public CustomButton(string title)
+            {
+                _host = new UILayoutHost()
+                {
+                    Layout = new LinearLayout(Orientation.Horizontal)
+                        {
+                            Padding = new UIEdgeInsets(3, 2, 3, 5),
+                            LayoutParameters = new LayoutParameters(AutoSize.FillParent, 56)
+                                {
+                                },
+                            SubViews = new[]
+                                {
+                                    new NativeView()
+                                    {
+                                        LayoutParameters = new LayoutParameters(30, 30),
+                                        View = new UIView() { BackgroundColor = UIColor.Red },
+                                    },
+                                    new NativeView()
+                                    {
+                                        LayoutParameters = new LayoutParameters(AutoSize.WrapContent, AutoSize.FillParent)
+                                            {
+                                                MarginLeft = 4,
+                                                MarginRight = 2,
+                                                Gravity = Gravity.CenterVertical,
+                                                MaxWidth = 140,
+                                            },
+                                        View = new UILabel() { Text = title },
+                                    },
+                                }
+                        },
+                    };
+                AddSubview(_host);
+            }
+            public override CGSize SizeThatFits(CGSize size)
+            {
+                return _host.SizeThatFits(size);
+            }
+
+            public override CGRect Frame
+            {
+                get
+                {
+                    return base.Frame;
+                }
+                set
+                {
+                    base.Frame = value;
+                    if (_host != null)
+                    {
+                        _host.Frame = Bounds;
+                    }
+                }
+            }
+        }
+    }
 }
