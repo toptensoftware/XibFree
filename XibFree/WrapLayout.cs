@@ -75,7 +75,7 @@ namespace XibFree
 		}
 
 		// Overridden to provide layout measurement
-		protected override void onMeasure(nfloat parentWidth, nfloat parentHeight)
+        protected override void onMeasure(nfloat parentWidth, nfloat parentHeight)
 		{
 			MeasureHorizontal(parentWidth, parentHeight);
 		}
@@ -97,7 +97,7 @@ namespace XibFree
 
 
 		// Do measurement when in horizontal orientation
-		private void MeasureHorizontal(nfloat parentWidth, nfloat parentHeight)
+        private void MeasureHorizontal(nfloat parentWidth, nfloat parentHeight)
 		{
 			// Work out our height
 			nfloat layoutWidth = LayoutParameters.TryResolveWidth(this, parentWidth);
@@ -113,6 +113,7 @@ namespace XibFree
             var row = new Row();
             _rows.Add(row);
             Func<nfloat> spacing = () => visibleViewCount == 0 ? 0 : Spacing;
+            nfloat maxWidth = 0;
 			foreach (var v in SubViews)
 			{
                 if (v.Gone)
@@ -137,17 +138,17 @@ namespace XibFree
                 row.Height = NMath.Max(row.Height, v.GetMeasuredSize().Height);
 
                 visibleViewCount++;
-                layoutWidth = NMath.Max(layoutWidth, row.Width);
+                maxWidth = NMath.Max(maxWidth, row.Width);
                 row.Views.Add(v);
 			}
 
             layoutHeight = row.YPosition + row.Height;
-			
-			CGSize sizeMeasured = CGSize.Empty;
 
 			layoutHeight += Padding.TotalHeight();
-            layoutWidth += Padding.TotalWidth();
-			
+            maxWidth += Padding.TotalWidth();
+
+            CGSize sizeMeasured = new CGSize(maxWidth, layoutHeight);
+
             // And finally, set our measure dimensions
 			SetMeasuredSize(LayoutParameters.ResolveSize(new CGSize(layoutWidth, layoutHeight), sizeMeasured));
 		}

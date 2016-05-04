@@ -168,6 +168,68 @@ namespace Demo
                             },
                         }
                     },
+
+                    new LinearLayout(Orientation.Horizontal)
+                    {
+                        // How to layout this linear layout within the outer one
+                        LayoutParameters = new LayoutParameters()
+                            {
+                                Height = AutoSize.WrapContent,
+                                Width = AutoSize.FillParent,
+                            },
+
+                        // Sub view collection
+                        SubViews = new View[]
+                            {
+                                new NativeView()
+                                {
+                                    // This time we're showing a UILabel
+                                    View = new UILabel()
+                                        {
+                                            BackgroundColor = UIColor.Purple,
+                                            Text = "123 12 3123",
+                                            Lines = 0,
+                                            TextAlignment = UITextAlignment.Center,
+                                            TextColor = UIColor.White
+                                        },
+
+                                    LayoutParameters = new LayoutParameters(100, AutoSize.WrapContent)
+                                        {
+                                        },
+                                },
+                                new NativeView()
+                                {
+                                    // This time we're showing a UILabel
+                                    View = new UILabel()
+                                        {
+                                            BackgroundColor = UIColor.Purple,
+                                            Text = "Hello World, this is a test to see if things wrap and measure correctly",
+                                            Lines = 0,
+                                            TextAlignment = UITextAlignment.Center,
+                                            TextColor = UIColor.White
+                                        },
+
+                                    LayoutParameters = new LayoutParameters()
+                                        {
+                                            Width = AutoSize.WrapContent,
+                                            Height = AutoSize.WrapContent,      // Height calculated automatically based on text content!
+                                            MinWidth = 50,
+                                        },
+                                },
+                                new NativeView()
+                                {
+                                    LayoutParameters = new LayoutParameters(AutoSize.FillParent, AutoSize.WrapContent)
+                                    {
+                                        MarginLeft = 4,
+                                    },
+                                    View = new UILabel()
+                                    {
+                                        Text = "",
+                                    },
+                                }
+                            }
+                    },
+
                     new LinearLayout(Orientation.Horizontal)
                     {
                         LayoutParameters = new LayoutParameters(AutoSize.WrapContent, AutoSize.WrapContent),

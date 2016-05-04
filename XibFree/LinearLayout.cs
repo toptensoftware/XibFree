@@ -130,6 +130,7 @@ namespace XibFree
             nfloat totalVariableSize = 0;
             if (LayoutParameters.HeightUnits == Units.ContentRatio || height == nfloat.MaxValue)
             {
+                System.Diagnostics.Debug.WriteLine("XibFree.LinearLayout.MeasureVertical: This is a weird case: we have a height of wrap content, but child items that want to fill parent too.");
                 // This is a weird case: we have a height of wrap content, but child items that want to fill parent too.
                 // Temporarily switch those items to wrap content and use their natural size
                 foreach (var v in SubViews.Where(x=>!x.Gone && x.LayoutParameters.HeightUnits==Units.ParentRatio))
@@ -193,7 +194,7 @@ namespace XibFree
                 width += Padding.TotalWidth();
             }
 
-            //if (height == nfloat.MaxValue)
+            if (height == nfloat.MaxValue)
             {
                 height = totalFixedSize + totalVariableSize;
             }
@@ -230,12 +231,14 @@ namespace XibFree
                 else
                 {
                     // Lay it out
-                    v.Measure(parentWidth, adjustLayoutHeight(layoutHeight, v));
+                    v.Measure(nfloat.MaxValue, adjustLayoutHeight(layoutHeight, v));
+                    totalFixedSize += v.GetMeasuredSize().Width;
                     totalWidth += v.GetMeasuredSize().Width;
                 }
 
                 // Include margins
-                totalFixedSize += v.LayoutParameters.Margins.TotalWidth() + v.LayoutParameters.MinWidth;
+                totalFixedSize += v.LayoutParameters.Margins.TotalWidth();
+                //totalFixedSize += v.LayoutParameters.Margins.TotalWidth() + v.LayoutParameters.MinWidth;
                 visibleViewCount++;
             }
 
@@ -243,78 +246,78 @@ namespace XibFree
             totalFixedSize += Padding.TotalWidth();
 
             // And spacing between controls
-            if (visibleViewCount > 1) {
-                totalFixedSize += (visibleViewCount - 1) * Spacing;
-            }
+            if (visibleViewCount>1)
+                totalFixedSize += (visibleViewCount-1) * Spacing;
 
-            var wouldLikeToHaveMoreWidth = false;
-            if ((totalFixedSize + totalWidth) > parentWidth)
+
+//            if ((totalFixedSize + totalWidth) > parentWidth)
+//            {
+//                totalWidth = 0;
+//                var leftWidth = parentWidth - totalFixedSize;
+//                foreach (var v in SubViews.Where(x=>!x.Gone))
+//                {
+//                    if (v.LayoutParameters.WidthUnits == Units.ParentRatio)
+//                    {
+//                        // We'll deal with this later
+//
+//                        // For now, lets just total up the specified weights
+//                        //totalWeight += v.LayoutParameters.Weight;
+//                    }
+//                    else
+//                    {
+//                        // Lay it out
+//                        v.Measure((nfloat)Math.Max(leftWidth + v.LayoutParameters.MinWidth, v.LayoutParameters.MinWidth), adjustLayoutHeight(layoutHeight, v));
+//                        totalWidth += v.GetMeasuredSize().Width - v.LayoutParameters.MinWidth;
+//                        leftWidth -= v.GetMeasuredSize().Width - v.LayoutParameters.MinWidth;
+//                    }
+//                }
+//            }
+//            else
+//            {
+//                totalFixedSize += totalWidth;
+//            }
+
+
+            nfloat totalVariableSize = 0;
+            if (LayoutParameters.WidthUnits == Units.ContentRatio || layoutWidth == nfloat.MaxValue)
             {
-                wouldLikeToHaveMoreWidth = true;
-                totalWidth = 0;
-                var leftWidth = parentWidth - totalFixedSize;
-                foreach (var v in SubViews.Where(x=>!x.Gone))
+                System.Diagnostics.Debug.WriteLine("XibFree.LinearLayout.MeasureHorizontal: This is a weird case: we have a height of wrap content, but child items that want to fill parent too.");
+                // This is a weird case: we have a width of wrap content, but child items that want to fill parent too.
+                // Temporarily switch those items to wrap content and use their natural size
+                foreach (var v in SubViews.Where(x=>!x.Gone && x.LayoutParameters.WidthUnits==Units.ParentRatio))
                 {
-                    if (v.LayoutParameters.WidthUnits == Units.ParentRatio)
-                    {
-                        // We'll deal with this later
-
-                        // For now, lets just total up the specified weights
-                        //totalWeight += v.LayoutParameters.Weight;
-                    }
-                    else
-                    {
-                        // Lay it out
-                        v.Measure(NMath.Max(leftWidth + v.LayoutParameters.MinWidth, v.LayoutParameters.MinWidth), adjustLayoutHeight(layoutHeight, v));
-                        totalWidth += v.GetMeasuredSize().Width - v.LayoutParameters.MinWidth;
-                        leftWidth -= v.GetMeasuredSize().Width - v.LayoutParameters.MinWidth;
-                    }
+                    v.Measure(parentWidth == nfloat.MaxValue ? parentWidth : parentWidth - totalFixedSize, adjustLayoutHeight(layoutHeight, v));
+                    totalVariableSize += v.GetMeasuredSize().Width;
                 }
             }
             else
             {
-                totalFixedSize += totalWidth;
+                // If we've had an explicit weight passed to us, ignore the calculated total weight and use it instead
+                if (_totalWeight!=0)
+                    totalWeight = _totalWeight;
+
+                // Work out how much room we've got to share around
+                nfloat room = layoutWidth - totalFixedSize;
+
+                // Layout the fill parent items
+                foreach (var v in SubViews.Where(x=>!x.Gone && x.LayoutParameters.WidthUnits==Units.ParentRatio))
+                {
+                    // Work out size
+                    if (room<0)
+                        room = 0;
+                    nfloat size = (nfloat)(totalWeight==0 ? room : room * v.LayoutParameters.Weight / totalWeight);
+
+                    // Measure it
+                    v.Measure(size, adjustLayoutHeight(layoutHeight, v));
+
+                    // Update total size
+                    totalVariableSize += v.GetMeasuredSize().Width;
+
+                    // Adjust the weighting calculation in case the view didn't accept our measurement
+                    room -= v.GetMeasuredSize().Width;
+                    totalWeight -= v.LayoutParameters.Weight;
+                }
             }
-
-            nfloat totalVariableSize = 0;
-            //          if (LayoutParameters.WidthUnits == Units.ContentRatio || layoutWidth == nfloat.MaxValue)
-            //          {
-            //              // This is a weird case: we have a width of wrap content, but child items that want to fill parent too.
-            //              // Temporarily switch those items to wrap content and use their natural size
-            //              foreach (var v in SubViews.Where(x=>!x.Gone && x.LayoutParameters.WidthUnits==Units.ParentRatio))
-            //              {
-            //                  v.Measure(parentWidth, adjustLayoutHeight(layoutHeight, v));
-            //                  totalVariableSize += v.GetMeasuredSize().Width;
-            //              }
-            //          }
-            //          else
-            //          {
-            // If we've had an explicit weight passed to us, ignore the calculated total weight and use it instead
-            if (_totalWeight!=0)
-                totalWeight = _totalWeight;
-
-            // Work out how much room we've got to share around
-            nfloat room = layoutWidth - totalFixedSize;
-
-            // Layout the fill parent items
-            foreach (var v in SubViews.Where(x=>!x.Gone && x.LayoutParameters.WidthUnits==Units.ParentRatio))
-            {
-                // Work out size
-                if (room<0)
-                    room = 0;
-                nfloat size = (nfloat)(totalWeight==0 ? room : room * v.LayoutParameters.Weight / totalWeight);
-
-                // Measure it
-                v.Measure(size, adjustLayoutHeight(layoutHeight, v));
-
-                // Update total size
-                totalVariableSize += v.GetMeasuredSize().Width;
-
-                // Adjust the weighting calculation in case the view didn't accept our measurement
-                room -= v.GetMeasuredSize().Width;
-                totalWeight -= v.LayoutParameters.Weight;
-            }
-            //          }
 
             CGSize sizeMeasured = CGSize.Empty;
 
@@ -344,13 +347,13 @@ namespace XibFree
 
 
 
-            //if (layoutWidth == nfloat.MaxValue)
+            if (layoutWidth == nfloat.MaxValue)
             {
                 layoutWidth = totalFixedSize + totalVariableSize;
             }
 
             // And finally, set our measure dimensions
-            SetMeasuredSize(LayoutParameters.ResolveSize(new CGSize(wouldLikeToHaveMoreWidth?parentWidth:layoutWidth, layoutHeight), sizeMeasured));
+            SetMeasuredSize(LayoutParameters.ResolveSize(new CGSize(layoutWidth, layoutHeight), sizeMeasured));
         }
 
         // Overridden to layout the subviews
@@ -411,11 +414,6 @@ namespace XibFree
                 y+= v.LayoutParameters.Margins.Top;
 
                 CGSize size = v.GetMeasuredSize();
-
-                if (size.Width > newPosition.Width) {
-                    v.Measure (newPosition.Width, nfloat.MaxValue);
-                    size = v.GetMeasuredSize();
-                }
 
                 // Work out horizontal gravity for this control
                 var g = v.LayoutParameters.Gravity & Gravity.HorizontalMask;
@@ -509,7 +507,7 @@ namespace XibFree
                 }
 
 
-                v.Layout(new CGRect(x, y, NMath.Min(size.Width, newPosition.Width), size.Height), false);
+                v.Layout(new CGRect(x, y, size.Width, size.Height), false);
 
                 x += size.Width + v.LayoutParameters.Margins.Right;
             }

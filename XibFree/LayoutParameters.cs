@@ -332,7 +332,8 @@ namespace XibFree
                     return parentSize == nfloat.MaxValue ? nfloat.MaxValue : parentSize * ratio;
 
                 default:
-                    return parentSize;
+                    return nfloat.MaxValue;
+                    //return parentSize;
             }
         }
 
@@ -411,20 +412,20 @@ namespace XibFree
             {
                 size.Width = size.Height * WidthRatio;
             }
-            else if (WidthUnits == Units.ContentRatio)
-            {
-                if ((size.Width > sizeMeasured.Width) && sizeMeasured.Width > 0)
-                    size.Width = sizeMeasured.Width;
-            }
+//            else if (WidthUnits == Units.ContentRatio)
+//            {
+//                if ((size.Width > sizeMeasured.Width) && sizeMeasured.Width > 0)
+//                    size.Width = sizeMeasured.Width;
+//            }
             if (HeightUnits == Units.AspectRatio)
             {
                 size.Height = size.Width * HeightRatio;
             }
-            else if (HeightUnits == Units.ContentRatio)
-            {
-                if ((size.Height > sizeMeasured.Height) && (sizeMeasured.Height > 0))
-                    size.Height = sizeMeasured.Height;
-            }
+//            else if (HeightUnits == Units.ContentRatio)
+//            {
+//                if ((size.Height > sizeMeasured.Height) && (sizeMeasured.Height > 0))
+//                    size.Height = sizeMeasured.Height;
+//            }
 
             return size;
         }
