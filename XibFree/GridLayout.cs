@@ -24,7 +24,9 @@ namespace XibFree
     public class RowDefinition
     {
         public nfloat Height { get; set; }
+
         public nfloat MaxHeight { get; set; }
+
         public nfloat MinHeight { get; set; }
 
         public Units Unit { get; set; }
@@ -33,7 +35,7 @@ namespace XibFree
         /// Gets or sets the weight of a AutoSize.FillParent view relative to its sibling views
         /// </summary>
         /// <value>The weighting value for this view's size.</value>
-        public double Weight
+        public nfloat Weight
         {
             get;
             set;
@@ -53,7 +55,9 @@ namespace XibFree
     public class ColumnDefinition
     {
         public nfloat Width { get; set; }
+
         public nfloat MinWidth { get; set; }
+
         public nfloat MaxWidth { get; set; }
 
         public Units Unit { get; set; }
@@ -62,7 +66,7 @@ namespace XibFree
         /// Gets or sets the weight of a AutoSize.FillParent view relative to its sibling views
         /// </summary>
         /// <value>The weighting value for this view's size.</value>
-        public double Weight
+        public nfloat Weight
         {
             get;
             set;
@@ -149,7 +153,7 @@ namespace XibFree
             Measure(parentWidth, parentHeight);
         }
 
-
+        private View[,] _arrangedViews;
         // Do measurement when in horizontal orientation
         private void Measure(nfloat parentWidth, nfloat parentHeight)
         {
@@ -161,48 +165,140 @@ namespace XibFree
             var paddings = Padding.TotalWidth();
 
             _goneViews = new List<View>();
-            _views = new Dictionary<Tuple<int, int>, View>();
+            _arrangedViews = new View[RowDefinitions.Count, ColumnDefinitions.Count];
+            var columnWidthFillParentSubviews = new List<View>();
 
+            //calculating columns
+            var minWidth = (nfloat)ColumnDefinitions.Sum(x => x.MinWidth);
 
-            //Func<nfloat> spacing = () => visibleViewCount == 0 ? 0 : Spacing;
-            foreach (var v in SubViews)
+            foreach (var v in SubViews.Where(x=>!x.Gone))
             {
-                _views[Tuple.Create(v.Row, v.Column)] = v;
+                _arrangedViews[v.Row, v.Column] = v;
                 var columnDefinition = ColumnDefinitions[v.Column];
                 var rowDefinition = RowDefinitions[v.Column];
-                var width = columnDefinition.MaxWidth > 0 ? ColumnDefinitions[v.Column].MaxWidth : parentWidth- paddings;
-                v.Measure(width  - v.LayoutParameters.Margins.TotalWidth(), adjustLayoutHeight(layoutHeight, v));
-            
-                var measured = v.GetMeasuredSize();
-                columnDefinition.CalculatedWidth = NMath.Max(columnDefinition.CalculatedWidth, measured.Width);
-                rowDefinition.CalculatedHeight = NMath.Max(rowDefinition.CalculatedHeight, measured.Height);
+
+                nfloat width;
+                if (columnDefinition.Width > 0)
+                    width = columnDefinition.Width;
+                else if (columnDefinition.MaxWidth > 0)
+                    width = columnDefinition.MaxWidth;
+                else
+                    width = parentWidth - paddings;
+
+                nfloat height;
+                if (rowDefinition.Height > 0)
+                    height = rowDefinition.Height;
+                else
+                    height = adjustLayoutHeight(layoutHeight, v);
+
+                if (v.LayoutParameters.WidthUnits != Units.ParentRatio)
+                {
+                    v.Measure(width - v.LayoutParameters.Margins.TotalWidth(), height);
+                }
+                else
+                {
+                    v._measuredSize = new CGSize(0, 0);
+                    v._measuredSizeValid = true;
+                    columnWidthFillParentSubviews.Add(v);
+                }
             }
 
-//
-//                var width = v.GetMeasuredSize().Width + v.LayoutParameters.Margins.TotalWidth();
-//
-//                if (row.Width + width + spacing() > parentWidth)
-//                {
-//                    visibleViewCount = 0;
-//                    var newRow = new Row();
-//                    newRow.YPosition = row.YPosition + row.Height;
-//                    row = newRow;
-//                    _rows.Add(row);
-//                }
-//                row.Width += v.GetMeasuredSize().Width + v.LayoutParameters.Margins.TotalWidth() + spacing();
-//                row.Height = NMath.Max(row.Height, v.GetMeasuredSize().Height);
-//
-//                visibleViewCount++;
-//                layoutWidth = NMath.Max(layoutWidth, row.Width);
-//                row.Views.Add(v);
-//            }
-//
-//            layoutHeight = row.YPosition + row.Height;
-//
+            {
+                nfloat totalWeight = 0;
+                nfloat totalWidth = 0;
+                var columnId = -1;
+                foreach (var column in ColumnDefinitions)
+                {
+                    columnId++;
+                    column.CalculatedWidth = 0;
+
+                    if (column.Width > 0)
+                    {
+                        column.CalculatedWidth = column.Width;
+                    }
+                    else if (column.Width == AutoSize.WrapContent)
+                    {
+                        
+                        for (int rowId = 0; rowId < RowDefinitions.Count; rowId++)
+                        {
+                            var v = _arrangedViews[rowId, columnId];
+
+                            if (v != null)
+                            {
+                                column.CalculatedWidth = NMath.Max(column.CalculatedWidth, v.GetMeasuredSize().Width + v.LayoutParameters.Margins.TotalWidth());
+                            }
+                        }
+                    }
+                    else if (column.Width == AutoSize.FillParent)
+                    {
+                        totalWeight += column.Weight;
+                    }
+                    totalWidth += column.CalculatedWidth;
+                }
+
+                var room = layoutWidth - totalWidth;
+                foreach (var column in ColumnDefinitions.Where(x => x.Width == AutoSize.FillParent))
+                {
+                    columnId++;
+
+                    column.CalculatedWidth = room * column.Weight / totalWeight;
+                }
+            }
+
+            {
+                var totalWeight = 0;
+                var totalHeight = 0;
+                var rowId = -1;
+                foreach (var row in RowDefinitions)
+                {
+                    rowId++;
+
+                    if (row.Height > 0)
+                    {
+                        row.CalculatedHeight = row.Height;
+                        continue;
+                    }
+
+
+                    if (row.Height == AutoSize.WrapContent)
+                    {
+                        row.CalculatedHeight = 0;
+                        for (int columnId = 0; columnId < ColumnDefinitions.Count; columnId++)
+                        {
+                            var v = _arrangedViews[rowId, columnId];
+
+                            if (v != null)
+                            {
+                                row.CalculatedHeight = NMath.Max(row.CalculatedHeight, v.GetMeasuredSize().Height);
+                            }
+                        }
+                    }
+                }
+
+
+                var room = layoutHeight - totalHeight;
+                foreach (var row in RowDefinitions.Where(x => x.Height == AutoSize.FillParent))
+                {
+                    row.CalculatedHeight = room * row.Weight / totalWeight;
+                }
+            }
+
             CGSize sizeMeasured = CGSize.Empty;
-//
-//            layoutHeight += Padding.TotalHeight();
-//            layoutWidth += Padding.TotalWidth();
+            foreach (var item in ColumnDefinitions)
+            {
+                sizeMeasured.Width += item.CalculatedWidth;
+            }
+            sizeMeasured.Width += ColSpacing * (ColumnDefinitions.Count - 1);
+            foreach (var item in RowDefinitions)
+            {
+                sizeMeasured.Height += item.CalculatedHeight;
+            }
+            sizeMeasured.Height += RowSpacing * (RowDefinitions.Count - 1);
+
+            foreach (var v in columnWidthFillParentSubviews)
+            {
+                v.Measure(ColumnDefinitions[v.Column].CalculatedWidth, RowDefinitions[v.Row].CalculatedHeight);
+            }
 
             // And finally, set our measure dimensions
             SetMeasuredSize(LayoutParameters.ResolveSize(new CGSize(layoutWidth, layoutHeight), sizeMeasured));
@@ -221,8 +317,8 @@ namespace XibFree
             }
         }
 
-        private Dictionary<Tuple<int, int>, View> _views;
         private List<View> _goneViews;
+
         void Layout(CGRect newPosition)
         {
             foreach (var v in _goneViews)
@@ -235,11 +331,11 @@ namespace XibFree
             {
                 var rowDefinition = RowDefinitions[row];
                 var startingX = newPosition.Left + Padding.Left;
-                for (int column = 0; row < ColumnDefinitions.Count; row++)
+                for (int column = 0; column < ColumnDefinitions.Count; column++)
                 {
-                    var columnDefinition = ColumnDefinitions[row];
-                    View v;
-                    if (_views.TryGetValue(Tuple.Create(row, column), out v))
+                    var columnDefinition = ColumnDefinitions[column];
+                    View v = _arrangedViews[row, column];
+                    if (v != null)
                     {
                         var horizontalGravity = v.LayoutParameters.Gravity & Gravity.HorizontalMask;
                         if (horizontalGravity == Gravity.None)
@@ -276,9 +372,9 @@ namespace XibFree
 
                         v.Layout(new CGRect(new CGPoint(x, y), v.GetMeasuredSize()), false);
                     }
-                    startingX += columnDefinition.CalculatedWidth;
+                    startingX += columnDefinition.CalculatedWidth + ColSpacing;
                 }
-                startingY += rowDefinition.CalculatedHeight;
+                startingY += rowDefinition.CalculatedHeight + RowSpacing;
             }
         }
 
