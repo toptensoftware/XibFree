@@ -110,7 +110,12 @@ namespace XibFree
                 else
                 {
                     // Lay it out
+                    var maxWidthPreserved = v.LayoutParameters.MaxWidth;
+                    v.LayoutParameters.MaxWidth = NMath.Min(maxWidthPreserved == 0?nfloat.MaxValue:maxWidthPreserved, width);
                     v.Measure(adjustLayoutWidth(width, v), nfloat.MaxValue);
+                    v.LayoutParameters.MaxWidth = maxWidthPreserved;
+
+
                     totalFixedSize += v.GetMeasuredSize().Height;
                 }
 
@@ -219,6 +224,7 @@ namespace XibFree
             nfloat totalWidth = 0;
             double totalWeight = 0;
             int visibleViewCount = 0;
+            var sumMinWidth = (nfloat)SubViews.Where(x => !x.Gone).Sum(x => x.LayoutParameters.MinWidth);
             foreach (var v in SubViews.Where(x=>!x.Gone))
             {
                 if (v.LayoutParameters.WidthUnits==Units.ParentRatio)
@@ -231,7 +237,10 @@ namespace XibFree
                 else
                 {
                     // Lay it out
+                    var maxWidthPreserved = v.LayoutParameters.MaxWidth;
+                    v.LayoutParameters.MaxWidth = NMath.Min(maxWidthPreserved == 0?nfloat.MaxValue:maxWidthPreserved, NMath.Max(parentWidth - sumMinWidth + LayoutParameters.MinWidth, 0));
                     v.Measure(nfloat.MaxValue, adjustLayoutHeight(layoutHeight, v));
+                    v.LayoutParameters.MaxWidth = maxWidthPreserved;
                     totalFixedSize += v.GetMeasuredSize().Width;
                     totalWidth += v.GetMeasuredSize().Width;
                 }
@@ -507,7 +516,7 @@ namespace XibFree
                 }
 
 
-                v.Layout(new CGRect(x, y, size.Width, size.Height), false);
+                v.Layout(new CGRect(x, y, NMath.Min(size.Width, newPosition.Width - x + v.LayoutParameters.Margins.Left), size.Height), false);
 
                 x += size.Width + v.LayoutParameters.Margins.Right;
             }
