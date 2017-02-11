@@ -256,7 +256,8 @@ namespace XibFree
             
         private void ShowHide(bool show, bool animate)
         {
-            double delay = animate ? 0.25 : 0.0;
+            //double delay = animate ? 0.25 : 0.0;
+            double delay = 0;
             var root = this.FindRootUIView();
             UIView.Animate(delay, delegate
             {
