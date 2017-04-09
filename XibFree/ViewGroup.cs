@@ -49,6 +49,9 @@ namespace XibFree
 			}
 			set
 			{
+                // Skip null views
+                value = value.Where(v => v != null);
+
 				// Check none of the child already have parents
 				foreach (var c in value)
 				{
