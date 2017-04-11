@@ -75,7 +75,7 @@ namespace XibFree
         /// </summary>
         public static UIView FindRootUIView(this View view)
         {
-            return FindRootGroup(view)?.GetHost().GetUIView();
+            return FindRootGroup(view)?.GetHost()?.GetUIView();
         }
 
         /// <summary>

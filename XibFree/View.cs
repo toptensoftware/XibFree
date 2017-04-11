@@ -267,7 +267,10 @@ namespace XibFree
                 }
             }, delegate
             {
-                root.SetNeedsLayout();
+                if (root != null)
+                {
+                    root.SetNeedsLayout();
+                }
             });
         }
             
