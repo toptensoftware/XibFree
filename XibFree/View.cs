@@ -227,12 +227,24 @@ namespace XibFree
             
         public void Hide(bool collapsed, bool animate)
         {
+            if (LayoutParameters.Visibility != Visibility.Visible)
+            {
+                // Already hidden or in progress
+                // Console.WriteLine("Skipping Hide: already hidden");
+                return;
+            }
             LayoutParameters.Visibility = (collapsed) ? Visibility.Gone : Visibility.Invisible;
             ShowHide(false, animate);
         }
 
         public void Show(bool animate)
         {
+            if (LayoutParameters.Visibility == Visibility.Visible)
+            {
+                // Already visible or in progress
+                // Console.WriteLine("Skipping Show: already shown");
+                return;
+            }
             LayoutParameters.Visibility = Visibility.Visible;
             ShowHide(true, animate);
         }
@@ -256,21 +268,21 @@ namespace XibFree
             
         private void ShowHide(bool show, bool animate)
         {
-            //double delay = animate ? 0.25 : 0.0;
-            double delay = 0;
+            //Console.WriteLine("ShowHide(show=" + show + ",animate=" + animate + ")");
+            double delay = animate ? 0.25f : 0.0;
+            //double delay = 0;
             var root = this.FindRootUIView();
-            UIView.Animate(delay, delegate
+            UIView.AnimateNotify(delay, delegate
             {
                 foreach (var uiview in this.FindUIViews())
                 {
                     uiview.Alpha = (show) ? 1.0f : 0.0f;
                 }
-            }, delegate
+            }, (bool completed) =>
             {
-                if (root != null)
-                {
-                    root.SetNeedsLayout();
-                }
+                //Console.WriteLine("completed=" + completed);
+                //root?.Superview?.SetNeedsLayout();
+                root?.SetNeedsLayout();
             });
         }
             
