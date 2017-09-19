@@ -1,6 +1,6 @@
 # XibFree - A lightweight, code-only layout engine for iOS/MonoTouch
 
-# XibFree - A lightweight, code-only layout engine for Xamarin.iOS
+## Sorry :( This Project is not longer under development or maintenance.  The repo is kept here for posterity only.
 
 XibFree is a simple layout engine for code-only layouts in Xamarin.iOS (aka MonoTouch)
 
