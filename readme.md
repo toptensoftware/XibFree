@@ -60,7 +60,7 @@ var layout = new LinearLayout(Orientation.Horizontal)
 
 Which results in this:
 
-![Screen Shot 2013-03-31 at 5.52.28 PM.png](<Doc/Screen Shot 2013-03-31 at 5.52.28 PM.png>)
+![Screen Shot 2013-03-31 at 5.52.28 PM.png](<Doc/Screen%20Shot%202013-03-31%20at%205.52.28 PM.png>)
 
 
 ### Why Code-Only Layout?
