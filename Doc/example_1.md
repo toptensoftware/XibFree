@@ -1,6 +1,6 @@
 # Example 1 - LinearLayout
 
-![Screen Shot 2013-03-30 at 7.01.47 PM.png](<Screen Shot 2013-03-30 at 7.01.47 PM.png>)
+![Screen Shot 2013-03-30 at 7.01.47 PM.png](Screen%20Shot%202013%2003%2030%20at%207.01.47%20PM%20.png)
 
 
 ```C#
