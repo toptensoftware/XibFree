@@ -61,7 +61,7 @@ var layout = new LinearLayout(Orientation.Vertical)
 };
 ```
 
-![Screen Shot 2013-04-01 at 10.29.43 AM.png](<Screen Shot 2013-04-01 at 10.29.43 AM.png>)
+![Screen Shot 2013-04-01 at 10.29.43 AM.png](Screen%20Shot%202013-04-01%20at%2010.29.43%20AM.png)
 
 Now suppose we want to put a background color behind these labels that matches the size of the LinearLayout.  ViewGroups don't have UIViews associated with them so there's no UIView on which to set these properties.  By re-hosting UILayoutHost though, this becomes possible.
 
@@ -132,7 +132,7 @@ Note the following about the above:
 * The NativeView wrapping the UILayoutHost doesn't have any LayoutParameters.  When hosting a UILayoutView, NativeView automatically get's it's LayoutParameters from the root of the internal layout.
 
 
-![Screen Shot 2013-04-01 at 10.33.18 AM.png](<Screen Shot 2013-04-01 at 10.33.18 AM.png>)
+![Screen Shot 2013-04-01 at 10.33.18 AM.png](Screen%20Shot%202013-04-01%20at%2010.33.18%20AM.png)
 
 ### Rounded Corners
 
@@ -154,7 +154,7 @@ new NativeView()
 ```
 
 
-![Screen Shot 2013-04-01 at 10.50.09 AM.png](<Screen Shot 2013-04-01 at 10.50.09 AM.png>)
+![Screen Shot 2013-04-01 at 10.50.09 AM.png](Screen%20Shot%202013-04-01%20at%2010.50.09%20AM.png)
 
 ### Using UILayoutHost for clipping
 
@@ -182,7 +182,7 @@ new NativeView()
 
 As shown below, the LinearLayout is the correct size, but the contents are overflowing.
 
-![Screen Shot 2013-04-01 at 10.43.54 AM.png](<Screen Shot 2013-04-01 at 10.43.54 AM.png>)
+![Screen Shot 2013-04-01 at 10.43.54 AM.png](Screen%20Shot%202013-04-01%20at%2010.43.54%20AM.png)
 
 The fix is simply to set `ClipToBounds` on the UILayoutHost:
 
@@ -198,7 +198,7 @@ new NativeView()
 
 Problem fixed:
 
-![Screen Shot 2013-04-01 at 10.46.12 AM.png](<Screen Shot 2013-04-01 at 10.46.12 AM.png>)
+![Screen Shot 2013-04-01 at 10.46.12 AM.png](Screen%20Shot%202013-04-01%20at%2010.46.12%20AM.png)
 
 
 

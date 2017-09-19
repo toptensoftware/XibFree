@@ -2,11 +2,11 @@
 
 This tutorial shows how to build a complete code-only, full-screen layout for iOS using XibFree.  It demonstrates a simple approach to styling, leverages C# language features to simplify defining the layout, shows how to make a scrollable view and more.  By the end of the tutorial we'll have covered everything to build this view:
 
-![Screen Shot 2013-04-02 at 4.55.02 PM.png](<Screen Shot 2013-04-02 at 4.55.02 PM.png>)
+![Screen Shot 2013-04-02 at 4.55.02 PM.png](Screen%20Shot%202013-04-02%20at%204.55.02%20PM.png)
 
 In automatically scales for landscape mode, and is scrollable when the content doesn't fit:
 
-![Screen Shot 2013-04-02 at 4.56.10 PM.png](<Screen Shot 2013-04-02 at 4.56.10 PM.png>)
+![Screen Shot 2013-04-02 at 4.56.10 PM.png](Screen%20Shot%202013-04-02%20at%204.56.10%20PM.png)
 
 This tutorial assumes you've read about the basics of working with XibFree.  If not, please read the [getting started](getting_started.md) page.
 
@@ -77,7 +77,7 @@ namespace Demo
 
 So far we have this:
 
-![Screen Shot 2013-04-02 at 5.05.58 PM.png](<Screen Shot 2013-04-02 at 5.05.58 PM.png>)
+![Screen Shot 2013-04-02 at 5.05.58 PM.png](Screen%20Shot%202013-04-02%20at%205.05.58%20PM.png)
 
 ### Creating a stylized label
 
@@ -115,7 +115,7 @@ SubViews = new View[]
 }
 ```
 
-![Screen Shot 2013-04-02 at 5.10.16 PM.png](<Screen Shot 2013-04-02 at 5.10.16 PM.png>)
+![Screen Shot 2013-04-02 at 5.10.16 PM.png](Screen%20Shot%202013-04-02%20at%205.10.16%20PM.png)
 
 ### Nested LinearLayout and Stylized Buttons
 
@@ -168,7 +168,7 @@ void Alert(string message)
 
 The layout's correct and the buttons work but they look a bit old school:
 
-![Screen Shot 2013-04-02 at 8.59.42 PM.png](<Screen Shot 2013-04-02 at 8.59.42 PM.png>)
+![Screen Shot 2013-04-02 at 8.59.42 PM.png](Screen%20Shot%202013-04-02%20at%208.59.42%20PM.png)
 
 ### Integrating a Custom Control with XibFree
 
@@ -277,7 +277,7 @@ class Button : NativeView
 
 This looks much better:
 
-![Screen Shot 2013-04-02 at 9.12.54 PM.png](<Screen Shot 2013-04-02 at 9.12.54 PM.png>)
+![Screen Shot 2013-04-02 at 9.12.54 PM.png](Screen%20Shot%202013-04-02%20at%209.12.54%20PM.png)
 
 ### Finishing off the layout
 
@@ -324,7 +324,7 @@ var layout = new LinearLayout(Orientation.Vertical)
 
 That's it!  We now have everything in place:
 
-![Screen Shot 2013-04-02 at 4.56.10 PM.png](<Screen Shot 2013-04-02 at 4.56.10 PM.png>)
+![Screen Shot 2013-04-02 at 4.56.10 PM.png](Screen%20Shot%202013-04-02%20at%204.56.10%20PM.png)
 
 ### Full Source Code
 

@@ -4,11 +4,11 @@ In this example we look at how to enhance the [previous UITableViewCell example]
 
 The final result is this:
 
-![Screen Shot 2013-03-31 at 3.02.40 PM.png](<Screen Shot 2013-03-31 at 3.02.40 PM.png>)
+![Screen Shot 2013-03-31 at 3.02.40 PM.png](Screen%20Shot%202013-03-31%20at%203.02.40%20PM.png)
 
 and this:
 
-![Screen Shot 2013-03-31 at 3.03.01 PM.png](<Screen Shot 2013-03-31 at 3.03.01 PM.png>)
+![Screen Shot 2013-03-31 at 3.03.01 PM.png](Screen%20Shot%202013-03-31%20at%203.03.01%20PM.png)
 
 ### Updating the Layout
 

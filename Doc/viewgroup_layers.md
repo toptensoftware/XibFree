@@ -3,7 +3,7 @@
 
 Since ViewGroup's don't have an associated UIView they don't have on-screen visual representation. One way to resolve this is by [nesting UILayoutHost](nesting_uilayouthost), but ViewGroups now also support Layers that can also be used to place a visual element on screen.
 
-In the following example, (which based on the [same example](nesting_uilayouthost) as before) we add a gradient layer to a LinearLayout.  For good measure we also give it rounded corners:
+In the following example, (which based on the [same example](nesting_uilayouthost.md) as before) we add a gradient layer to a LinearLayout.  For good measure we also give it rounded corners:
 
 ```C#
 var layout = new LinearLayout(Orientation.Vertical)
@@ -71,11 +71,11 @@ var layout = new LinearLayout(Orientation.Vertical)
 
 Here's the result:
 
-![Screen Shot 2013-04-01 at 2.21.46 PM.png](<Screen Shot 2013-04-01 at 2.21.46 PM.png>)
+![Screen Shot 2013-04-01 at 2.21.46 PM.png](Screen%20Shot%202013-04-01%20at%202.21.46%20PM.png)
 
 and XibFree repositions it when the layout is recalculated:
 
-![Screen Shot 2013-04-01 at 2.21.51 PM.png](<Screen Shot 2013-04-01 at 2.21.51 PM.png>)
+![Screen Shot 2013-04-01 at 2.21.51 PM.png](Screen%20Shot%202013-04-01%20at%202.21.51%20PM.png)
 
 
 ### Limitations

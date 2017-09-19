@@ -2,7 +2,7 @@
 
 In order to give a quick overview of XibFree, this guide will setup a simple vertical linear layout with two colored views stacked within it, like so:
 
-![Screen Shot 2013-03-31 at 11.29.47 AM.png](<Screen Shot 2013-03-31 at 11.29.47 AM.png>)
+![Screen Shot 2013-03-31 at 11.29.47 AM.png](Screen%20Shot%202013-03-31%20at%2011.29.47%20AM.png)
 
 ### Get XibFree.dll
 

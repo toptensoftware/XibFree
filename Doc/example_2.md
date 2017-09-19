@@ -2,7 +2,7 @@
 
 This example, show the other view group layout - FrameLayout.  FrameLayout is a bit of a cross between Androids FrameLayout and RelativeLayout.  Provides most of the benefits of RelativeLayout (ie: overlaid views), but is simpler and closer to FrameLayout in functionality.
 
-![Screen Shot 2013-03-30 at 7.01.05 PM.png](<Screen Shot 2013-03-30 at 7.01.05 PM.png>)
+![Screen Shot 2013-03-30 at 7.01.05 PM.png](Screen%20Shot%202013-03-30%20at%207.01.05%20PM.png)
 
 
 ```C#

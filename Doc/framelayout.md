@@ -58,7 +58,7 @@ var layout = new FrameLayout()
 };
 ```
 
-![Screen Shot 2013-03-31 at 12.46.17 PM.png](<Screen Shot 2013-03-31 at 12.46.17 PM.png>)
+![Screen Shot 2013-03-31 at 12.46.17 PM.png](Screen%20Shot%202013-03-31%20at%2012.46.17%20PM.png)
 
 ### Padding
 

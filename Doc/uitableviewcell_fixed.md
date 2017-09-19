@@ -2,11 +2,11 @@
 
 XibFree is a great way to define custom layouts for UITableViewCells.  This guide shows how to setup a simple UITableViewCell with an image on the left, two vertically stacked labels in the middle (that stretch to fill available space) and a large label on the right.  The final effect is this:
 
-![Screen Shot 2013-03-31 at 2.30.06 PM.png](<Screen Shot 2013-03-31 at 2.30.06 PM.png>)
+![Screen Shot 2013-03-31 at 2.30.06 PM.png](Screen%20Shot%202013-03-31%20at%202.30.06%20PM.png)
 
 And of course it works in landscape too:
 
-![Screen Shot 2013-03-31 at 2.55.24 PM.png](<Screen Shot 2013-03-31 at 2.55.24 PM.png>)
+![Screen Shot 2013-03-31 at 2.55.24 PM.png](Screen%20Shot%202013-03-31%20at%202.55.24%20PM.png)
 
 ### Declare a data model
 
