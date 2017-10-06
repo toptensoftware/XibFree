@@ -27,17 +27,21 @@ namespace Demo
 		{
 			window = new UIWindow(UIScreen.MainScreen.Bounds);
 
-			/*
-			var controller = new MainViewController();
-			navigationController = new UINavigationController(controller);
-			window.RootViewController = navigationController;
-			*/
 
-			window.RootViewController = new FullScreenDemo();
+			var controller = new MainViewController();
+			var navigationController = new UINavigationController(controller);
+			window.RootViewController = navigationController;
+
+
+			//window.RootViewController = new FullScreenDemo();
 
 			// make the window visible
 			window.MakeKeyAndVisible();
 			
+            //#if ENABLE_TEST_CLOUD
+            Xamarin.Calabash.Start();
+            //#endif
+
 			return true;
 		}
 	}

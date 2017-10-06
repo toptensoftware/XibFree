@@ -48,13 +48,17 @@ namespace Demo
 			{
 				new Demo() { Title = "#1 Basics", TClass = typeof(Demo1) },
 				new Demo() { Title = "LinearLayout", TClass = typeof(LinearLayoutDemo) },
+				new Demo() { Title = "LinearLayout2", TClass = typeof(LinearLayoutDemo2) },
+				new Demo() { Title = "GridLayout", TClass = typeof(GridLayoutDemo) },
 				new Demo() { Title = "FrameLayout", TClass = typeof(FrameLayoutDemo) },
 				new Demo() { Title = "Nested Hosts", TClass = typeof(NestedDemo) },
+                new Demo() { Title = "Nested Hosts Visibility Bug", TClass = typeof(NestedDemoVisibilityBug) },
 				new Demo() { Title = "ViewGroup Layers", TClass = typeof(ViewGroupLayerDemo) },
 				new Demo() { Title = "TableViewCell", TClass = typeof(TableViewCellDemo) },
 				new Demo() { Title = "TableViewCell Variable", TClass = typeof(TableViewCellDemo2) },
 				new Demo() { Title = "Visibility", TClass = typeof(VisibilityDemo) },
 				new Demo() { Title = "Recalculate Layout", TClass = typeof(RecalculateLayoutDemo) },
+                    new Demo() { Title = "Wrap Layout", TClass = typeof(WrapLayoutDemo) },
 			};
 
 			#region implemented abstract members of UITableViewSource
@@ -72,7 +76,8 @@ namespace Demo
 				}
 
 				cell.TextLabel.Text = _demos[indexPath.Row].Title;
-
+                cell.AccessibilityIdentifier = _demos[indexPath.Row].Title;
+                cell.AccessibilityLabel = _demos[indexPath.Row].Title;
 				return cell;
 			}
 

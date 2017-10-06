@@ -26,8 +26,8 @@ namespace Demo
 			{
 				var item = new Item();
 				item.Title =  string.Format("Item {0}", i+1);
-				item.Total = r.Next(1000);
-				item.Count = r.Next(item.Total);
+				item.Total = i + 1;
+                item.Count = (int)(i *0.45);
 				_items.Add(item);
 			}
 

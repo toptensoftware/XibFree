@@ -83,7 +83,9 @@ namespace Demo
 					},
 					new NativeView()
 					{
-						View = new UIButton(UIButtonType.RoundedRect),
+                                View = new UIButton(UIButtonType.RoundedRect) {
+                                    AccessibilityIdentifier = "ChangeVisibility",
+                                },
 						LayoutParameters = new LayoutParameters(AutoSize.FillParent, AutoSize.WrapContent),
 						Init = v =>
 						{

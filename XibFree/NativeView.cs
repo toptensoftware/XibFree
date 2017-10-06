@@ -134,8 +134,8 @@ namespace XibFree
 			CGSize sizeMeasured = CGSize.Empty;
 			if (width == nfloat.MaxValue || height == nfloat.MaxValue)
 			{
-				CGSize sizeToFit = new CGSize(width, height);
-				sizeMeasured = Measurer!=null ? Measurer(_view, sizeToFit) : _view.SizeThatFits(sizeToFit);
+                //CGSize sizeToFit = new CGSize(LayoutParameters.MaxWidth == 0 ? width : NMath.Min(width, LayoutParameters.MaxWidth), height);
+                sizeMeasured = Measurer!=null ? Measurer(_view, new CGSize(width, height)) : _view.SizeThatFits(new CGSize(LayoutParameters.MaxWidth == 0 ? width : NMath.Min(width, LayoutParameters.MaxWidth), height));
 			}
 
 			// Set the measured size
