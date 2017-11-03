@@ -18,6 +18,7 @@ using System;
 using UIKit;
 using CoreGraphics;
 using CoreAnimation;
+using System.Diagnostics;
 
 namespace XibFree
 {
@@ -100,7 +101,14 @@ namespace XibFree
 		/// <param name="newPosition">The new position of this view</param>
 		public void Layout(CGRect newPosition, bool parentHidden)
 		{
-			onLayout(newPosition, parentHidden);
+            try
+            {
+                onLayout(newPosition, parentHidden);
+            }
+            catch (Exception ex)
+            {
+                Trace.WriteLine("XibFree Layout error: " + ex.Message);
+            }
 		}
 
 		/// <summary>

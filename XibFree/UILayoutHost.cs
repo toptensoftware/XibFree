@@ -17,6 +17,7 @@
 using System;
 using UIKit;
 using CoreGraphics;
+using System.Diagnostics;
 
 namespace XibFree
 {
@@ -99,10 +100,17 @@ namespace XibFree
 		{
 			if (_layout!=null)
 			{
-				// Remeasure
-				_layout.Measure(Bounds.Width, Bounds.Height);
-				// Apply layout
-				_layout.Layout(Bounds, false);
+                try
+                {
+                    // Remeasure
+                    _layout.Measure(Bounds.Width, Bounds.Height);
+                    // Apply layout
+                    _layout.Layout(Bounds, false);
+                }
+                catch (Exception ex)
+                {
+                    Trace.WriteLine("XibFree LayoutSubviews error: " + ex.Message);
+                }
 			}
 		}
 
