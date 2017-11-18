@@ -91,6 +91,7 @@ namespace XibFree
 				ContentSize = size;
 			}
 		}
+
 	}
 }
 
