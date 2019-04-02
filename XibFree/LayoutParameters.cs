@@ -59,7 +59,7 @@ namespace XibFree
 			Width = width;
 			Height = height;
 			Margins = UIEdgeInsets.Zero;
-			Weight = 1;
+			Weight = weight;
 			Gravity = Gravity.None;
 		}
 
