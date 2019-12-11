@@ -16,6 +16,7 @@
 
 using System;
 using UIKit;
+using System.Collections.Generic;
 
 namespace XibFree
 {
@@ -47,5 +48,87 @@ namespace XibFree
 			var host = view.GetLayoutHost();
 			return host.Layout;
 		}
+
+        /// <summary>
+        /// Returns the top-level ViewGroup that this view is
+        /// a part of. Returns null if it is not under a group
+        /// yet. If view is the root, it is returned.
+        /// </summary>
+        public static ViewGroup FindRootGroup(this View view)
+        {
+            if (view.Parent == null && view is ViewGroup)
+            {
+                return (ViewGroup)view;
+            }
+
+            ViewGroup parent = null;
+            while (view.Parent != null)
+            {
+                view = parent = view.Parent;
+            }
+            return parent;
+        }
+
+        /// <summary>
+        /// Returns the top-level UIView that this view is being hosted under.
+        /// Returns null if not hosted.
+        /// </summary>
+        public static UIView FindRootUIView(this View view)
+        {
+            return FindRootGroup(view)?.GetHost()?.GetUIView();
+        }
+
+        /// <summary>
+        /// Returns the nearest parent ViewGroup that this view is
+        /// a part of. Returns null if it is not under a group
+        /// yet. Returns the view passed if it is actually a
+        /// ViewGroup.
+        /// </summary>
+        public static ViewGroup FindNearestGroup(this View view)
+        {
+            while (true)
+            {
+                if (view is ViewGroup)
+                {
+                    return (ViewGroup)view;
+                }
+                view = view.Parent;
+                if (view == null)
+                {
+                    return null;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Returns the UIView associated with nearest parent ViewGroup 
+        /// that this view is a part of. Returns null if it is not under 
+        /// a group yet. Returns the UIView for the view passed if it is 
+        /// actually a ViewGroup.
+        /// </summary>
+        public static UIView FindNearestGroupUIView(this View view)
+        {
+            return view.FindNearestGroup()?.GetHost()?.GetUIView();
+        }
+
+        /// <summary>
+        /// Returns all UIViews at or under the passed view.
+        /// </summary>
+        public static IEnumerable<UIView> FindUIViews(this View view)
+        {
+            var views = new List<UIView>();
+            if (view is NativeView)
+            {
+                views.Add((view as NativeView).View);
+            }
+            else if (view is ViewGroup)
+            {
+                foreach (var child in (view as ViewGroup).SubViews)
+                {
+                    views.AddRange(FindUIViews(child));
+                }
+            }
+            return views;
+        }
 	}
 }

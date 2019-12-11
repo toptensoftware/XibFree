@@ -49,6 +49,9 @@ namespace XibFree
 			}
 			set
 			{
+                // Skip null views
+                value = value.Where(v => v != null);
+
 				// Check none of the child already have parents
 				foreach (var c in value)
 				{
@@ -67,7 +70,7 @@ namespace XibFree
 		}
 
 		/// <summary>
-		/// Insert a new subview at a specified position
+		/// Insert a new native subview at a specified position
 		/// </summary>
 		/// <param name="position">Zero-based index of where to insert the new subview.</param>
 		/// <param name="view">The native subview to insert.</param>
@@ -78,7 +81,7 @@ namespace XibFree
 		}
 
 		/// <summary>
-		/// Insert a new subview at the end of the subview collection
+		/// Insert a new native subview at the end of the subview collection
 		/// </summary>
 		/// <param name="view">The native subview to insert.</param>
 		/// <param name="lp">Layout parameters for the subview.</param>
@@ -88,7 +91,7 @@ namespace XibFree
 		}
 
 		/// <summary>
-		/// Insert a new subview at the end of the subview collection
+		/// Insert a new Xib subview at the end of the subview collection
 		/// </summary>
 		/// <param name="child">The subview to add</param>
 		public void AddSubView(View view)
@@ -97,7 +100,7 @@ namespace XibFree
 		}
 
 		/// <summary>
-		/// Remove a subview from the subview collection
+		/// Remove a native subview from the subview collection
 		/// </summary>
 		/// <param name="view">The subview to remove.</param>
 		public void RemoveSubView(UIView view)
@@ -113,7 +116,7 @@ namespace XibFree
 		}
 
 		/// <summary>
-		/// Insert a new subview at a specified position
+		/// Insert a new Xib subview at a specified position
 		/// </summary>
 		/// <param name="position">Zero-based index of where to insert the new subview.</param>
 		/// <param name="view">The subview to add.</param>
@@ -129,7 +132,7 @@ namespace XibFree
 		}
 	
 		/// <summary>
-		/// Remove the specified subview
+		/// Remove the specified Xib subview
 		/// </summary>
 		/// <param name="view">The subview to remove</param>
 		public void RemoveSubView(View view)
@@ -138,7 +141,7 @@ namespace XibFree
 		}
 
 		/// <summary>
-		/// Remove the subview at a specified position
+		/// Remove the Xib subview at a specified position
 		/// </summary>
 		/// <param name="index">The zero-based index of the view to remove.</param>
 		public void RemoveSubViewAt(int index)
@@ -191,7 +194,7 @@ namespace XibFree
 		/// Overridden to locate the parent host for this view hierarchy
 		/// </summary>
 		/// <returns>The host.</returns>
-		internal override ViewGroup.IHost GetHost()
+		public override ViewGroup.IHost GetHost()
 		{
 			// If this view group has been parented into an actual UIView, we'll have a IHost reference
 			// that acts as the host for all views in the hierarchy.  If not, ask our parent

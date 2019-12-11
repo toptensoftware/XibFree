@@ -34,7 +34,7 @@
 				{
 					var item = new Item();
 					item.Title =  string.Format("Item {0}", i+1);
-					item.Total = r.Next(1000);
+					item.Total = r.Next(999) + 1;
 					item.Count = r.Next(item.Total);
 					item.LongText = messages[r.Next(messages.Length)];
 					_items.Add(item);
@@ -155,7 +155,7 @@
 									BackgroundColor = UIColor.Clear,
 									TextColor = UIColor.FromRGB(51,102,153),
 									HighlightedTextColor = UIColor.White,
-									Font = UIFont.BoldSystemFontOfSize(24),
+									Font = UIFont.BoldSystemFontOfSize(20),
 									TextAlignment = UITextAlignment.Right,
 								},
 								LayoutParameters = new LayoutParameters()

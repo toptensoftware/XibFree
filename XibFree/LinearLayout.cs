@@ -367,7 +367,16 @@ namespace XibFree
 				// Hide hidden views
 				if (v.Gone)
 				{
-					v.Layout(CGRect.Empty, false);
+                    try
+                    {
+                        v.Layout(CGRect.Empty, false);
+                    }
+                    catch
+                    {
+                        // mmuegel: see exception when Visibility=Gone initially; could
+                        // not figure it out, so this *appears* to be hack work around
+                        System.Diagnostics.Debug.WriteLine("error laying out Gone view " + v);
+                    }
 					continue;
 				}
 
@@ -397,9 +406,12 @@ namespace XibFree
 						x = newPosition.Right - Padding.Right - v.LayoutParameters.Margins.Right - size.Width;
 						break;
 
-					case Gravity.CenterHorizontal:
-						x = (newPosition.Left + newPosition.Right)/2
-							- (size.Width + v.LayoutParameters.Margins.TotalWidth())/2;
+                    case Gravity.CenterHorizontal:
+                        nfloat boxWidth = newPosition.Right - newPosition.Left - 
+                            Padding.TotalWidth() - v.LayoutParameters.Margins.TotalWidth();
+                        nfloat offsetInBox = (boxWidth - size.Width)/2;
+                        x =  newPosition.Left + Padding.Left + v.LayoutParameters.Margins.Left +
+                            offsetInBox;
 						break;
 				}
 
@@ -494,13 +506,13 @@ namespace XibFree
 		// Helper to get the total measured height of all subviews, including all padding and margins
 		private nfloat getTotalMeasuredHeight()
 		{
-			return (nfloat)(Padding.TotalWidth() + getTotalSpacing() + SubViews.Where(x=>!x.Gone).Sum(x=>x.GetMeasuredSize().Height + x.LayoutParameters.Margins.TotalHeight()));
+			return (nfloat)(Padding.TotalHeight() + getTotalSpacing() + SubViews.Where(x=>!x.Gone).Sum(x=>x.GetMeasuredSize().Height + x.LayoutParameters.Margins.TotalHeight()));
 		}
 		
 		// Helper to get the total measured width of all subviews, including all padding and margins
 		private nfloat getTotalMeasuredWidth()
 		{
-			return (nfloat)(Padding.TotalHeight() + getTotalSpacing() + SubViews.Where(x=>!x.Gone).Sum(x=>x.GetMeasuredSize().Width + x.LayoutParameters.Margins.TotalWidth()));
+			return (nfloat)(Padding.TotalWidth() + getTotalSpacing() + SubViews.Where(x=>!x.Gone).Sum(x=>x.GetMeasuredSize().Width + x.LayoutParameters.Margins.TotalWidth()));
 		}
 
 		// Helper to adjust the parent width passed down to subviews during measurement

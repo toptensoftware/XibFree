@@ -18,6 +18,7 @@ using System;
 using UIKit;
 using CoreGraphics;
 using CoreAnimation;
+using System.Diagnostics;
 
 namespace XibFree
 {
@@ -75,7 +76,7 @@ namespace XibFree
 		}
 
 		// Internal helper to walk the parent view hierachy and find the view that's hosting this view hierarchy
-		internal virtual ViewGroup.IHost GetHost()
+		public virtual ViewGroup.IHost GetHost()
 		{
 			if (_parent==null)
 				return null;
@@ -100,7 +101,14 @@ namespace XibFree
 		/// <param name="newPosition">The new position of this view</param>
 		public void Layout(CGRect newPosition, bool parentHidden)
 		{
-			onLayout(newPosition, parentHidden);
+            try
+            {
+                onLayout(newPosition, parentHidden);
+            }
+            catch (Exception ex)
+            {
+                Trace.WriteLine("XibFree Layout error: " + ex.Message);
+            }
 		}
 
 		/// <summary>
@@ -224,7 +232,68 @@ namespace XibFree
 				LayoutParameters.Visibility = value ? Visibility.Visible : Visibility.Invisible;
 			}
 		}
+            
+        public void Hide(bool collapsed, bool animate)
+        {
+            if (LayoutParameters.Visibility != Visibility.Visible)
+            {
+                // Already hidden or in progress
+                // Console.WriteLine("Skipping Hide: already hidden");
+                return;
+            }
+            LayoutParameters.Visibility = (collapsed) ? Visibility.Gone : Visibility.Invisible;
+            ShowHide(false, animate);
+        }
 
+        public void Show(bool animate)
+        {
+            if (LayoutParameters.Visibility == Visibility.Visible)
+            {
+                // Already visible or in progress
+                // Console.WriteLine("Skipping Show: already shown");
+                return;
+            }
+            LayoutParameters.Visibility = Visibility.Visible;
+            ShowHide(true, animate);
+        }
+
+        public void SetVisibility(bool visible, bool animate)
+        {
+            if (visible)
+                Show(animate);
+            else
+                Hide(true, animate);
+        }
+
+        public void SetVisibility(Visibility visibility, bool animate)
+        {
+            if (LayoutParameters.Visibility != visibility)
+            {
+                LayoutParameters.Visibility = visibility;
+                ShowHide(visibility == Visibility.Visible, animate);
+            }
+        }
+            
+        private void ShowHide(bool show, bool animate)
+        {
+            //Console.WriteLine("ShowHide(show=" + show + ",animate=" + animate + ")");
+            double delay = animate ? 0.25f : 0.0;
+            //double delay = 0;
+            var root = this.FindRootUIView();
+            UIView.AnimateNotify(delay, delegate
+            {
+                foreach (var uiview in this.FindUIViews())
+                {
+                    uiview.Alpha = (show) ? 1.0f : 0.0f;
+                }
+            }, (bool completed) =>
+            {
+                //Console.WriteLine("completed=" + completed);
+                //root?.Superview?.SetNeedsLayout();
+                root?.SetNeedsLayout();
+            });
+        }
+            
 		public void RemoveFromSuperview()
 		{
 			if (Parent!=null)
